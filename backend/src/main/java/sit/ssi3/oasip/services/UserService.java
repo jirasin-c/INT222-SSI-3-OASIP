@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 
-
+import sit.ssi3.oasip.dtos.EventcategoryDTO;
 import sit.ssi3.oasip.dtos.UserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
+import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -49,42 +49,30 @@ public class UserService {
         return listMapper.mapList(userList, UserDTO.class, modelMapper);
     }
 
-    public UserDetailDTO getUserById(Integer userID) {
-        User user = userRepository.findById(userID).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User ID " + userID + " Does not Exits"
-                )
-        );
+    public UserDetailDTO getUserByName(String name) {
+        User user = userRepository.findByNameEquals(name);
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User ID " + name + " Does not Exits");
         return modelMapper.map(user, UserDetailDTO.class);
     }
 
-    public User createUser(@RequestBody UserDTO newUser)  {
+    public User createUser(UserDTO newUser)  {
 
-          User user = modelMapper.map(newUser,User.class);
+        User user = modelMapper.map(newUser,User.class);
+
+        if(this.userRepository.findByEmail(newUser.getEmail()) != null){ user.setEmailUnique(true);};
+
+        if(this.userRepository.findByName(newUser.getName()) != null){ user.setNameUnique(true);};
         // validate event field
         Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+
         for (ConstraintViolation<User> violation : violations) {
             System.out.println(violation.getMessage());
         }
-        // return when error message contains
+//        // return when error message contains
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
-        // custom error response
+//         custom error response
         return this.userRepository.saveAndFlush(user); // return success service
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

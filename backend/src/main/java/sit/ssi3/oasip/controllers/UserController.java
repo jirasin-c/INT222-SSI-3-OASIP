@@ -29,9 +29,9 @@ public class UserController {
         return userService.getUser(sortBy);
     }
 
-    @GetMapping("/{userID}")
-    public UserDetailDTO getUserById(@PathVariable Integer userID){
-        return userService.getUserById(userID);
+    @GetMapping("/{name}")
+    public UserDetailDTO  getUserByName(@PathVariable String name){
+        return userService.getUserByName(name);
     }
 
 
