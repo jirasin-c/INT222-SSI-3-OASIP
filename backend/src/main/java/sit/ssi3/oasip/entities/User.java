@@ -41,10 +41,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private RoleEnum role;
 
-    @Column(name = "createdOn" , insertable = false,updatable = false)
+    @Column(name = "createdOn" , insertable = false,updatable = false , nullable = false)
     private Date createdOn;
 
-    @Column(name = "updatedOn" , insertable = false,updatable = false)
+    @Column(name = "updatedOn" , insertable = false,updatable = false , nullable = false)
     private Date updatedOn;
 
     @Transient
