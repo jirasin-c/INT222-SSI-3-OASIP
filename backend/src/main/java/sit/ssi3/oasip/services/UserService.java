@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import sit.ssi3.oasip.Enum.RoleEnum;
 import sit.ssi3.oasip.dtos.EventcategoryDTO;
 import sit.ssi3.oasip.dtos.UserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
@@ -50,10 +51,11 @@ public class UserService {
     }
 
     public UserDetailDTO getUserByName(String name) {
-        User user = userRepository.findByNameEquals(name);
+        User user = userRepository.findByName(name);
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User ID " + name + " Does not Exits");
         return modelMapper.map(user, UserDetailDTO.class);
     }
+
 
     public User createUser(UserDTO newUser)  {
 
@@ -62,9 +64,15 @@ public class UserService {
         if(this.userRepository.findByEmail(newUser.getEmail()) != null){ user.setEmailUnique(true);};
 
         if(this.userRepository.findByName(newUser.getName()) != null){ user.setNameUnique(true);};
+
+        for(RoleEnum role : RoleEnum.values()){
+            if(newUser.getRole().equalsIgnoreCase(role.name()) ){
+                user.setRoleSpecified(true);
+            }
+        }
+
         // validate event field
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-
 
         for (ConstraintViolation<User> violation : violations) {
             System.out.println(violation.getMessage());

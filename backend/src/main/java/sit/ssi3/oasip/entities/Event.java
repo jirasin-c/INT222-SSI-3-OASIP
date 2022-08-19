@@ -54,5 +54,16 @@ public class Event {
     @AssertFalse(message = "This event is overlapped with other events")
     private boolean isOverlapped;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "User_ID")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
 

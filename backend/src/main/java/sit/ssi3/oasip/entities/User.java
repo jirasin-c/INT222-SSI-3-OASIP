@@ -4,15 +4,15 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.UniqueElements;
+import sit.ssi3.oasip.Enum.RoleEnum;
 //import sit.ssi3.validations.UniqueEmail;
 
 import javax.persistence.*;
-import javax.validation.constraints.AssertFalse;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.Instant;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -36,9 +36,10 @@ public class User {
     @Column(name = "email", nullable = false, length = 50 )
     private String email;
 
-    @Lob
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private String role;
+    private RoleEnum role;
 
     @Column(name = "createdOn" , insertable = false,updatable = false)
     private Date createdOn;
@@ -54,6 +55,11 @@ public class User {
     @AssertFalse(message = "Name must be unique")
     private boolean isNameUnique;
 
+    @Transient
+    @AssertTrue(message = "Role must be specified")
+    private boolean isRoleSpecified;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Event> events = new LinkedHashSet<>();
 
 }
