@@ -52,7 +52,7 @@ public class UserService {
 
     public UserDetailDTO getUserByName(String name) {
         User user = userRepository.findByName(name);
-        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User ID " + name + " Does not Exits");
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Name " + name + " Does not Exits");
         return modelMapper.map(user, UserDetailDTO.class);
     }
 
@@ -82,5 +82,13 @@ public class UserService {
 //         custom error response
         return this.userRepository.saveAndFlush(user); // return success service
     }
+
+    public void deleteUser(String name) {
+        User user = userRepository.findByName(name);
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Name " + name + " Does not Exits");
+        userRepository.deleteUserByName(name);
+    }
+
+
 
 }

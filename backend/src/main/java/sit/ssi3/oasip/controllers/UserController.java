@@ -14,9 +14,10 @@ import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.services.UserService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
-
+@Transactional
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -42,6 +43,10 @@ public class UserController {
         return new ResponseEntity<User>(newUserSaved, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{name}")
+    public void deleteUser(@PathVariable String name){
+        userService.deleteUser(name);
+    }
 
 
 
