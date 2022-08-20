@@ -89,7 +89,7 @@ CREATE TABLE `user` (
   `userID` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `role` enum('admin','lecturer','student') NOT NULL,
+  `role` enum('admin','lecturer','student') DEFAULT 'student' NOT NULL,
   `createdOn` datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`userID`),

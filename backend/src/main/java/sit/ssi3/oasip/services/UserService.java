@@ -6,25 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-
-
 import sit.ssi3.oasip.Enum.RoleEnum;
-import sit.ssi3.oasip.dtos.EventcategoryDTO;
 import sit.ssi3.oasip.dtos.UserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
-import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.entities.User;
+import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
-import javax.validation.*;
-
-import java.util.Date;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -32,6 +28,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EventRepository eventRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -56,20 +54,26 @@ public class UserService {
         return modelMapper.map(user, UserDetailDTO.class);
     }
 
+    public User createUser(UserDTO newUser) {
 
-    public User createUser(UserDTO newUser)  {
-
-        User user = modelMapper.map(newUser,User.class);
-
-        if(this.userRepository.findByEmail(newUser.getEmail()) != null){ user.setEmailUnique(true);};
-
-        if(this.userRepository.findByName(newUser.getName()) != null){ user.setNameUnique(true);};
-
-        for(RoleEnum role : RoleEnum.values()){
-            if(newUser.getRole().equalsIgnoreCase(role.name()) ){
-                user.setRoleSpecified(true);
-            }
+        if (newUser.getRole().length() == 0) {
+            newUser.setRole("student");
         }
+
+        User user = modelMapper.map(newUser, User.class);
+
+        if (this.userRepository.findByEmail(newUser.getEmail()) != null) {
+            user.setEmailUnique(true);
+        }
+
+        if (this.userRepository.findByName(newUser.getName()) != null) {
+            user.setNameUnique(true);
+        }
+
+        if (RoleEnum.checkEnum(newUser.getRole())) {
+            user.setRole(RoleEnum.convertToEnum(newUser.getRole()));
+
+        } else user.setRoleSpecified(true);
 
         // validate event field
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -83,9 +87,47 @@ public class UserService {
         return this.userRepository.saveAndFlush(user); // return success service
     }
 
+    public UserDTO updateUser(UserDTO updateUser, String name) {
+
+        User newUser = userRepository.findByName(name);
+        if (newUser == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
+
+        if (updateUser.getName() != null) {
+            if (this.userRepository.findByName(updateUser.getName()) != null) {
+                newUser.setNameUnique(true);
+            } else newUser.setName(updateUser.getName());
+        }
+
+        if (updateUser.getEmail() != null) {
+            if (this.userRepository.findByEmail(updateUser.getEmail()) != null) {
+                newUser.setEmailUnique(true);
+            } else newUser.setEmail(updateUser.getEmail());
+        }
+
+        if (updateUser.getRole() != null) {
+            if (RoleEnum.checkEnum(updateUser.getRole())) {
+                newUser.setRole(RoleEnum.convertToEnum(updateUser.getRole()));
+            } else newUser.setRoleSpecified(true);
+        }
+
+        // validate event field
+        Set<ConstraintViolation<User>> violations = validator.validate(newUser);
+
+        for (ConstraintViolation<User> violation : violations) {
+            System.out.println(violation.getMessage());
+        }
+//        // return when error message contains
+        if (violations.size() > 0) throw new ConstraintViolationException(violations);
+
+        return modelMapper.map(userRepository.saveAndFlush(newUser), UserDTO.class);
+
+    }
+
     public void deleteUser(String name) {
         User user = userRepository.findByName(name);
-        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Name " + name + " Does not Exits");
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
+        eventRepository.deleteEventsByUserId(user.getId());
         userRepository.deleteUserByName(name);
     }
 

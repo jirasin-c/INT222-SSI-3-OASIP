@@ -38,8 +38,8 @@ public class User {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private RoleEnum role;
+    @Column(name = "role", nullable = false  )
+    private RoleEnum role ;
 
     @Column(name = "createdOn" , insertable = false,updatable = false , nullable = false)
     private Date createdOn;
@@ -56,7 +56,7 @@ public class User {
     private boolean isNameUnique;
 
     @Transient
-    @AssertTrue(message = "Role must be specified")
+    @AssertFalse(message = "Role must be admin, lecturer, or student")
     private boolean isRoleSpecified;
 
     @OneToMany(mappedBy = "user")
