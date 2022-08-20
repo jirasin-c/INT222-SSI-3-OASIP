@@ -5,6 +5,7 @@ import Booking from "../views/Booking.vue"
 import EventCategory from "../views/EventCategory.vue"
 import UserList from "../views/UserList.vue"
 import UserDetail from "../views/UserDetail.vue"
+import AddUser from "../views/AddUser.vue"
 const history = createWebHistory('/ssi3/');
 // const history = createWebHistory();
 const routes = [
@@ -38,6 +39,11 @@ const routes = [
     path: "/user-detail/:name",
     name: "UserDetail",
     component: UserDetail
+  },
+  {
+    path: "/add-user/",
+    name: "AddUser",
+    component: AddUser
   }
 ];
 

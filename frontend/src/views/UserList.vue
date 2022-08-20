@@ -1,10 +1,11 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import UiAdd from '../components/UiAdd.vue';
 const appRouter = useRouter()
 const userList = ref([])
-const userDetail = ref([])
-const isDetail = ref(false)
+// const userDetail = ref([])
+// const isDetail = ref(false)
 const isEmpty = ref(false)
 
 const getUser = async () => {
@@ -71,7 +72,16 @@ onBeforeMount(async () => {
         class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
         USER LIST
     </div>
-
+    <div class="flex items-center mt-8 justify-end mr-16">
+        <router-link :to="{ name: 'AddUser' }">
+            <div
+                class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
+                <div class="text-xl font-extrabold m-2 hover:animate-bounce">
+                    <UiAdd class="inline-block" /> Creat new user
+                </div>
+            </div>
+        </router-link>
+    </div>
     <div class="flex flex-row h-screen">
         <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
             <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
@@ -99,8 +109,9 @@ onBeforeMount(async () => {
                                 <p>Name: {{ user.name }}</p>
                                 <p>Email: {{ user.email }}</p>
                                 <p>Role: {{ user.role }}</p>
-                                <button class="btn btn-secondary" @click="getDetail(user.name)">See
+                                <button class="btn btn-primary" @click="getDetail(user.name)">See
                                     more</button>
+                                <button class="btn btn-secondary" @click="getDetail(user.name)">Delete</button>
                                 <!-- </div> -->
                                 <!-- <div v-else> -->
 
