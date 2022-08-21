@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-
+import { useRouter } from 'vue-router';
+const appRouter = useRouter()
 const name = ref('')
 const email = ref('')
 const roles = ref(['Student', 'Lecturer', 'Admin', 'Guest'])
@@ -26,7 +27,7 @@ const validateEmail = () => {
 const creatUser = (async () => {
 
     // console.log(`Trim:` + name.value.trim());
-    console.log(name.value, email.value, 'Role:' + selectedRole.value,);
+    console.log('Name: ' + name.value, 'Email: ' + email.value, 'Role:' + selectedRole.value,);
     if (name.value == '' || email.value == '') {
         alertText.value = ''
         falseInput.value = true
@@ -75,7 +76,7 @@ const creatUser = (async () => {
             email.value = ''
             selectedRole.value = 'Student'
             success.value = true
-            // setTimeout(() => appRouter.push({ name: 'UserList' }), 1000)
+            setTimeout(() => appRouter.push({ name: 'UserList' }), 1000)
             // appRouter.push({ name: 'Home' })
         }
         else if (res.status === 400) {

@@ -17,12 +17,6 @@ const getUser = async () => {
     } else {
         isEmpty.value = false
     }
-    //      if (res.status == 404) {
-    //     isEmpty.value = true;
-    //     event.value = []
-    //   } else {
-    //     isEmpty.value = false;
-    //   }
 }
 const getDetail = async (name) => {
 
@@ -61,6 +55,20 @@ const getDetail = async (name) => {
     //   });
 }
 
+const deleteUser = async (delName) => {
+    // console.log(name);
+    if (confirm(`Are you sure to delete user name: ${delName}`)) {
+        // console.log('delete success');
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${delName}`, {
+            method: 'DELETE'
+        })
+        if (res.status === 200) {
+            userList.value = userList.value.filter((u) => u.name !== delName)
+        } else {
+            alert("Can't deleted")
+        }
+    }
+}
 onBeforeMount(async () => {
     await getUser()
     console.log(userList.value);
@@ -109,9 +117,13 @@ onBeforeMount(async () => {
                                 <p>Name: {{ user.name }}</p>
                                 <p>Email: {{ user.email }}</p>
                                 <p>Role: {{ user.role }}</p>
-                                <button class="btn btn-primary" @click="getDetail(user.name)">See
+                                <button class="btn btn-primary justify-self-end flex" @click="getDetail(user.name)">See
                                     more</button>
-                                <button class="btn btn-secondary" @click="getDetail(user.name)">Delete</button>
+                                <!-- <div class="justify-self-end flex"> -->
+                                <button class="btn btn-secondary justify-self-end flex"
+                                    @click="deleteUser(user.name)">Delete</button>
+
+                                <!-- </div> -->
                                 <!-- </div> -->
                                 <!-- <div v-else> -->
 
