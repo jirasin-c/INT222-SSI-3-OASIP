@@ -10,13 +10,16 @@ const isEmpty = ref(false)
 
 const getUser = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`)
-    userList.value = await res.json()
     if (res.status != 200) {
         isEmpty.value = true
         userList.value = []
     } else {
         isEmpty.value = false
+        userList.value = await res.json()
     }
+    userList.value.filter((ul) => {
+        ul.role = capitalizeFirstLetter(ul.role)
+    })
 }
 const getDetail = async (name) => {
 
@@ -69,9 +72,13 @@ const deleteUser = async (delName) => {
         }
     }
 }
+
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
 onBeforeMount(async () => {
     await getUser()
-    console.log(userList.value);
+    // console.log(userList.value);
 })
 </script>
  

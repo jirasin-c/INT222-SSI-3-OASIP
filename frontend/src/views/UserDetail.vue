@@ -7,10 +7,18 @@ const name = params.name
 const detail = ref([])
 const localCreatedOn = ref()
 const localUpdatedOn = ref()
+const isEdit = ref(false)
+const editName = ref('')
+const editEmail = ref('')
+const beforeEditName = ref('')
+const beforeEditEmail = ref('')
 
 const getDetail = (async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`)
   detail.value = await res.json()
+  detail.value.role = capitalizeFirstLetter(detail.value.role)
+  // console.log(detail.value.role);
+  // capitalizeFirstLetter(detail.value.role)
   // localCreatedOn.value = new Date(detail.value.createdOn).to
   localCreatedOn.value = new Date(detail.value.createdOn).toLocaleTimeString("th-TH", {
     weekday: "short",
@@ -30,6 +38,11 @@ const getDetail = (async () => {
     minute: "numeric",
   }
   )
+
+  editName.value = detail.value.name
+  editEmail.value = detail.value.email
+  beforeEditName.value = editName.value
+  beforeEditEmail.value = editEmail.value
   console.log(localCreatedOn.value);
   console.log(localUpdatedOn.value);
 
@@ -45,6 +58,13 @@ const getDetail = (async () => {
   //     e.eventStartTime = localDate;
   //   });
 })
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+const updateUser = async () => {
+  console.log('update');
+}
 onBeforeMount(async () => {
   await getDetail()
 
@@ -58,14 +78,19 @@ onBeforeMount(async () => {
         <div
           class="card w-auto lg:w-[1200px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm mb-12">
           <div class="card-body text-xl md:text-3xl place-self-center">
-            <p
+            <p v-if="isEdit == false"
               class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center ">
               {{ name }}
             </p>
+            <input v-else type="text" v-model="editName"
+              class="input input-bordered input-secondary w-full max-w-xs self-center text-2xl" id="name" />
             <p>
               <IcPerson class="inline-block mr-5" />
-              <label> Email:
-                {{ detail.email }}
+              <label>Email:
+                <span v-if="isEdit == false">{{ detail.email }}</span>
+                <span v-else><input type="text" v-model="editEmail"
+                    class="input input-bordered input-secondary w-full max-w-xs self-center text-lg"
+                    id="email" /></span>
               </label>
             </p>
             <p>
@@ -173,12 +198,13 @@ onBeforeMount(async () => {
             </p> -->
           </div>
           <div class="card-actions justify-end m-5">
-            <!-- <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button> -->
-            <!-- <button class="btn btn-accent border-none " @click="isEdit = true, updateEvent()"
-              v-show="isEdit">Apply</button> -->
-            <!-- <button class="btn btn-secondary border-none "
-              @click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote"
-              v-show="isEdit">Cancel</button> -->
+            <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
+            <button class="btn btn-accent border-none " @click="isEdit = true, updateUser()"
+              v-show="isEdit">Apply</button>
+            <!-- click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote" -->
+            <button class="btn btn-secondary border-none "
+              @click="isEdit = !isEdit, editName = beforeEditName, editEmail = beforeEditEmail"
+              v-show="isEdit">Cancel</button>
             <router-link :to="{ name: 'UserList' }"><button
                 class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500">Go
                 back</button>
