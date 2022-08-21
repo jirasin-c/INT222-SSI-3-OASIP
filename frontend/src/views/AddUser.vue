@@ -27,7 +27,7 @@ const validateEmail = () => {
 const creatUser = (async () => {
 
     // console.log(`Trim:` + name.value.trim());
-    console.log('Name: ' + name.value, 'Email: ' + email.value, 'Role:' + selectedRole.value,);
+    // console.log('Name: ' + name.value, 'Email: ' + email.value, 'Role:' + selectedRole.value,);
     if (name.value == '' || email.value == '') {
         alertText.value = ''
         falseInput.value = true
@@ -59,13 +59,15 @@ const creatUser = (async () => {
         if (selectedRole.value == "Select your role") {
             selectedRole.value = "Student"
         }
+        // console.log('Name: ' + name.value.trim(), 'Email: ' + email.value, 'Role:' + selectedRole.value,);
+
         const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
             },
             body: JSON.stringify({
-                name: name.value,
+                name: name.value.trim(),
                 email: email.value,
                 role: selectedRole.value.toLocaleLowerCase()
             })
