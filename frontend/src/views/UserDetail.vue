@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
 let { params } = useRoute()
@@ -60,8 +60,8 @@ const getDetail = (async (newUser) => {
   beforeEditName.value = editName.value
   beforeEditEmail.value = editEmail.value
   beforeEditRole.value = editRole.value
-  console.log(localCreatedOn.value);
-  console.log(localUpdatedOn.value);
+  // console.log(localCreatedOn.value);
+  // console.log(localUpdatedOn.value);
 
   //   event.value.filter((e) => {
   // const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
@@ -100,6 +100,7 @@ const updateUser = async () => {
 
   if (editName.value.trim() === detail.value.name && editEmail.value === detail.value.email && editRole.value === detail.value.role) {
     // console.log('same');
+    isEdit.value = false
     return
   } else {
 
@@ -136,12 +137,50 @@ const updateUser = async () => {
       //     selectedRole.value = "Student"
       // }
       // console.log('Name: ' + name.value.trim(), 'Email: ' + email.value, 'Role:' + selectedRole.value,);
+      // const customEdit = reactive({})
+      // if (beforeEditEmail.value === editEmail.value && beforeEditRole.value === editRole.value) {
+      //   console.log('1');
+      //   customEdit = {
+      //     name: editName.value.trim()
+      //   }
+      //   console.log(customEdit.value);
+      // } else if (beforeEditName.value === editName.value && beforeEditRole.value === editRole.value) {
+      //   console.log('2');
+      //   customEdit = {
+      //     email: editEmail.value
+      //   }
+      // } else if (beforeEditName.value === editName.value && beforeEditEmail.value === editEmail.value) {
+      //   console.log('3');
+      //   customEdit = {
+      //     role: editRole.value.toLocaleLowerCase()
+      //   }
+      // } else if (beforeEditEmail.value !== editEmail.value && beforeEditRole.value !== editRole.value) {
+      //   console.log('4');
+      //   customEdit = {
+      //     email: editEmail.value,
+      //     role: editRole.value.toLocaleLowerCase()
+      //   }
+      // } else if (beforeEditName.value !== editName.value && beforeEditRole.value !== editRole.value) {
+      //   console.log('5');
+      //   customEdit = {
+      //     name: editEmail.value,
+      //     role: editRole.value.toLocaleLowerCase()
+      //   }
+      // } else {
+      //   console.log('6');
+      //   customEdit = {
+      //     name: editName.value.trim(),
+      //     email: editEmail.value,
+      //     role: editRole.value.toLocaleLowerCase()
+      //   }
+      // }
 
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`, {
         method: 'PUT',
         headers: {
           'content-type': 'application/json'
         },
+        // body: JSON.stringify(customEdit)
         body: JSON.stringify({
           name: editName.value.trim(),
           email: editEmail.value,
@@ -150,7 +189,7 @@ const updateUser = async () => {
       })
       // console.log(res);
       if (res.status === 200) {
-        const e = editName.value.trim()
+        // const e = editName.value.trim()
         success.value = true
         isEdit.value = false
         // alert("Event updated successfully")
@@ -173,7 +212,6 @@ const updateUser = async () => {
       return
     }
   }
-
 }
 
 onBeforeMount(async () => {
@@ -194,20 +232,20 @@ onBeforeMount(async () => {
               <span>{{ name }}</span>
             </p>
             <p v-else>
-              <span>
+              <label>
+                Name:
                 <span class="text-sm text-yellow-500 pb-2" v-show="editName.length == 100">** A name must be 1 -
                   100 characters. **</span>
                 <input type="text" class="input input-bordered input-secondary w-full max-w-xs self-center text-2xl"
-                  v-model="editName" id="name" />
+                  v-model="editName" id="name" maxlength="100" />
                 <label class="label">
                   <span class="label-text-alt"></span>
                   <span class="label-text-alt">{{ editName.length }}/100</span>
                 </label>
 
-              </span>
+              </label>
             </p>
             <p>
-              <!-- <IcPerson class="inline-block mr-5" /> -->
               <label>Email:
                 <span v-if="isEdit == false">{{ detail.email }}</span>
                 <span v-else>
@@ -228,7 +266,6 @@ onBeforeMount(async () => {
               </label>
             </p>
             <p>
-              <!-- <IcPerson class="inline-block mr-5" /> -->
               <label> Role:
                 <span v-if="isEdit == false">{{ detail.role }}</span>
                 <span v-else>
