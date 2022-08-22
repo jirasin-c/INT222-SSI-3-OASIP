@@ -94,16 +94,21 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
 
         if (updateUser.getName() != null) {
-            if (this.userRepository.findByName(updateUser.getName()) != null) {
-                newUser.setNameUnique(true);
-            } else newUser.setName(updateUser.getName());
+            User user = this.userRepository.findByName(updateUser.getName());
+            if (user != null) {
+                newUser.setNameUnique(!newUser.getName().equals(updateUser.getName()));
+            }
+            else newUser.setName(updateUser.getName());
         }
 
         if (updateUser.getEmail() != null) {
-            if (this.userRepository.findByEmail(updateUser.getEmail()) != null) {
-                newUser.setEmailUnique(true);
-            } else newUser.setEmail(updateUser.getEmail());
+            User user = this.userRepository.findByEmail(updateUser.getEmail());
+            if (user != null) {
+                newUser.setEmailUnique(!newUser.getEmail().equals(updateUser.getEmail()));
+            }
+            else newUser.setEmail(updateUser.getEmail());
         }
+
 
         if (updateUser.getRole() != null) {
             if (RoleEnum.checkEnum(updateUser.getRole())) {
@@ -121,7 +126,6 @@ public class UserService {
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
 
         return modelMapper.map(userRepository.saveAndFlush(newUser), UserDTO.class);
-
     }
 
     public void deleteUser(String name) {
