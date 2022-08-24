@@ -9,6 +9,7 @@ services:
     container_name: databasescon
     environment:
       - MYSQL_ROOT_PASSWORD=trimitr56
+      - TZ=Asia/Bangkok
     restart: on-failure
   backendcon:
     build: ./backend/
@@ -22,6 +23,7 @@ services:
       - MYSQL_PATH=databasescon
       - MYSQL_PORT=3306
       - MYSQL_DATABASE=oasip
+      - TZ=Asia/Bangkok
     container_name: backendcon
   frontendcon:
     image: frontend

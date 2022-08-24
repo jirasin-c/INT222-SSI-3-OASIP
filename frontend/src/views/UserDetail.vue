@@ -36,26 +36,29 @@ const getDetail = async (newUser) => {
   // console.log(detail.value.role);
   // capitalizeFirstLetter(detail.value.role)
   // localCreatedOn.value = new Date(detail.value.createdOn).to
-  localCreatedOn.value = new Date(detail.value.createdOn).toLocaleTimeString("th-TH", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-    // timeZoneName: "short"
-  }
-  )
-  localUpdatedOn.value = new Date(detail.value.updatedOn).toLocaleTimeString("th-TH", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "2-digit",
-    hour: "numeric",
-    minute: "numeric",
-    // timeZoneName: "short"
-  }
-  )
+  localCreatedOn.value = new Date(detail.value.createdOn)
+  localCreatedOn.value = new Date(detail.value.updatedOn)
+
+  // localCreatedOn.value = new Date(detail.value.createdOn).toLocaleTimeString("th-TH", {
+  //   weekday: "short",
+  //   month: "short",
+  //   day: "numeric",
+  //   year: "2-digit",
+  //   hour: "numeric",
+  //   minute: "numeric",
+  //   // timeZoneName: "short"
+  // }
+  // )
+  // localUpdatedOn.value = new Date(detail.value.updatedOn).toLocaleTimeString("th-TH", {
+  //   weekday: "short",
+  //   month: "short",
+  //   day: "numeric",
+  //   year: "2-digit",
+  //   hour: "numeric",
+  //   minute: "numeric",
+  //   // timeZoneName: "short"
+  // }
+  // )
   editName.value = detail.value.name
   editEmail.value = detail.value.email
   editRole.value = detail.value.role
