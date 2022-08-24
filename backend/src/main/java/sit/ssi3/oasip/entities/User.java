@@ -9,6 +9,7 @@ import sit.ssi3.oasip.Enum.RoleEnum;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -42,10 +43,10 @@ public class User {
     private RoleEnum role ;
 
     @Column(name = "createdOn" , insertable = false,updatable = false , nullable = false)
-    private Date createdOn;
+    private Timestamp createdOn;
 
     @Column(name = "updatedOn" , insertable = false,updatable = false , nullable = false)
-    private Date updatedOn;
+    private Timestamp updatedOn;
 
     @Transient
     @AssertFalse(message = "Email must be unique")

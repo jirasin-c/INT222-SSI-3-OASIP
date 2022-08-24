@@ -22,7 +22,7 @@ const alertText = ref('')
 const success = ref(false)
 
 
-const getDetail = (async (newUser) => {
+const getDetail = async (newUser) => {
   // if (success.value == true) {
   // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${newUser}`)
   // params.name = newUser
@@ -43,6 +43,7 @@ const getDetail = (async (newUser) => {
     year: "2-digit",
     hour: "numeric",
     minute: "numeric",
+    // timeZoneName: "short"
   }
   )
   localUpdatedOn.value = new Date(detail.value.updatedOn).toLocaleTimeString("th-TH", {
@@ -52,6 +53,7 @@ const getDetail = (async (newUser) => {
     year: "2-digit",
     hour: "numeric",
     minute: "numeric",
+    // timeZoneName: "short"
   }
   )
   editName.value = detail.value.name
@@ -74,7 +76,8 @@ const getDetail = (async (newUser) => {
   // });
   //     e.eventStartTime = localDate;
   //   });
-})
+}
+
 
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
