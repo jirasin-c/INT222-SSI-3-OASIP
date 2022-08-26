@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 const appRouter = useRouter()
+const user = ref([])
 const name = ref('')
 const email = ref('')
 const roles = ref(['Student', 'Lecturer', 'Admin', 'Guest'])
@@ -10,7 +11,13 @@ const isNotEmail = ref(false)
 const falseInput = ref(false)
 const alertText = ref('')
 const success = ref(false)
+const usedName = ref(false)
+const usedEmail = ref(false)
 
+const getUser = async () => {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
+    user.value = await res.json()
+}
 const validateEmail = () => {
     const validRegex = /^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if (email.value.match(validRegex) && email.value.length > 0) {
@@ -24,8 +31,51 @@ const validateEmail = () => {
     }
 }
 
-const creatUser = (async () => {
+const checkUsedName = (checkedName) => {
+    usedName.value = false
+    // console.log('check name');
+    user.value.filter((curr) => {
+        // console.log(`currentName: ${curr.name} == ${checkedName}`);
+        if (curr.name == checkedName.trim()) {
+            // console.log('ตรงกัน');
+            usedName.value = true
+            return
+        }
+        // else {
+        //     // usedName.value = false
+        //     return
+        // }
+    })
+}
+const checkUsedEmail = (checkedEmail) => {
+    usedEmail.value = false
+    user.value.filter((curr) => {
+        if (curr.email === checkedEmail.trim()) {
+            usedEmail.value = true
+            return
+        }
+        // else {
+        //     return false
+        // }
+    })
+}
 
+// const checkUsedUserName = (signUpUserName) => {
+//     // console.log(signUpUserName);
+//     accounts.value.filter((current) => {
+//         if (current.userName === signUpUserName) {
+//             userUsed.value = true
+//         }
+//     }
+//     );
+
+// }
+const creatUser = async () => {
+    // if (name.value.length == 100 || email.value.length == 50) {
+    //     if (confirm("!!! Warning check your name before submit. If the name or email characters exceed the limit, the information will cut off ")) {
+
+    //     }
+    // }
     // console.log(`Trim:` + name.value.trim());
     // console.log('Name: ' + name.value, 'Email: ' + email.value, 'Role:' + selectedRole.value,);
     if (name.value == '' || email.value == '') {
@@ -49,6 +99,17 @@ const creatUser = (async () => {
     }
     if (isNotEmail.value == false) {
         falseInput.value = false
+        if (usedName.value == true && usedEmail.value == true) {
+            alert("This name and email already used.")
+            return
+        } else if (usedName.value == true) {
+            alert("This name already used.")
+            return
+        } else if (usedEmail.value == true) {
+            alert("This email already used.")
+            return
+        }
+
         if (selectedRole.value.toLocaleLowerCase() == 'guest') {
             alert('Guest is invalid.')
             return
@@ -68,7 +129,7 @@ const creatUser = (async () => {
             },
             body: JSON.stringify({
                 name: name.value.trim(),
-                email: email.value,
+                email: email.value.trim(),
                 role: selectedRole.value.toLocaleLowerCase()
             })
         })
@@ -86,9 +147,18 @@ const creatUser = (async () => {
             selectedRole.value == "Select your role"
         }
     } else {
+        if (selectedRole.value.toLocaleLowerCase() == 'guest') {
+            alert('Guest is invalid.')
+            return
+        }
         alert("Invalid email address!");
         return
     }
+}
+
+onBeforeMount(async () => {
+    await getUser()
+    // console.log(user.value);
 })
 </script>
  
@@ -110,11 +180,14 @@ const creatUser = (async () => {
                                     Name: <span class="text-red-500">*</span>
                                 </span>
                             </label>
+                            <span class="text-sm text-red-500 pb-2" v-show="usedName">This name is already
+                                used.</span>
                             <span class="text-sm text-yellow-500 pb-2" v-show="name.length == 100">** A name must be 1 -
-                                100 characters. **</span>
+                                100 characters. ** <br>
+                                101st characters onwards will be cut off</span>
                             <input type="text" v-model="name" placeholder="Type yourname..."
                                 class="input input-bordered input-secondary w-full max-w-xs text-lg text-gray-50"
-                                id="name" maxlength="100" />
+                                id="name" maxlength="100" @change="checkUsedName(name)" />
                             <label class="label">
                                 <span class="label-text-alt"></span>
                                 <span class="label-text-alt">{{ name.length }}/100</span>
@@ -125,14 +198,17 @@ const creatUser = (async () => {
                                     Email : <span class="text-red-500">*</span>
                                 </span>
                             </label>
+                            <span class="text-sm text-red-500 pb-2" v-show="usedEmail">This email is already
+                                used.</span>
                             <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
                                 address.</span>
                             <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 50">** An email must be
                                 1
-                                - 50 characters. **</span>
+                                - 50 characters. **<br>
+                                51st characters onwards will be cut off</span>
                             <input type="email" placeholder="example@mail.kmutt.ac.th"
                                 class="input input-bordered input-secondary w-full max-w-xs  text-lg" v-model="email"
-                                id="email" maxlength="50" />
+                                id="email" maxlength="50" @change="checkUsedEmail(email)" />
                             <label class="label">
                                 <span class="label-text-alt"></span>
                                 <span class="label-text-alt">{{ email.length }}/50</span>
@@ -140,7 +216,7 @@ const creatUser = (async () => {
 
                             <label for="role" class="label">
                                 <span class="label-text text-base font-semibold">
-                                    Role: <span class="text-red-500">*</span>
+                                    Role:
                                 </span>
                             </label>
                             <select class="select select-secondary w-full max-w-xs  text-lg" id="role"

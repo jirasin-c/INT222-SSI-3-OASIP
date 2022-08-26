@@ -19,8 +19,51 @@ const editRole = ref('')
 const beforeEditRole = ref('')
 const falseInput = ref(false)
 const alertText = ref('')
+const user = ref([])
 const success = ref(false)
+const usedName = ref(false)
+const usedEmail = ref(false)
 
+const getUser = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
+  user.value = await res.json()
+}
+
+const checkUsedName = (checkedName) => {
+  usedName.value = false
+  if (beforeEditName.value == checkedName) {
+    return
+  }
+  // console.log('check name');
+  user.value.filter((curr) => {
+    // console.log(`currentName: ${curr.name} == ${checkedName}`);
+    if (curr.name == checkedName.trim()) {
+      // console.log('ตรงกัน');
+      usedName.value = true
+      return
+    }
+    // else {
+    //     // usedName.value = false
+    //     return
+    // }
+  })
+}
+const checkUsedEmail = (checkedEmail) => {
+  usedEmail.value = false
+  if (beforeEditEmail.value == checkedEmail) {
+    return
+  }
+  user.value.filter((curr) => {
+    if (curr.email === checkedEmail.trim()) {
+      // console.log(`currentEmail: ${curr.email} == ${checkedEmail}`);
+      usedEmail.value = true
+      return
+    }
+    // else {
+    //     return false
+    // }
+  })
+}
 
 const getDetail = async (newUser) => {
   // if (success.value == true) {
@@ -36,29 +79,29 @@ const getDetail = async (newUser) => {
   // console.log(detail.value.role);
   // capitalizeFirstLetter(detail.value.role)
   // localCreatedOn.value = new Date(detail.value.createdOn).to
-  localCreatedOn.value = new Date(detail.value.createdOn)
-  localCreatedOn.value = new Date(detail.value.updatedOn)
+  // localCreatedOn.value = new Date(detail.value.createdOn)
+  // localCreatedOn.value = new Date(detail.value.updatedOn)
 
-  // localCreatedOn.value = new Date(detail.value.createdOn).toLocaleTimeString("th-TH", {
-  //   weekday: "short",
-  //   month: "short",
-  //   day: "numeric",
-  //   year: "2-digit",
-  //   hour: "numeric",
-  //   minute: "numeric",
-  //   // timeZoneName: "short"
-  // }
-  // )
-  // localUpdatedOn.value = new Date(detail.value.updatedOn).toLocaleTimeString("th-TH", {
-  //   weekday: "short",
-  //   month: "short",
-  //   day: "numeric",
-  //   year: "2-digit",
-  //   hour: "numeric",
-  //   minute: "numeric",
-  //   // timeZoneName: "short"
-  // }
-  // )
+  localCreatedOn.value = new Date(detail.value.createdOn).toLocaleTimeString("th-TH", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    // timeZoneName: "short"
+  }
+  )
+  localUpdatedOn.value = new Date(detail.value.updatedOn).toLocaleTimeString("th-TH", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "2-digit",
+    hour: "numeric",
+    minute: "numeric",
+    // timeZoneName: "short"
+  }
+  )
   editName.value = detail.value.name
   editEmail.value = detail.value.email
   editRole.value = detail.value.role
@@ -104,7 +147,7 @@ const updateUser = async () => {
   // console.log(editName.value);
   // console.log(detail.value.name);
 
-  if (editName.value.trim() === detail.value.name && editEmail.value === detail.value.email && editRole.value === detail.value.role) {
+  if (editName.value.trim() === detail.value.name && editEmail.value.trim() === detail.value.email && editRole.value === detail.value.role) {
     // console.log('same');
     isEdit.value = false
     return
@@ -132,54 +175,21 @@ const updateUser = async () => {
     }
     if (isNotEmail.value == false) {
       falseInput.value = false
+      if (usedName.value == true && usedEmail.value == true) {
+        alert("This name and email already used.")
+        return
+      } else if (usedName.value == true) {
+        alert("This name already used.")
+        return
+      } else if (usedEmail.value == true) {
+        alert("This email already used.")
+        return
+      }
+
       if (editRole.value.toLocaleLowerCase() == 'guest') {
         alert('Guest is invalid.')
         return
       }
-      // if (confirm(`Are you sure to the create user ?`)) {
-      // const utc = new Date(startTime.value).toISOString()
-      // startTime.value = utc
-      // if (selectedRole.value == "Select your role") {
-      //     selectedRole.value = "Student"
-      // }
-      // console.log('Name: ' + name.value.trim(), 'Email: ' + email.value, 'Role:' + selectedRole.value,);
-      // const customEdit = reactive({})
-      // if (beforeEditEmail.value === editEmail.value && beforeEditRole.value === editRole.value) {
-      //   console.log('1');
-      //   customEdit = {
-      //     name: editName.value.trim()
-      //   }
-      //   console.log(customEdit.value);
-      // } else if (beforeEditName.value === editName.value && beforeEditRole.value === editRole.value) {
-      //   console.log('2');
-      //   customEdit = {
-      //     email: editEmail.value
-      //   }
-      // } else if (beforeEditName.value === editName.value && beforeEditEmail.value === editEmail.value) {
-      //   console.log('3');
-      //   customEdit = {
-      //     role: editRole.value.toLocaleLowerCase()
-      //   }
-      // } else if (beforeEditEmail.value !== editEmail.value && beforeEditRole.value !== editRole.value) {
-      //   console.log('4');
-      //   customEdit = {
-      //     email: editEmail.value,
-      //     role: editRole.value.toLocaleLowerCase()
-      //   }
-      // } else if (beforeEditName.value !== editName.value && beforeEditRole.value !== editRole.value) {
-      //   console.log('5');
-      //   customEdit = {
-      //     name: editEmail.value,
-      //     role: editRole.value.toLocaleLowerCase()
-      //   }
-      // } else {
-      //   console.log('6');
-      //   customEdit = {
-      //     name: editName.value.trim(),
-      //     email: editEmail.value,
-      //     role: editRole.value.toLocaleLowerCase()
-      //   }
-      // }
 
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`, {
         method: 'PUT',
@@ -189,7 +199,7 @@ const updateUser = async () => {
         // body: JSON.stringify(customEdit)
         body: JSON.stringify({
           name: editName.value.trim(),
-          email: editEmail.value,
+          email: editEmail.value.trim(),
           role: editRole.value.toLocaleLowerCase()
         })
       })
@@ -214,6 +224,11 @@ const updateUser = async () => {
         // selectedRole.value == "Select your role"
       }
     } else {
+      // console.log(editRole.value);
+      if (editRole.value.toLocaleLowerCase() == 'guest') {
+        alert('Guest is invalid.')
+        return
+      }
       alert("Invalid email address!");
       return
     }
@@ -222,7 +237,7 @@ const updateUser = async () => {
 
 onBeforeMount(async () => {
   await getDetail()
-
+  await getUser()
 })
 </script>
  
@@ -240,29 +255,36 @@ onBeforeMount(async () => {
             <p v-else>
               <label>
                 Name:
+                <span class="text-sm text-red-500 pb-2" v-show="usedName">This name is already
+                  used.</span>
                 <span class="text-sm text-yellow-500 pb-2" v-show="editName.length == 100">** A name must be 1 -
-                  100 characters. **</span>
+                  100 characters. **
+                  <br>
+                  101st characters onwards will be cut off</span>
                 <input type="text" class="input input-bordered input-secondary w-full max-w-xs self-center text-2xl"
-                  v-model="editName" id="name" maxlength="100" />
+                  v-model="editName" id="name" maxlength="100" @change="checkUsedName(editName)" />
                 <label class="label">
                   <span class="label-text-alt"></span>
                   <span class="label-text-alt">{{ editName.length }}/100</span>
                 </label>
-
               </label>
             </p>
             <p>
               <label>Email:
                 <span v-if="isEdit == false">{{ detail.email }}</span>
                 <span v-else>
+                  <span class="text-sm text-red-500 pb-2" v-show="usedEmail">This email is already
+                    used.</span>
                   <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
                     address.</span>
                   <span class="text-sm text-yellow-500 pb-2" v-show="editEmail.length == 50">** An email must be
                     1
-                    - 50 characters. **</span>
+                    - 50 characters. **
+                    <br>
+                    51st characters onwards will be cut off</span>
                   <input type="email" v-model="editEmail"
                     class="input input-bordered input-secondary w-full max-w-xs self-center text-lg" id="email"
-                    maxlength="50" />
+                    maxlength="50" @change="checkUsedEmail(editEmail)" />
 
                   <label class="label">
                     <span class="label-text-alt"></span>
@@ -407,7 +429,7 @@ onBeforeMount(async () => {
               v-show="isEdit">Apply</button>
             <!-- click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote" -->
             <button class="btn btn-secondary border-none "
-              @click="isEdit = !isEdit, editName = beforeEditName, editEmail = beforeEditEmail, editRole = beforeEditRole"
+              @click="isEdit = !isEdit, editName = beforeEditName, editEmail = beforeEditEmail, editRole = beforeEditRole, usedEmail = false, usedName = false"
               v-show="isEdit">Cancel</button>
             <router-link :to="{ name: 'UserList' }"><button
                 class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500">Go
