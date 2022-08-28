@@ -4,20 +4,15 @@ package sit.ssi3.oasip.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import sit.ssi3.oasip.dtos.CreateEventDTO;
-import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.UserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
-import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.services.UserService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Transactional
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -52,7 +47,6 @@ public class UserController {
     public void deleteUser(@PathVariable String name){
         userService.deleteUser(name);
     }
-
 
 
 }

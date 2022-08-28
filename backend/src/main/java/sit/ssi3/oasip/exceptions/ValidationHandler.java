@@ -12,8 +12,8 @@ import java.io.IOException;
 @ControllerAdvice
 public class ValidationHandler {
 
-        @ExceptionHandler(ConstraintViolationException.class)
-        public void handleConstraintViolationException(ConstraintViolationException exception,
+        @ExceptionHandler(ConstraintException.class)
+        public void handleConstraintViolationException(ConstraintException exception,
                                                        ServletWebRequest webRequest) throws IOException {
             webRequest.getResponse().sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
         }

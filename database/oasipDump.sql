@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `event`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `event` (
-  `eventID` int NOT NULL,
+  `eventID` int NOT NULL AUTO_INCREMENT,
   `bookingName` varchar(100) NOT NULL,
   `bookingEmail` varchar(100) NOT NULL,
   `eventStartTime` datetime NOT NULL,
@@ -89,6 +89,7 @@ CREATE TABLE `user` (
   `userID` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,	
   `role` enum('admin','lecturer','student') DEFAULT 'student' NOT NULL,
   `createdOn` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedOn` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
@@ -104,7 +105,10 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'OASIP ADMIN','oasip.admin@kmutt.ac.th','admin','2022-08-01 00:00:00','2022-08-01 00:00:00'),(2,'Somchai Jaidee','somchai.jai@kmutt.ac.th','lecturer','2022-08-08 15:00:00','2022-08-08 15:00:00'),(3,'Komkrid Rakdee','komkrid.rak@mail.kmutt.ac.th','student','2022-08-08 15:00:01','2022-08-08 15:00:01'),(4,'สมเกียรติ ขยันเรียน','somkiat.kay@kmutt.ac.th','student','2022-08-16 09:00:00','2022-08-16 09:00:00');
+INSERT INTO `user` VALUES (1,'OASIP ADMIN','oasip.admin@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$N7GKAVc2NXrK+kNP8PFfSg$Tt7fvnnXyQbMLB6ibHY0wFQkt4HjTQM5F8JnrZVTihQ','admin','2022-08-01 00:00:00','2022-08-01 00:00:00'),
+(2,'Somchai Jaidee','somchai.jai@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$U9r3i1368FlmWt4KrxhvoA$CqkNk/m4GnsNWFo32eGPc6tUzUin+PwZfApuq1TzGic','lecturer','2022-08-08 15:00:00','2022-08-08 15:00:00'),
+(3,'Komkrid Rakdee','komkrid.rak@mail.kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$JpLtq0y/RZp+NdSscBEkzg$rY8vjUzgOsoaHF4eVmgeok3lUUYi7hel9nHII0GesSA','student','2022-08-08 15:00:01','2022-08-08 15:00:01'),
+(4,'สมเกียรติ ขยันเรียน','somkiat.kay@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$eYboDuiB1CrhAanMxAffnA$g0GvfAH9mgcL0h/R9OsVuXoOi5HltOUGqjN0sX4AKcU','student','2022-08-16 09:00:00','2022-08-16 09:00:00');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -123,3 +127,5 @@ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 flush privileges;
 set time_zone = '+7:00';
 set global time_zone = '+7:00';
+
+

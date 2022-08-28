@@ -5,20 +5,20 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.Enum.RoleEnum;
 import sit.ssi3.oasip.dtos.UserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
 import sit.ssi3.oasip.entities.User;
+import sit.ssi3.oasip.exceptions.ConstraintException;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.*;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +42,9 @@ public class UserService {
                     .buildValidatorFactory()
                     .getValidator();
 
+    private Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
+
+
     public List<UserDTO> getUser(String sortBy) {
         List<User> userList = userRepository.findAll(Sort.by(sortBy).ascending());
         if (userList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Users");
@@ -50,39 +53,37 @@ public class UserService {
 
     public UserDetailDTO getUserByName(String name) {
         User user = userRepository.findByName(name);
-        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Name " + name + " Does not Exits");
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
         return modelMapper.map(user, UserDetailDTO.class);
     }
 
     public User createUser(UserDTO newUser) {
-
         if (newUser.getRole().length() == 0) {
             newUser.setRole("student");
         }
-
         User user = modelMapper.map(newUser, User.class);
-
-        if (this.userRepository.findByEmail(newUser.getEmail()) != null) {
-            user.setEmailUnique(true);
+        if (!(user.getPassword().length() >= 8 && user.getPassword().length() <= 14)) {
+            user.setPasswordFit(true);
+        } else {
+            user.setPassword(encoder.encode(newUser.getPassword()));
         }
-
         if (this.userRepository.findByName(newUser.getName()) != null) {
             user.setNameUnique(true);
         }
-
+        if (this.userRepository.findByEmail(newUser.getEmail()) != null) {
+            user.setEmailUnique(true);
+        }
         if (RoleEnum.checkEnum(newUser.getRole())) {
             user.setRole(RoleEnum.convertToEnum(newUser.getRole()));
-
         } else user.setRoleSpecified(true);
 
         // validate event field
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-
         for (ConstraintViolation<User> violation : violations) {
             System.out.println(violation.getMessage());
         }
 //        // return when error message contains
-        if (violations.size() > 0) throw new ConstraintViolationException(violations);
+        if (violations.size() > 0) throw new ConstraintException(violations);
 //         custom error response
         return this.userRepository.saveAndFlush(user); // return success service
     }
@@ -123,7 +124,7 @@ public class UserService {
             System.out.println(violation.getMessage());
         }
 //        // return when error message contains
-        if (violations.size() > 0) throw new ConstraintViolationException(violations);
+        if (violations.size() > 0) throw new ConstraintException(violations);
 
         return modelMapper.map(userRepository.saveAndFlush(newUser), UserDTO.class);
     }

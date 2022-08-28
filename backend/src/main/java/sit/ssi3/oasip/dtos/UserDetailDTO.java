@@ -11,6 +11,7 @@ import java.util.Date;
 public class UserDetailDTO implements Serializable {
     private  String name;
     private  String email;
+    private  String password;
     private  String role;
     @JsonFormat(timezone = "Asia/Bangkok")
     private Timestamp createdOn;
