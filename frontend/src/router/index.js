@@ -6,6 +6,7 @@ import EventCategory from "../views/EventCategory.vue"
 import UserList from "../views/UserList.vue"
 import UserDetail from "../views/UserDetail.vue"
 import AddUser from "../views/AddUser.vue"
+import MatchPass from "../views/MatchPass.vue"
 const history = createWebHistory('/ssi3/');
 // const history = createWebHistory();
 const routes = [
@@ -44,6 +45,11 @@ const routes = [
     path: "/add-user/",
     name: "AddUser",
     component: AddUser
+  },
+  {
+    path: "/match-pass/",
+    name: "MatchPass",
+    component: MatchPass
   }
 ];
 
