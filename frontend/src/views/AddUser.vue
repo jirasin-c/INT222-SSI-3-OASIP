@@ -126,11 +126,11 @@ const creatUser = async () => {
     if (isNotEmail.value == false) {
         falseInput.value = false
         if (passwordUnmatch.value == true) {
-            alert("Password are does not match,please edit your re-password. ")
+            alert("Password are does not match, please edit your re-password.")
             return
         }
-        if (password.value.length > 14) {
-            alert("Exceed password limited, please edit your password.")
+        if (password.value.length > 14 || password.value.length < 8) {
+            alert("Password can be 8-14 characters, please edit your password.")
             return
         }
         if (usedName.value == true && usedEmail.value == true) {
