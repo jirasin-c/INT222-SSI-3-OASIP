@@ -8,12 +8,35 @@ const isMatch = ref(false)
 const isExist = ref(false)
 const isChecked = ref(false)
 const isShowPassword = ref(false)
+const falseInput = ref(false)
+const alertText = ref('')
 
 const checkMatch = async () => {
     isChecked.value = false
     isMatch.value = false
     isExist.value = false
 
+    if (email.value == '' || password.value == '') {
+        alertText.value = ''
+        falseInput.value = true
+
+        if (email.value == '') {
+            if (password.value != '') {
+                alertText.value += ("email")
+            } else {
+                alertText.value += ("email, ")
+            }
+        }
+
+        if (password.value == '') {
+            if (email.value != '') {
+                alertText.value += ("password")
+            } else {
+                alertText.value += ("password")
+            }
+        }
+        return
+    }
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/match/`, {
         method: 'POST',
         headers: {
@@ -141,6 +164,17 @@ const checkMatch = async () => {
                                 </svg>
                                 <span class="ml-10">Password matched.</span>
                             </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
+                        v-show="falseInput">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
+                                fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Please fill {{ alertText }} field.</span>
                         </div>
                     </div>
                 </div>
