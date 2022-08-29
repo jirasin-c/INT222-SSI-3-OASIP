@@ -105,10 +105,16 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'OASIP ADMIN','oasip.admin@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$N7GKAVc2NXrK+kNP8PFfSg$Tt7fvnnXyQbMLB6ibHY0wFQkt4HjTQM5F8JnrZVTihQ','admin','2022-08-01 00:00:00','2022-08-01 00:00:00'),
-(2,'Somchai Jaidee','somchai.jai@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$U9r3i1368FlmWt4KrxhvoA$CqkNk/m4GnsNWFo32eGPc6tUzUin+PwZfApuq1TzGic','lecturer','2022-08-08 15:00:00','2022-08-08 15:00:00'),
-(3,'Komkrid Rakdee','komkrid.rak@mail.kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$JpLtq0y/RZp+NdSscBEkzg$rY8vjUzgOsoaHF4eVmgeok3lUUYi7hel9nHII0GesSA','student','2022-08-08 15:00:01','2022-08-08 15:00:01'),
-(4,'สมเกียรติ ขยันเรียน','somkiat.kay@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$eYboDuiB1CrhAanMxAffnA$g0GvfAH9mgcL0h/R9OsVuXoOi5HltOUGqjN0sX4AKcU','student','2022-08-16 09:00:00','2022-08-16 09:00:00');
+-- INSERT INTO `user` VALUES (1,'OASIP ADMIN','oasip.admin@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$N7GKAVc2NXrK+kNP8PFfSg$Tt7fvnnXyQbMLB6ibHY0wFQkt4HjTQM5F8JnrZVTihQ','admin','2022-08-01 00:00:00','2022-08-01 00:00:00'),
+-- (2,'Somchai Jaidee','somchai.jai@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$U9r3i1368FlmWt4KrxhvoA$CqkNk/m4GnsNWFo32eGPc6tUzUin+PwZfApuq1TzGic','lecturer','2022-08-08 15:00:00','2022-08-08 15:00:00'),
+-- (3,'Komkrid Rakdee','komkrid.rak@mail.kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$JpLtq0y/RZp+NdSscBEkzg$rY8vjUzgOsoaHF4eVmgeok3lUUYi7hel9nHII0GesSA','student','2022-08-08 15:00:01','2022-08-08 15:00:01'),
+-- (4,'สมเกียรติ ขยันเรียน','somkiat.kay@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$eYboDuiB1CrhAanMxAffnA$g0GvfAH9mgcL0h/R9OsVuXoOi5HltOUGqjN0sX4AKcU','student','2022-08-16 09:00:00','2022-08-16 09:00:00');
+
+INSERT INTO `user` VALUES (1,'OASIP ADMIN','oasip.admin@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$sYXzbUOqBoHY1NfhJ8cjnw$H6+adWySiFPgcUogJK3hEhcF6Y4fusy7tcXYEL+f0cQ','admin','2022-08-01 00:00:00','2022-08-01 00:00:00'),
+(2,'Somchai Jaidee','somchai.jai@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$dmsOy7LPTjmooPu+P2oTZA$NZFTFd3f0K1Sp19aaUwyn3jgiy15yFcXhp8E4/1yXoI','lecturer','2022-08-08 15:00:00','2022-08-08 15:00:00'),
+(3,'Komkrid Rakdee','komkrid.rak@mail.kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$8W61ZOC5RU7sJP5kKRbSqg$OLwZNPeMqxp+g0Vbn+odcA47XMClFN+IswTueVah7F0','student','2022-08-08 15:00:01','2022-08-08 15:00:01'),
+(4,'สมเกียรติ ขยันเรียน','somkiat.kay@kmutt.ac.th','$argon2id$v=19$m=4096,t=3,p=1$gBqgjspF45FcIKQEw8GmaQ$alrOCZ0YrDqOu8/aZiLDMGZo4vFkSEAXA0YoHhY0BDQ','student','2022-08-16 09:00:00','2022-08-16 09:00:00');
+
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
