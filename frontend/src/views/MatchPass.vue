@@ -15,6 +15,7 @@ const checkMatch = async () => {
     isChecked.value = false
     isMatch.value = false
     isExist.value = false
+    falseInput.value = false
 
     if (email.value == '' || password.value == '') {
         alertText.value = ''
