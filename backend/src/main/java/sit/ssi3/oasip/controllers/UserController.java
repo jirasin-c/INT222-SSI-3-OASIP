@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sit.ssi3.oasip.dtos.UserDTO;
+import sit.ssi3.oasip.dtos.RequestUserDTO;
+import sit.ssi3.oasip.dtos.RespondUserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.services.UserService;
@@ -21,7 +22,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("")
-    public List<UserDTO> getUser(@RequestParam(defaultValue = "name") String sortBy){
+    public List<RespondUserDTO> getUser(@RequestParam(defaultValue = "name") String sortBy){
         return userService.getUser(sortBy);
     }
 
@@ -33,13 +34,13 @@ public class UserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<User> createUser(@RequestBody UserDTO newUser) {
-        User newUserSaved = userService.createUser(newUser);
-        return new ResponseEntity<User>(newUserSaved, HttpStatus.OK);
+    public ResponseEntity createUser(@RequestBody RequestUserDTO newUser) {
+        userService.createUser(newUser);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PutMapping("/{name}")
-    public UserDTO updateUser(@RequestBody UserDTO updateUser,@PathVariable String name){
+    public RequestUserDTO updateUser(@RequestBody RequestUserDTO updateUser, @PathVariable String name){
         return  userService.updateUser(updateUser,name);
     }
 

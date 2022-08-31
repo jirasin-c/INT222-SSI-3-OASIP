@@ -9,7 +9,8 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.Enum.RoleEnum;
-import sit.ssi3.oasip.dtos.UserDTO;
+import sit.ssi3.oasip.dtos.RequestUserDTO;
+import sit.ssi3.oasip.dtos.RespondUserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.exceptions.ConstraintException;
@@ -18,7 +19,6 @@ import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.validation.*;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -45,10 +45,10 @@ public class UserService {
     private Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
 
 
-    public List<UserDTO> getUser(String sortBy) {
+    public List<RespondUserDTO> getUser(String sortBy) {
         List<User> userList = userRepository.findAll(Sort.by(sortBy).ascending());
         if (userList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No Users");
-        return listMapper.mapList(userList, UserDTO.class, modelMapper);
+        return listMapper.mapList(userList, RespondUserDTO.class, modelMapper);
     }
 
     public UserDetailDTO getUserByName(String name) {
@@ -57,7 +57,7 @@ public class UserService {
         return modelMapper.map(user, UserDetailDTO.class);
     }
 
-    public User createUser(UserDTO newUser) {
+    public void createUser(RequestUserDTO newUser) {
         if (newUser.getRole().length() == 0) {
             newUser.setRole("student");
         }
@@ -85,10 +85,10 @@ public class UserService {
 //        // return when error message contains
         if (violations.size() > 0) throw new ConstraintException(violations);
 //         custom error response
-        return this.userRepository.saveAndFlush(user); // return success service
+         this.userRepository.saveAndFlush(user); // return success service
     }
 
-    public UserDTO updateUser(UserDTO updateUser, String name) {
+    public RequestUserDTO updateUser(RequestUserDTO updateUser, String name) {
 
         User newUser = userRepository.findByName(name);
         if (newUser == null)
@@ -126,7 +126,7 @@ public class UserService {
 //        // return when error message contains
         if (violations.size() > 0) throw new ConstraintException(violations);
 
-        return modelMapper.map(userRepository.saveAndFlush(newUser), UserDTO.class);
+        return modelMapper.map(userRepository.saveAndFlush(newUser), RequestUserDTO.class);
     }
 
     public void deleteUser(String name) {

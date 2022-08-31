@@ -1,5 +1,7 @@
 package sit.ssi3.oasip.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import sit.ssi3.oasip.Enum.RoleEnum;
 
@@ -15,6 +17,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "user")
+//@JsonIgnoreProperties(value = "password")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

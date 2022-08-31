@@ -1,5 +1,6 @@
 package sit.ssi3.oasip.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import sit.ssi3.oasip.Enum.RoleEnum;
 
@@ -12,7 +13,7 @@ import java.util.Date;
 
 
 @Data
-public class UserDTO implements Serializable {
+public class RequestUserDTO implements Serializable {
     private  String name;
     private  String email;
     private  String password;
