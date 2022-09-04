@@ -11,6 +11,7 @@ const isShowPassword = ref(false);
 const falseInput = ref(false);
 const alertText = ref("");
 const appRouter = useRouter();
+const isNotSignedIn = ref(true);
 
 const checkMatch = async () => {
   isChecked.value = false;
@@ -55,8 +56,8 @@ const checkMatch = async () => {
   if (res.status === 200) {
     isChecked.value = true;
     isMatch.value = true;
-    setTimeout(() => appRouter.push({ name: "Home" }), 1000);
-
+    isNotSignedIn.value = false;
+    setTimeout(() => appRouter.push({ name: "Home" }), 1500);
     // isExist.value = true
   } else if (res.status === 401) {
     isChecked.value = true;
@@ -228,34 +229,69 @@ const checkMatch = async () => {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span class="ml-10">Login successful!</span>
+                <p class="ml-12">Login successful!</p>
+              </div>
+            </div>
+
+            <div
+              class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
+              v-show="falseInput"
+            >
+              <div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="stroke-current flex-shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>Please fill {{ alertText }} field.</span>
               </div>
             </div>
           </div>
-          <div
-            class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
-            v-show="falseInput"
-          >
-            <div>
+          <div class="card-actions justify-center">
+            <button
+              class="btn btn-primary"
+              v-show="isNotSignedIn == true"
+              @click="checkMatch"
+            >
+              SIGN IN
+            </button>
+            <button
+              v-show="isNotSignedIn == false"
+              type="button"
+              class="flex items-center rounded-lg bg-green-700 px-4 py-2 text-white"
+              disabled
+            >
               <svg
+                class="mr-3 h-5 w-5 animate-spin text-white"
                 xmlns="http://www.w3.org/2000/svg"
-                class="stroke-current flex-shrink-0 h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
               >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
-              <span>Please fill {{ alertText }} field.</span>
-            </div>
+              <span class="font-medium"> Redirecting... </span>
+            </button>
           </div>
-        </div>
-        <div class="card-actions">
-          <button class="btn btn-primary" @click="checkMatch">SIGN IN</button>
         </div>
       </div>
     </div>
