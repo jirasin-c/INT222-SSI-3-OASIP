@@ -33,7 +33,7 @@
       <div class="mr-20">
         <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
         </router-link>
-        <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">MATCH PASS
+        <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
         </router-link>
       </div>
     </div>

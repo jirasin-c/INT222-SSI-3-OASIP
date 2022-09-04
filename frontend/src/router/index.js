@@ -42,12 +42,12 @@ const routes = [
     component: UserDetail
   },
   {
-    path: "/add-user/",
+    path: "/sign-up/",
     name: "AddUser",
     component: AddUser
   },
   {
-    path: "/match-pass/",
+    path: "/sign-in/",
     name: "MatchPass",
     component: MatchPass
   }
