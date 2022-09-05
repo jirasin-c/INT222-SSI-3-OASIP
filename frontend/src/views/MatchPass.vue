@@ -207,7 +207,7 @@ const checkMatch = async () => {
                   />
                 </svg>
                 <span class="ml-9"
-                  >A user with specified email does not existed!</span
+                  >A user with specified email does not existed.</span
                 >
               </div>
             </div>
