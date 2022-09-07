@@ -31,8 +31,11 @@ services:
     restart: unless-stopped
     volumes:
       - ./frontend/:/var/local/app:cached
-      #- ./frontend/config/nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:cached
+        #- ./frontend/config/nginx/Proxy.conf:/etc/nginx/conf.d/Proxy.conf:cached
       - ./frontend/config/nginx/default.conf:/etc/nginx/conf.d/default.conf:cached
+      - /etc/ssl:/etc/ssl
+        # - /etc/ssl/ip21ssi3.crt:/etc/ip21ssi3.crt:cached
+        #- /etc/ssl/ip21ssi3.key:/etc/ip21ssi3.key:cached
     container_name: frontendcon
     ports:
       - "3000:80"
@@ -40,11 +43,15 @@ services:
     image: nginx:1.19.1
     restart: unless-stopped
     volumes:
-      #- ./front-end/config/nginx/default.conf:/etc/nginx/conf.d/default.conf:cached
+      - ./frontend/config/nginx/default.conf:/etc/nginx/conf.d/default.conf:cached
       - ./frontend/config/nginx/Proxy.conf:/etc/nginx/conf.d/Proxy.conf:cached
       - ./frontend/logs/nginx:/var/log/nginx:cached
+      - /etc/ssl:/etc/ssl
+        #- /etc/ssl/ip21ssi3.crt:/etc/ssl/ip21ssi3.crt:cached
+        #- /etc/ssl/ip21ssi3.key:/etc/ssl/ip21ssi3.key:cached
     container_name: proxy_nginx_frontend
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - frontendcon
