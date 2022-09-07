@@ -18,14 +18,15 @@ const isShowRePassword = ref(false)
 const password = ref('')
 const rePassword = ref('')
 const passwordUnmatch = ref(false)
+const errText = ref('')
 
 // onUpdated(() => {
 //     console.log(isShowPassword.value);
 // })
-const getUser = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
-    user.value = await res.json()
-}
+// const getUser = async () => {
+//     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
+//     user.value = await res.json()
+// }
 
 const passwordCheckMatch = (checkedPass) => {
     // console.log(checkedPass);
@@ -157,7 +158,7 @@ const creatUser = async () => {
         // console.log('Name: ' + name.value.trim(), 'Email: ' + email.value, 'Role:' + selectedRole.value,);
         // success.value = true
 
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`, {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -171,15 +172,18 @@ const creatUser = async () => {
         })
         // console.log(res);
         if (res.status === 200) {
-            name.value = ''
-            email.value = ''
+            setTimeout(() => appRouter.push({ name: 'MatchPass' , params:{email: email.value.trim(), password: password.value }}), 1000)
+            // name.value = ''
+            // email.value = ''
             selectedRole.value = 'Student'
             success.value = true
-            setTimeout(() => appRouter.push({ name: 'UserList' }), 1000)
             // appRouter.push({ name: 'Home' })
         }
         else if (res.status === 400) {
-            alert("This name and email are already used.")
+            errText.value = await res.json()
+            console.log(errText.value);
+            alert(errText.value.message)
+            // alert("This name and email are already used.")
             selectedRole.value == "Select your role"
         }
     } else {
@@ -193,7 +197,7 @@ const creatUser = async () => {
 }
 
 onBeforeMount(async () => {
-    await getUser()
+    // await getUser()
     // console.log(user.value);
 })
 </script>

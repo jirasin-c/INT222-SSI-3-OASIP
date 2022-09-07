@@ -23,9 +23,17 @@ const user = ref([])
 const success = ref(false)
 const usedName = ref(false)
 const usedEmail = ref(false)
+const myHeader = ref()
 
 const getUser = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`,{
+        method: "GET",
+        // headers: {
+        // "content-type": "application/json",
+        // "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        // },
+        headers: myHeader.value
+    })
   user.value = await res.json()
 }
 
@@ -71,7 +79,14 @@ const getDetail = async (newUser) => {
   // params.name = newUser
   // detail.value = await res.json()
   // } else {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`,{
+        method: "GET",
+        // headers: {
+        // "content-type": "application/json",
+        // "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        // },
+        headers: myHeader.value
+    })
   detail.value = await res.json()
   // }
   // detail.value = await res.json()
@@ -236,6 +251,12 @@ const updateUser = async () => {
 }
 
 onBeforeMount(async () => {
+  if (localStorage.getItem('token') != null) {   
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        })
+    }
   await getDetail()
   await getUser()
 })

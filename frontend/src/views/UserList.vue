@@ -7,9 +7,27 @@ const userList = ref([])
 // const userDetail = ref([])
 // const isDetail = ref(false)
 const isEmpty = ref(false)
+const isLogin = ref(false)
+// const jwtToken = ref('')
+const myHeader = ref()
 
 const getUser = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`)
+    // console.log(jwtToken);
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`,{
+        method: "GET",
+        // headers: {
+        // "content-type": "application/json",
+        // "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        // },
+        headers: myHeader.value
+    })
+    // console.log(res);
+    
+    if (res.status === 401) {
+        isLogin.value = true
+        return
+    }
+
     if (res.status != 200) {
         isEmpty.value = true
         userList.value = []
@@ -60,10 +78,12 @@ const getDetail = async (name) => {
 
 const deleteUser = async (delName) => {
     // console.log(name);
+    // console.log(myHeader.value);
     if (confirm(`Are you sure to delete user name: ${delName}`)) {
         // console.log('delete success');
         const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${delName}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: myHeader.value
         })
         if (res.status === 200) {
             userList.value = userList.value.filter((u) => u.name !== delName)
@@ -77,6 +97,14 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
 onBeforeMount(async () => {
+    // jwtToken.value = localStorage.getItem('token')
+    if (localStorage.getItem('token') != null) {   
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`,
+        })
+    }
+    // console.log(myHeader.value);
     await getUser()
     // console.log(userList.value);
 })
@@ -102,6 +130,12 @@ onBeforeMount(async () => {
             <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
                 <div v-if="isEmpty" class="grid justify-items-center pt-72">
                     <p class="text-2xl text-gray-400">No User.</p>
+                </div>
+                <div v-if="isLogin" class="grid justify-items-center pt-72">
+                    <p class="text-2xl text-gray-400">Please sign in to see the users.</p>
+                    <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">Go to SIGN
+                        IN
+                    </router-link>
                 </div>
                 <div class="grid grid-cols-1  md:grid md:grid-cols-3 md:gap-6 ">
                     <!-- <div v-if="isDetail">
