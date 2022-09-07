@@ -2,7 +2,7 @@
 import { async } from "postcss-js";
 import { onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-let {params} = useRoute()
+let { params } = useRoute()
 // console.log(params.email);
 // console.log(params.password);
 
@@ -28,7 +28,6 @@ const checkMatch = async () => {
   if (email.value == "" || password.value == "") {
     alertText.value = "";
     falseInput.value = true;
-
     if (email.value == "") {
       if (password.value != "") {
         alertText.value += "email";
@@ -87,23 +86,23 @@ const checkMatch = async () => {
   // console.log(password.value);
 };
 
-onBeforeMount(async ()=>{
-  if (params.email !== undefined && params.password !== undefined) {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      email: params.email,
-      password: params.password,
-    }),
-   });
-   isNotSignedIn.value = false;
-   jwtToken.value = await res.json()
-    localStorage.setItem('token', jwtToken.value.token)
-    setTimeout(() => appRouter.push({ name: "Home" }), 1500);
-  }
+onBeforeMount(async () => {
+  // if (params.email !== undefined && params.password !== undefined) {
+  //   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
+  //     method: "POST",
+  //     headers: {
+  //       "content-type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       email: params.email,
+  //       password: params.password,
+  //     }),
+  //   });
+  //   isNotSignedIn.value = false;
+  //   jwtToken.value = await res.json()
+  //   localStorage.setItem('token', jwtToken.value.token)
+  //   setTimeout(() => appRouter.push({ name: "Home" }), 1500);
+  // }
 })
 </script>
 
@@ -201,18 +200,20 @@ onBeforeMount(async ()=>{
                 <p class="ml-12">Login successful!</p>
               </div>
             </div>
+          </div>
 
-            <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-show="falseInput">
-              <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Please fill {{ alertText }} field.</span>
-              </div>
+          <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center mb-5"
+            v-show="falseInput">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Please fill {{ alertText }} field.</span>
             </div>
           </div>
+          
           <div class="card-actions justify-center">
             <button class="btn btn-primary" v-show="isNotSignedIn == true" @click="checkMatch">
               SIGN IN
@@ -236,4 +237,5 @@ onBeforeMount(async ()=>{
 </template>
 
 <style>
+
 </style>
