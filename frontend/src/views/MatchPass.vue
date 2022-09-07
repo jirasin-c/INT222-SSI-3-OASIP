@@ -87,22 +87,22 @@ const checkMatch = async () => {
 };
 
 onBeforeMount(async () => {
-  // if (params.email !== undefined && params.password !== undefined) {
-  //   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
-  //     method: "POST",
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       email: params.email,
-  //       password: params.password,
-  //     }),
-  //   });
-  //   isNotSignedIn.value = false;
-  //   jwtToken.value = await res.json()
-  //   localStorage.setItem('token', jwtToken.value.token)
-  //   setTimeout(() => appRouter.push({ name: "Home" }), 1500);
-  // }
+  if (params.email !== undefined && params.password !== undefined) {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        email: params.email,
+        password: params.password,
+      }),
+    });
+    isNotSignedIn.value = false;
+    jwtToken.value = await res.json()
+    localStorage.setItem('token', jwtToken.value.token)
+    setTimeout(() => appRouter.push({ name: "Home" }), 1500);
+  }
 })
 </script>
 
@@ -213,7 +213,7 @@ onBeforeMount(async () => {
               <span>Please fill {{ alertText }} field.</span>
             </div>
           </div>
-          
+
           <div class="card-actions justify-center">
             <button class="btn btn-primary" v-show="isNotSignedIn == true" @click="checkMatch">
               SIGN IN
