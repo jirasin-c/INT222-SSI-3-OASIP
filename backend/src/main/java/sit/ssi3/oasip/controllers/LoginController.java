@@ -9,7 +9,7 @@ import sit.ssi3.oasip.services.AuthenticationService;
 import sit.ssi3.oasip.services.LoginService;
 
 @RestController
-@RequestMapping("/api/match")
+@RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired

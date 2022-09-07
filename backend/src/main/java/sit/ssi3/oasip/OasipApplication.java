@@ -2,6 +2,9 @@ package sit.ssi3.oasip;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.TimeZone;
 
@@ -13,8 +16,12 @@ public class OasipApplication {
         TimeZone.setDefault(tz);
 
         SpringApplication.run(OasipApplication.class, args);
+
     }
 
 
-
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new Argon2PasswordEncoder();
+    }
 }

@@ -44,8 +44,8 @@ public class JwtTokenUtil implements Serializable {
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
 //        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token.replace("\"","").replace(" ","")).getBody();
-//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-        return Jwts.parser().setSigningKey(secret.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+//        return Jwts.parser().setSigningKey(secret.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
     }
 
     //check if the token is expired
@@ -64,7 +64,7 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder().setClaims(claims).setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
-                .signWith(SignatureAlgorithm.HS512, secret.getBytes(StandardCharsets.UTF_8)).compact();
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
 
     //validate token
