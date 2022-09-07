@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.dtos.LoginDTO;
+import sit.ssi3.oasip.dtos.TokenDTO;
+import sit.ssi3.oasip.services.AuthenticationService;
 import sit.ssi3.oasip.services.LoginService;
 
 @RestController
@@ -11,12 +13,12 @@ import sit.ssi3.oasip.services.LoginService;
 public class LoginController {
 
     @Autowired
-    private LoginService loginService;
+    private AuthenticationService authenticationService;
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public String MatchPassword(@RequestBody LoginDTO requestUser) {
-        return loginService.match(requestUser);
+    public TokenDTO MatchPassword(@RequestBody LoginDTO requestUser) {
+        return authenticationService.match(requestUser);
     }
 
 
