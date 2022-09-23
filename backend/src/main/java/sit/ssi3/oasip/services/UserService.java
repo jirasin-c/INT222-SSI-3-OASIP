@@ -131,8 +131,11 @@ public class UserService {
 
     public void deleteUser(String name) {
         User user = userRepository.findByName(name);
+//        System.out.println(user);
+//        System.out.println(name);
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
-        eventRepository.deleteEventsByUserId(user.getId());
+//        eventRepository.deleteEventsByUserId(user.getId());
+        eventRepository.deleteAllByUser(user);
         userRepository.deleteUserByName(name);
     }
 
