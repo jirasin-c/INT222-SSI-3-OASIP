@@ -1,4 +1,44 @@
-<script setup></script>
+<script setup>
+import { async } from "postcss-js";
+import { onBeforeMount, ref } from "vue";
+import { useUser } from "../stores/user";
+const myUser = useUser()
+const user = ref()
+// const logout = () => {
+//   localStorage.removeItem("token")
+//   localStorage.removeItem("name")
+//   myUser.setLogout()
+//   location.reload()
+// }
+
+onBeforeMount(async () => {
+  if (localStorage.getItem("token") != null && localStorage.getItem("name") != null) {
+    const fetchName = localStorage.getItem("name")
+    // console.log(localStorage.getItem("token"));
+    // console.log(localStorage.getItem("name"));
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${fetchName}`, {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      },
+    })
+
+    user.value = await res.json()
+    // console.log(user.value);
+    // user.value.map((e) => {
+    //   // console.log(e);
+    //   if (e.email == email.value) {
+    myUser.setUserName(user.value.name)
+    myUser.setUserRole(user.value.role)
+    myUser.setLogin()
+    // localStorage.setItem('name', e.name)
+
+    //   }
+    // })
+  }
+})
+</script>
 
 <template>
   <div class="w-screen">
@@ -30,7 +70,15 @@
           <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
         </div>
       </div>
-      <div class="mr-20">
+      <div class="mr-20" v-if="myUser.isLogin == true">
+        <router-link :to="{ name: 'UserDetail', params: { name: myUser.userName } }"
+          class="btn btn-ghost normal-case text-lg hover:btn-primary ">
+          Welcome: {{myUser.userName}}
+        </router-link>
+        <button @click="myUser.setLogout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT
+        </button>
+      </div>
+      <div class="mr-20" v-else>
         <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
         </router-link>
         <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
@@ -42,4 +90,5 @@
 </template>
 
 <style>
+
 </style>

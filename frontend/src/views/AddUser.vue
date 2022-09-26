@@ -172,7 +172,7 @@ const creatUser = async () => {
         })
         // console.log(res);
         if (res.status === 200) {
-            setTimeout(() => appRouter.push({ name: 'MatchPass' , params:{email: email.value.trim(), password: password.value }}), 1000)
+            setTimeout(() => appRouter.push({ name: 'MatchPass', params: { email: email.value.trim(), password: password.value } }), 1000)
             // name.value = ''
             // email.value = ''
             selectedRole.value = 'Student'
@@ -293,7 +293,7 @@ onBeforeMount(async () => {
                             <input v-if="!isShowPassword" type="password" placeholder="••••••••" v-model="password"
                                 class="input input-bordered input-secondary w-full max-w-xs  text-2xl" id="password" />
                             <input v-else type="text" v-model="password"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-lg" id="password" />
+                                class="input input-bordered input-secondary w-full max-w-xs  text-base" id="password" />
                             <label class="label">
                                 <span class="label-text-alt"></span>
                                 <!-- <span class="label-text-alt">{{ password.length }}/14</span> -->
@@ -328,7 +328,7 @@ onBeforeMount(async () => {
                                 class="input input-bordered input-secondary w-full max-w-xs  text-2xl" id="re-password"
                                 @change="passwordCheckMatch(rePassword)" />
                             <input v-else type="text" v-model="rePassword"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-lg" id="re-password"
+                                class="input input-bordered input-secondary w-full max-w-xs  text-base" id="re-password"
                                 @change="passwordCheckMatch(rePassword)" />
                             <label class="label">
                                 <span class="label-text-alt"></span>
@@ -383,4 +383,5 @@ onBeforeMount(async () => {
 </template>
  
 <style>
+
 </style>

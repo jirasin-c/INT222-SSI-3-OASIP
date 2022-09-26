@@ -1,8 +1,9 @@
 <script setup>
-import { async } from "postcss-js";
+import { useUser } from "../stores/user";
 import { onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 let { params } = useRoute()
+const myUser = useUser()
 // console.log(params.email);
 // console.log(params.password);
 
@@ -18,7 +19,43 @@ const alertText = ref("");
 const appRouter = useRouter();
 const isNotSignedIn = ref(true);
 const jwtToken = ref()
+const user = ref()
+const toSetUser = ref()
 
+const getUserToState = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
+    method: "GET",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    },
+  })
+
+  user.value = await res.json()
+  user.value.map((e) => {
+    // console.log(e);
+    if (params.email !== undefined && params.password !== undefined) {
+      if (e.email == params.email) {
+        myUser.setLogin()
+        myUser.setUserName(e.name)
+        myUser.setUserRole(e.role)
+        localStorage.setItem('name', e.name)
+
+      }
+    }
+    if (e.email == email.value) {
+      myUser.setLogin()
+      myUser.setUserName(e.name)
+      myUser.setUserRole(e.role)
+      localStorage.setItem('name', e.name)
+
+    }
+  })
+  // console.log(user.value);
+
+
+
+}
 const checkMatch = async () => {
   isChecked.value = false;
   isMatch.value = false;
@@ -45,7 +82,6 @@ const checkMatch = async () => {
     }
     return;
   }
-
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
     method: "POST",
     headers: {
@@ -66,6 +102,9 @@ const checkMatch = async () => {
     jwtToken.value = await res.json()
     // console.log(detail.value);
     localStorage.setItem('token', jwtToken.value.token)
+    await getUserToState()
+    // myUser.setUserName('qq')
+    // myUser.setLogin()
     setTimeout(() => appRouter.push({ name: "Home" }), 1500);
     // isExist.value = true
   } else if (res.status === 401) {
@@ -85,7 +124,6 @@ const checkMatch = async () => {
   // console.log(email.value);
   // console.log(password.value);
 };
-
 onBeforeMount(async () => {
   if (params.email !== undefined && params.password !== undefined) {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
@@ -101,6 +139,7 @@ onBeforeMount(async () => {
     isNotSignedIn.value = false;
     jwtToken.value = await res.json()
     localStorage.setItem('token', jwtToken.value.token)
+    await getUserToState()
     setTimeout(() => appRouter.push({ name: "Home" }), 1500);
   }
 })
@@ -131,7 +170,8 @@ onBeforeMount(async () => {
                                 - 50 characters. **<br>
                                 51st characters onwards will be cut off</span> -->
           <input type="email" placeholder="example@mail.kmutt.ac.th"
-            class="input input-bordered input-secondary w-full max-w-xs text-lg mb-5" v-model="email" id="email" />
+            class="input input-bordered input-secondary w-full max-w-xs text-lg mb-5" v-model="email" id="email"
+            @keypress.enter="checkMatch" />
           <!-- <label class="label">
                         <span class="label-text-alt"></span>
                         <span class="label-text-alt">{{ email.length }}/50</span>
@@ -163,14 +203,23 @@ onBeforeMount(async () => {
             </label>
           </label>
           <input v-if="!isShowPassword" type="password" placeholder="••••••••" v-model="password"
-            class="input input-bordered input-secondary w-full max-w-xs text-2xl mb-7" id="password" />
+            class="input input-bordered input-secondary w-full max-w-xs text-2xl mb-7" id="password"
+            @keypress.enter="checkMatch" />
           <input v-else type="text" v-model="password"
-            class="input input-bordered input-secondary w-full max-w-xs text-lg mb-7" id="password" />
+            class="input input-bordered input-secondary w-full max-w-xs text-base mb-7" id="password"
+            @keypress.enter="checkMatch" />
           <!-- <label class="label">
                         <span class="label-text-alt"></span>
                         <span class="label-text-alt">{{ password.length }}/14</span>
                         <span class="label-text-alt">{{ password.length }} Characters.</span>
                      </label> -->
+          <label class="label">
+            <span class="label-text-alt"></span>
+            <span class="label-text-alt">Don't have account? <router-link :to="{ name: 'AddUser' }"
+                class="text-blue-500 hover:underline">
+                Sign Up
+              </router-link></span>
+          </label>
           <div v-show="isChecked" class="mb-3">
             <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-if="!isMatch">
               <div v-if="isExist">
@@ -179,7 +228,7 @@ onBeforeMount(async () => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span class="ml-3">Password incorrect!</span>
+                <span class="ml-10">Password incorrect!</span>
               </div>
               <div v-else>
                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
@@ -187,7 +236,7 @@ onBeforeMount(async () => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span class="ml-9">A user with specified email does not existed.</span>
+                <span class="mr-5">A user with specified email does not existed.</span>
               </div>
             </div>
             <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-gray-50 self-center" v-else>
@@ -214,7 +263,7 @@ onBeforeMount(async () => {
             </div>
           </div>
 
-          <div class="card-actions justify-center">
+          <div class="card-actions justify-center mt-3">
             <button class="btn btn-primary" v-show="isNotSignedIn == true" @click="checkMatch">
               SIGN IN
             </button>
