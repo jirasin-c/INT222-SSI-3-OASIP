@@ -10,6 +10,13 @@ const user = ref()
 //   myUser.setLogout()
 //   location.reload()
 // }
+const logout = () =>{
+  if (confirm("Are you sure to sign out ?")) {
+    myUser.setLogout()
+  }else{
+    return
+  }
+}
 
 onBeforeMount(async () => {
   if (localStorage.getItem("token") != null && localStorage.getItem("name") != null) {
@@ -75,7 +82,7 @@ onBeforeMount(async () => {
           class="btn btn-ghost normal-case text-lg hover:btn-primary ">
           Welcome: {{myUser.userName}}
         </router-link>
-        <button @click="myUser.setLogout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT
+        <button @click="logout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT
         </button>
       </div>
       <div class="mr-20" v-else>

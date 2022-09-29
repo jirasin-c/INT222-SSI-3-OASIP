@@ -17,15 +17,24 @@ const getUser = async () => {
     // console.log(jwtToken);
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
         method: "GET",
-        // headers: {
-        // "content-type": "application/json",
-        // "Authorization": `Bearer ${localStorage.getItem('token')}`,
-        // },
         headers: myHeader.value
     })
     // console.log(res);
 
     if (res.status === 401) {
+        var errText = await res.json()
+        // console.log(errText.message);
+        if (errText.message == "Token expire") {
+            var refreshToken 
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
+                method: "GET",
+                headers: myHeader.value
+            })
+            refreshToken = await res.json()
+            localStorage.setItem('token', refreshToken.token)
+            await getUser()
+        }
+
         isNotLogin.value = true
         // console.log(isLogin);
         return
