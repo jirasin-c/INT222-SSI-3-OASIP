@@ -5,14 +5,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import sit.ssi3.oasip.Enum.RoleEnum;
 
+
 import java.util.Collection;
 
 public class AuthenticationUser implements UserDetails {
     private final String username;
     private final String password;
-    private final RoleEnum authorities;
+    private final Collection<Role> authorities;
 
-    public AuthenticationUser(String username, String password, RoleEnum authorities) {
+    public AuthenticationUser(String username, String password, Collection<Role> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -21,8 +22,9 @@ public class AuthenticationUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return this.authorities;
-        return null;
+//        for (Role c : this.authorities)
+//            System.out.println(c);
+        return this.authorities;
     }
 
     @Override

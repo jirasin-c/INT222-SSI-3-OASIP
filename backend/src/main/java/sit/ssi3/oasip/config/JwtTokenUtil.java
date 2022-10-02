@@ -26,6 +26,13 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.secret}")
     private String secret;
 
+    private long refreshExpirationDateInMs;
+
+    @Value("#{${jwt.refreshExpirationDateInhour}*60*60*1000}")
+    public void setRefreshExpirationDateInMs(int refreshExpirationDateInMs) {
+        this.refreshExpirationDateInMs = refreshExpirationDateInMs;
+    }
+
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -43,9 +50,7 @@ public class JwtTokenUtil implements Serializable {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token.replace("\"","").replace(" ","")).getBody();
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-//        return Jwts.parser().setSigningKey(secret.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token.replace("\"","").replace(" ","")).getBody();
     }
 
     //check if the token is expired
@@ -72,4 +77,16 @@ public class JwtTokenUtil implements Serializable {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    public String generateRefreshToken(AuthenticationUser authenticationUser) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateRefreshToken(claims, authenticationUser.getUsername());
+    }
+
+    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInMs))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
+
 }
