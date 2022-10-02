@@ -10,7 +10,7 @@ import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.repositories.UserRepository;
 
 @Service
-public class LoginService {
+public class MatchService {
 
     @Autowired
     UserRepository userRepository;

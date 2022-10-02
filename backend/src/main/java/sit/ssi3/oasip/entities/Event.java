@@ -66,4 +66,3 @@ public class Event {
         this.user = user;
     }
 }
-

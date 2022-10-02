@@ -9,8 +9,10 @@ import java.sql.Timestamp;
 
 @Data
 public class RespondUserDTO implements Serializable {
+    private  Integer ID;
     private  String name;
     private  String email;
     private  String role;
+
 
 }

@@ -1,21 +1,15 @@
 package sit.ssi3.oasip.controllers;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import sit.ssi3.oasip.config.JwtTokenUtil;
-import sit.ssi3.oasip.configJwts.JwtResponse;
 import sit.ssi3.oasip.services.AuthenticationService;
-import sit.ssi3.oasip.services.LoginService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @RestController
