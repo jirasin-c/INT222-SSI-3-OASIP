@@ -2,8 +2,8 @@
 import { onBeforeMount, onUpdated, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUser } from '../stores/user';
+import UiAdd from '../components/UiAdd.vue';
 const myUser = useUser()
-// import UiAdd from '../components/UiAdd.vue';
 const appRouter = useRouter()
 const userList = ref([])
 // const userDetail = ref([])
@@ -23,21 +23,36 @@ const getUser = async () => {
 
     if (res.status === 401) {
         var errText = await res.json()
-        // console.log(errText.message);
-        if (errText.message == "Token expire") {
-            var refreshToken 
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
+        console.log(errText.message);
+        if (errText.message == "JWT Token has expired") {
+            var tokenToLocal = localStorage.getItem("token")
+            var tokenLocal = JSON.parse(tokenToLocal)
+            // var newAccessToken = ""
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refreshtoken`, {
                 method: "GET",
-                headers: myHeader.value
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `Bearer ${tokenLocal.refreshToken}`
+                },
             })
-            refreshToken = await res.json()
-            localStorage.setItem('token', refreshToken.token)
+            var tokenRes = await res.json()
+            console.log(tokenRes.message);
+
+            if (tokenRes.message == "JWT Refresh Token has expired") {
+                myUser.setLogout()
+                appRouter.push({ name: "SignIn" })
+            }
+            // newAccessToken = await res.json()
+            // console.log(newAccessToken);
+            tokenLocal.accessToken = tokenRes.token
+            localStorage.setItem('token', JSON.stringify(tokenLocal))
             await getUser()
+
         }
 
-        isNotLogin.value = true
-        // console.log(isLogin);
-        return
+        // isNotLogin.value = true
+        // // console.log(isLogin);
+        // return
     }
 
     if (res.status != 200) {
@@ -86,9 +101,12 @@ const capitalizeFirstLetter = (string) => {
 onBeforeMount(async () => {
     // jwtToken.value = localStorage.getItem('token')
     if (localStorage.getItem('token') != null) {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // console.log(tokenLocal);
         myHeader.value = new Headers({
             "content-type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`,
+            "Authorization": `Bearer ${tokenLocal.accessToken}`,
         })
     }
     // console.log(myHeader.value);
@@ -102,6 +120,23 @@ onBeforeMount(async () => {
         class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
         USER LIST
     </div>
+    <div class="flex items-center mt-8 justify-end mr-16">
+        <router-link :to="{ name: 'MatchPass' }">
+            <div class="w-4/8 shadow p-5 mr-5 bg-primary text-slate-300 rounded-2xl justify-self-start flex">
+                <!-- <div class="text-xl font-extrabold m-2 hover:animate-bounce"> -->
+                Match Pass
+                <!-- </div> -->
+            </div>
+        </router-link>
+        <router-link :to="{ name: 'AddUser' }">
+            <div
+                class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
+                <div class="text-xl font-extrabold m-2 hover:animate-bounce">
+                    <UiAdd class="inline-block" /> Creat new user
+                </div>
+            </div>
+        </router-link>
+    </div>
     <div class="flex flex-row h-screen">
         <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
             <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
@@ -110,7 +145,7 @@ onBeforeMount(async () => {
                 </div>
                 <div v-if="isNotLogin" class="grid justify-items-center pt-72">
                     <p class="text-2xl text-gray-400 mb-5">Please sign in to see the users.</p>
-                    <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">Go to
+                    <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">Go to
                         SIGN
                         IN
                     </router-link>

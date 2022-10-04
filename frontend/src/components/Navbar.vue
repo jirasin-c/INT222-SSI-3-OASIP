@@ -1,4 +1,5 @@
 <script setup>
+import { get } from "color-string";
 import { async } from "postcss-js";
 import { onBeforeMount, ref } from "vue";
 import { useUser } from "../stores/user";
@@ -10,40 +11,85 @@ const user = ref()
 //   myUser.setLogout()
 //   location.reload()
 // }
-const logout = () =>{
+const logout = () => {
   if (confirm("Are you sure to sign out ?")) {
     myUser.setLogout()
-  }else{
+  } else {
     return
   }
 }
+const getName = async () => {
+  var userToLocal = localStorage.getItem("user")
+  var userLocal = JSON.parse(userToLocal)
+  // console.log(userLocal);
 
-onBeforeMount(async () => {
-  if (localStorage.getItem("token") != null && localStorage.getItem("name") != null) {
-    const fetchName = localStorage.getItem("name")
+  if (localStorage.getItem("token") != null && userLocal != null) {
+
+    const fetchName = userLocal.name
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
     // console.log(localStorage.getItem("token"));
     // console.log(localStorage.getItem("name"));
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${fetchName}`, {
       method: "GET",
       headers: {
         "content-type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
+        "Authorization": `Bearer ${tokenLocal.accessToken}`
       },
     })
 
+    if (res.status === 401) {
+      var errText = await res.json()
+      console.log(errText.message);
+      if (errText.message == "JWT Token has expired") {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // var newAccessToken = ""
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refreshtoken`, {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.refreshToken}`
+          },
+        })
+        var tokenRes = await res.json()
+        console.log(tokenRes.message);
+
+        if (tokenRes.message == "JWT Refresh Token has expired") {
+          myUser.setLogout()
+          // appRouter.push({ name: "SignIn" })
+        }
+        // newAccessToken = await res.json()
+        // console.log(newAccessToken);
+        tokenLocal.accessToken = tokenRes.token
+        localStorage.setItem('token', JSON.stringify(tokenLocal))
+        await getName()
+        // newAccessToken = await res.json()
+        // console.log(newAccessToken);
+        // tokenLocal.accessToken = newAccessToken.token
+        // localStorage.setItem('token', JSON.stringify(tokenLocal))
+        // getName()
+      }
+    }
+    // console.log(res.status);
     user.value = await res.json()
     // console.log(user.value);
     // user.value.map((e) => {
     //   // console.log(e);
     //   if (e.email == email.value) {
-    myUser.setUserName(user.value.name)
-    myUser.setUserRole(user.value.role)
     myUser.setLogin()
+    myUser.setUserName(user.value.name)
+    myUser.setUserEmail(user.value.email)
+    myUser.setUserRole(user.value.role)
     // localStorage.setItem('name', e.name)
 
     //   }
     // })
   }
+}
+
+onBeforeMount(async () => {
+  await getName()
 })
 </script>
 
@@ -73,7 +119,8 @@ onBeforeMount(async () => {
           <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg">BOOKS</router-link>
           <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
           </router-link>
-          <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg">USER LIST</router-link>
+          <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
+            v-show="myUser.userRole == 'admin' ">USER LIST</router-link>
           <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
         </div>
       </div>
@@ -86,9 +133,9 @@ onBeforeMount(async () => {
         </button>
       </div>
       <div class="mr-20" v-else>
-        <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
-        </router-link>
-        <router-link :to="{ name: 'MatchPass' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+        <!-- <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
+        </router-link> -->
+        <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
         </router-link>
       </div>
     </div>

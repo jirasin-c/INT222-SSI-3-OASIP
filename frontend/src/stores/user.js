@@ -4,6 +4,7 @@ export const useUser = defineStore('user', () => {
   const isLogin = ref(false)
   const userID = ref(undefined)
   const userName = ref('')
+  const userEmail = ref('')
   const userRole = ref('')
   const setLogin = () => (isLogin.value = true)
   const setLogout = () =>{
@@ -12,13 +13,14 @@ export const useUser = defineStore('user', () => {
     userName.value = ''
     userRole.value = ''
     localStorage.removeItem("token")
-    localStorage.removeItem("name")
+    localStorage.removeItem("user")
     location.reload()
   }
   const setUserID = (setID) => (userID.value = setID)
   const setUserName = (setName) => (userName.value = setName)
+  const setUserEmail = (setEmail) => (userEmail.value = setEmail)
   const setUserRole = (setRole) => (userRole.value = setRole)
-  return { isLogin, userID, userName, userRole, setLogin, setLogout, setUserID, setUserName, setUserRole }
+  return { isLogin, userID, userName, userEmail, userRole, setLogin, setLogout, setUserID, setUserName, setUserEmail, setUserRole }
 })
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useUser, import.meta.hot))

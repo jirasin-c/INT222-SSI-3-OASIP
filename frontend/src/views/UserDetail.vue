@@ -230,8 +230,8 @@ const updateUser = async () => {
         // getDetail(e)
         // setTimeout(() => appRouter.push({ name: 'UserDetail', params: { name: e } }), 1000)
         // appRouter.push({ name: 'UserDetail', params: { name: name } })
-        localStorage.setItem("name", editName.value.trim())
-        myUser.setUserName(editName.value.trim())
+        // localStorage.setItem("name", editName.value.trim())
+        // myUser.setUserName(editName.value.trim())
         setTimeout(() => appRouter.push({ name: 'UserList' }), 1000)
         // appRouter.push({ name: 'Home' })
       }
@@ -254,11 +254,14 @@ const updateUser = async () => {
 
 onBeforeMount(async () => {
   if (localStorage.getItem('token') != null) {
-    myHeader.value = new Headers({
-      "content-type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem('token')}`,
-    })
-  }
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // console.log(tokenLocal);
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.accessToken}`,
+        })
+    }
   await getDetail()
   await getUser()
 })

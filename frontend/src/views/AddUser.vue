@@ -172,7 +172,8 @@ const creatUser = async () => {
         })
         // console.log(res);
         if (res.status === 200) {
-            setTimeout(() => appRouter.push({ name: 'MatchPass', params: { email: email.value.trim(), password: password.value } }), 1000)
+            // setTimeout(() => appRouter.push({ name: 'MatchPass', params: { email: email.value.trim(), password: password.value } }), 1000)
+            setTimeout(() => appRouter.push({ name: 'UserList'}), 1000)
             // name.value = ''
             // email.value = ''
             selectedRole.value = 'Student'
@@ -226,7 +227,7 @@ onBeforeMount(async () => {
                                 100 characters. ** <br>
                                 101st characters onwards will be cut off</span>
                             <input type="text" v-model="name" placeholder="Type yourname..."
-                                class="input input-bordered input-secondary w-full max-w-xs text-lg text-gray-50"
+                                class="input input-bordered input-secondary w-full max-w-xs text-lg"
                                 id="name" maxlength="100" @change="checkUsedName(name)" />
                             <label class="label">
                                 <span class="label-text-alt"></span>

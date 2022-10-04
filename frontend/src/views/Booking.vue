@@ -2,7 +2,9 @@
 import { computed } from '@vue/reactivity';
 import { ref, onBeforeMount, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUser } from '../stores/user';
 import MdiTrashCan from '../components/MdiTrashCan.vue';
+const myUser = useUser()
 const eventCategory = ref([])
 const events = ref([])
 const selectedCategory = ref('Project Management Clinic')
@@ -23,7 +25,7 @@ const isNotEmail = ref(false)
 const alertText = ref('')
 
 onUpdated(() => {
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+(String(new Date().getMinutes()+1).padStart(2,'0'))
+    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
     // console.log(currentTime.value);
     // console.log(startTime.value);
     // const d = String(new Date().getMinutes())
@@ -39,41 +41,46 @@ onUpdated(() => {
             // console.log(categoryName.value);
         }
     });
-        // validateOverlapped()
-        // console.log(isOverlapped.value);
+    // validateOverlapped()
+    // console.log(isOverlapped.value);
 })
 onBeforeMount(async () => {
     await getEventCategory()
     await getEvents()
-    currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+(String(new Date().getMinutes()+1).padStart(2,'0'))
+    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
     // currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
+    // console.log(myUser.userName);
+    // console.log(myUser.userEmail);
+    // console.log(myUser.userRole);
+    // console.log(myUser.isLogin);
+    email.value = myUser.userEmail
 })
 
-const compareDate = (startTime,currentTime)=>{
-    if (startTime>currentTime) {
+const compareDate = (startTime, currentTime) => {
+    if (startTime > currentTime) {
         isPast.value = false
         return false
-    }else if(startTime<currentTime){
+    } else if (startTime < currentTime) {
         isPast.value = true
         return true
-    }else{
+    } else {
         isPast.value = false
         return false
     }
 
 }
 
-const validateEmail = () =>{
-    const validRegex =/^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            if (email.value.match(validRegex) && email.value.length > 0) {
-                isNotEmail.value = false
-            }else if (email.value.length == 0 || email.value == ' ') {
-                isNotEmail.value = true
-                return false
-            }else{
-                isNotEmail.value = true
-                return true
-            }
+const validateEmail = () => {
+    const validRegex = /^(([^'<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    if (email.value.match(validRegex) && email.value.length > 0) {
+        isNotEmail.value = false
+    } else if (email.value.length == 0 || email.value == ' ') {
+        isNotEmail.value = true
+        return false
+    } else {
+        isNotEmail.value = true
+        return true
+    }
 }
 
 // const validateOverlapped = ()=>{
@@ -113,63 +120,63 @@ const createEvent = async () => {
     const compareStartTime = new Date(startTime.value).toLocaleString()
     const compareStartTimeISO = new Date(startTime.value)
 
-    events.value.filter((findOvl)=>{
-    const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
-    const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
-    const existDuration = findOvl.eventDuration * 60000
-    const existingEndTime = new Date(existStartTimeToMillisec+existDuration).toLocaleString()
-    
-    const durationToMillisec = duration.value* 60000
-    const alertExistEndTime = new Date(existStartTimeToMillisec+existDuration).getHours()+":"+('0'+new Date(existStartTimeToMillisec+existDuration).getMinutes()).slice(-2)+":"+('0'+ new Date(existStartTimeToMillisec+existDuration).getSeconds()).slice(-2)
-    const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
-    const startTimePlusDuration = startTimeToMillisec + durationToMillisec
-    const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
-    // console.log(findOvl.eventCategoryName)
-    // console.log(categoryName.value);
-       if ((findOvl.eventCategoryName === categoryName.value)) {
-        //    console.log(existingEndTime);
-        //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
+    events.value.filter((findOvl) => {
+        const existingStartTime = new Date(findOvl.eventStartTime).toLocaleString()
+        const existStartTimeToMillisec = new Date(findOvl.eventStartTime).getTime()
+        const existDuration = findOvl.eventDuration * 60000
+        const existingEndTime = new Date(existStartTimeToMillisec + existDuration).toLocaleString()
+
+        const durationToMillisec = duration.value * 60000
+        const alertExistEndTime = new Date(existStartTimeToMillisec + existDuration).getHours() + ":" + ('0' + new Date(existStartTimeToMillisec + existDuration).getMinutes()).slice(-2) + ":" + ('0' + new Date(existStartTimeToMillisec + existDuration).getSeconds()).slice(-2)
+        const startTimeToMillisec = new Date(compareStartTimeISO).getTime()
+        const startTimePlusDuration = startTimeToMillisec + durationToMillisec
+        const compareEndTime = new Date(startTimePlusDuration).toLocaleString()
+        // console.log(findOvl.eventCategoryName)
+        // console.log(categoryName.value);
+        if ((findOvl.eventCategoryName === categoryName.value)) {
+            //    console.log(existingEndTime);
+            //    if(((compareEndTime <= existingEndTime) && (compareEndTime >= existingStartTime)) || ((compareStartTime >= existingStartTime) &&(compareStartTime < existingEndTime)))  {
             // if(((compareStartTime == existingStartTime)&&(compareEndTime == existingEndTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
             // if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime))|| ((compareStartTime > existingStartTime) && (compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))) {
-            if(((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) &&(compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) &&(compareEndTime >= existingEndTime))){
-            // if(((compareStartTime<existingEndTime)&&(compareEndTime>=existingEndTime)) && ((compareStartTime>=existingStartTime) && (compareEndTime>=existingStartTime))) {
-        //    if((existingStartTime<compareStartTime&&compareStartTime<existingEndTime)||(existingStartTime<compareEndTime&&compareEndTime<existingEndTime))  {
-            //    console.log(compareEndTime);
-           isOverlapped.value = true
-           alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
-           }
-       }
+            if (((compareEndTime <= existingEndTime) && (compareEndTime > existingStartTime)) || ((compareStartTime > existingStartTime) && (compareStartTime < existingEndTime)) || ((compareStartTime <= existingStartTime) && (compareEndTime >= existingEndTime))) {
+                // if(((compareStartTime<existingEndTime)&&(compareEndTime>=existingEndTime)) && ((compareStartTime>=existingStartTime) && (compareEndTime>=existingStartTime))) {
+                //    if((existingStartTime<compareStartTime&&compareStartTime<existingEndTime)||(existingStartTime<compareEndTime&&compareEndTime<existingEndTime))  {
+                //    console.log(compareEndTime);
+                isOverlapped.value = true
+                alert(`Sorry, the booking has Overlapped in ${existingStartTime} - ${alertExistEndTime}, Please select new date.`)
+            }
+        }
     })
     if (startTime.value == '') {
-            startTime.value = null
-        }
+        startTime.value = null
+    }
     // console.log(startTime.value);
-    if (name.value == '' || email.value == '' || startTime.value == null ) {
+    if (name.value == '' || email.value == '' || startTime.value == null) {
         alertText.value = ''
         //  console.log(startTime.value);
         startTime.value = startTime.value
         //  console.log(startTime.value);
-        falseInput.value = true 
+        falseInput.value = true
 
-        if(name.value == ''){
+        if (name.value == '') {
             if (email.value != '') {
-            alertText.value += ("name, ")
-            }else{
+                alertText.value += ("name, ")
+            } else {
                 alertText.value += ("name, ")
             }
         }
-        if(email.value == ''){
-            if (startTime.value != null ) {
+        if (email.value == '') {
+            if (startTime.value != null) {
                 alertText.value += ("email ")
-            }else{
-                alertText.value += ("email, ") 
+            } else {
+                alertText.value += ("email, ")
             }
         }
         if (startTime.value == null) {
             alertText.value += ("start time ")
         }
 
-        return 
+        return
     }
 
     if (isOverlapped.value == true) {
@@ -178,67 +185,67 @@ const createEvent = async () => {
     }
 
     if (isPast.value == true) {
-            startTime.value = startTime.value
-            alert("Start time is in the past, Please select new date")
+        startTime.value = startTime.value
+        alert("Start time is in the past, Please select new date")
         return
-    }  
+    }
 
-        // if (name.value.length == 100 || notes.value.length == 500 || email.value.length == 100 ) {
-        //     startTime.value = startTime.value
-        //     alert("Field longer string can't be event.")
-        // }else{
-            if (isNotEmail.value == false) {
-                falseInput.value = false
-                console.log(startTime.value);
-                // const utc = new Date(startTime.value).toISOString()
-                // startTime.value = utc
-                console.log(startTime.value);
-                if (confirm(`Are you sure to the create the event ?`)) {
-                    const utc = new Date(startTime.value).toISOString()
-                    // startTime.value = utc
-                    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
-                        method: 'POST',
-                        headers: {
-                            'content-type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            bookingName: name.value,
-                            bookingEmail: email.value,
-                            eventStartTime: utc,
-                            eventDuration: duration.value,
-                            eventNotes: notes.value,
-                            eventCategoryID: categoryID.value,
-                        })
-                    })
-                    if (res.status === 200) {
-                        startTime.value = null
-                        name.value = ''
-                        email.value = ''
-                        notes.value = ''
-                        // alert("Event created successfully")
-                        success.value = true
-                        setTimeout(()=>appRouter.push({ name: 'Home' }),1000)
-                        // appRouter.push({ name: 'Home' })
-                    } else {
-                        startTime.value = startTime.value
-                        alert("Event can't created")
-                    }     
-                }
-            }else{
-                alert("Invalid email address!");
-                return
+    // if (name.value.length == 100 || notes.value.length == 500 || email.value.length == 100 ) {
+    //     startTime.value = startTime.value
+    //     alert("Field longer string can't be event.")
+    // }else{
+    if (isNotEmail.value == false) {
+        falseInput.value = false
+        console.log(startTime.value);
+        // const utc = new Date(startTime.value).toISOString()
+        // startTime.value = utc
+        console.log(startTime.value);
+        if (confirm(`Are you sure to the create the event ?`)) {
+            const utc = new Date(startTime.value).toISOString()
+            // startTime.value = utc
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    bookingName: name.value,
+                    bookingEmail: email.value,
+                    eventStartTime: utc,
+                    eventDuration: duration.value,
+                    eventNotes: notes.value,
+                    eventCategoryID: categoryID.value,
+                })
+            })
+            if (res.status === 200) {
+                startTime.value = null
+                name.value = ''
+                email.value = ''
+                notes.value = ''
+                // alert("Event created successfully")
+                success.value = true
+                setTimeout(() => appRouter.push({ name: 'Home' }), 1000)
+                // appRouter.push({ name: 'Home' })
+            } else {
+                startTime.value = startTime.value
+                alert("Event can't created")
             }
+        }
+    } else {
+        alert("Invalid email address!");
+        return
+    }
 }
 const getEventCategory = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`)
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }
-const getEvents = async () =>{
+const getEvents = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
     events.value = await res.json()
     // console.log(events.value);
-} 
+}
 
 </script>
  
@@ -279,8 +286,9 @@ const getEvents = async () =>{
                                         Start time: <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                    <span class="text-sm text-red-500 pb-2" v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
-                                    <!-- <span class="text-sm text-red-500 pb-2" v-show="isOverlapped">Start time is overlapped.</span> -->
+                                <span class="text-sm text-red-500 pb-2"
+                                    v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
+                                <!-- <span class="text-sm text-red-500 pb-2" v-show="isOverlapped">Start time is overlapped.</span> -->
                                 <input type="datetime-local" placeholder="Type here"
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg"
                                     v-model="startTime" id="starttime" :min="currentTime">
@@ -289,10 +297,11 @@ const getEvents = async () =>{
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1 - 100 characters. **</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1
+                                    - 100 characters. **</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
-                                    id="name" maxlength="100"/>
+                                    id="name" maxlength="100" />
                                 <label class="label">
                                     <span class="label-text-alt"></span>
                                     <span class="label-text-alt">{{name.length}}/100</span>
@@ -302,11 +311,21 @@ const getEvents = async () =>{
                                         Email : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email address.</span>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** An email must be 1 - 100 characters. **</span>
-                                <input type="email" placeholder="example@mail.kmutt.ac.th"
+                                <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
+                                    address.</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** An email must
+                                    be 1 - 100 characters. **</span>
+                                <input v-if="myUser.isLogin == false" type="email"
+                                    placeholder="example@mail.kmutt.ac.th"
                                     class="input input-bordered input-secondary w-full max-w-xs  text-lg"
-                                    v-model="email" id="email" maxlength="100"/>
+                                    v-model="email" id="email" maxlength="100" />
+                                <input v-else-if="myUser.userRole != 'admin'" type="email"
+                                    placeholder="example@mail.kmutt.ac.th"
+                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg text-gray-50"
+                                    v-model="email" id="email" maxlength="100" disabled />
+                                <input v-else type="email" placeholder="example@mail.kmutt.ac.th"
+                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg"
+                                    v-model="email" id="email" maxlength="100" />
                                 <label class="label">
                                     <span class="label-text-alt"></span>
                                     <span class="label-text-alt">{{email.length}}/100</span>
@@ -316,17 +335,19 @@ const getEvents = async () =>{
                                         Notes :
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500" >** A notes must be 1 - 500 characters. **</span>
+                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500">** A notes must be
+                                    1 - 500 characters. **</span>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
                                     placeholder="Type something..." maxlength="500"></textarea>
-                                    <label class="label">
+                                <label class="label">
                                     <span class="label-text-alt"></span>
                                     <span class="label-text-alt">{{notes.length}}/500</span>
                                 </label>
                             </div>
                         </div>
-                        <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-show="falseInput">
+                        <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
+                            v-show="falseInput">
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
                                     fill="none" viewBox="0 0 24 24">
@@ -336,7 +357,8 @@ const getEvents = async () =>{
                                 <span>Please fill {{alertText}} field.</span>
                             </div>
                         </div>
-                        <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center" v-show="success">
+                        <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center"
+                            v-show="success">
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
                                     fill="none" viewBox="0 0 24 24">
