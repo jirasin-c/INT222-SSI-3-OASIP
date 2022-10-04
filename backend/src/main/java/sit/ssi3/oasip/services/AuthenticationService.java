@@ -73,9 +73,10 @@ public class AuthenticationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (BadCredentialsException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
+//        catch (Exception ex) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
+//        }
     }
 
 //        } catch (Exception e) {
