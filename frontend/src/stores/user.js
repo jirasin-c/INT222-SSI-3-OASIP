@@ -12,8 +12,9 @@ export const useUser = defineStore('user', () => {
     userID.value = undefined
     userName.value = ''
     userRole.value = ''
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
+    // localStorage.removeItem("token")
+    // localStorage.removeItem("user")
+    localStorage.clear()
     location.reload()
   }
   const setUserID = (setID) => (userID.value = setID)

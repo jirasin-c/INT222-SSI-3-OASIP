@@ -33,6 +33,9 @@ public class EventService {
     private ListMapper listMapper;
     @Autowired
     private EventCategoryService eventCategoryService;
+
+    @Autowired
+    private UserService userService;
     @Autowired
     private static final Validator validator =
             Validation.byDefaultProvider()
@@ -140,6 +143,7 @@ public class EventService {
         event.setBookingEmail(newEvent.getBookingEmail());
         event.setEventCategoryID(newEvent.getEventCategoryID() == null ? null : eventCategoryService.getEventcategoryByID(newEvent.getEventCategoryID()));
         event.setEventStartTime(newEvent.getEventStartTime());
+        event.setUser(userService.getUserByID(newEvent.getUserID()));
         event.setOverlapped(false);
 
         // find all event

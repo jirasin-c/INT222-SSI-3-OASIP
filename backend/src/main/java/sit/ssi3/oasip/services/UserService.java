@@ -12,6 +12,7 @@ import sit.ssi3.oasip.Enum.RoleEnum;
 import sit.ssi3.oasip.dtos.RequestUserDTO;
 import sit.ssi3.oasip.dtos.RespondUserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
+import sit.ssi3.oasip.entities.Eventcategory;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.exceptions.ConstraintException;
 import sit.ssi3.oasip.repositories.EventRepository;
@@ -20,6 +21,7 @@ import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.validation.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -55,6 +57,13 @@ public class UserService {
         User user = userRepository.findByName(name);
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
         return modelMapper.map(user, UserDetailDTO.class);
+    }
+    public User getUserByID(Integer id) {
+        User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException(id + "Does not Exist !!!"));
+//        Eventcategory eventcategory = eventCategoryRepository.findById(categoryID).orElseThrow(() ->
+//                new RuntimeException(categoryID + " Does not Exist !!!"));
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID" + id + " Does not Exits");
+        return modelMapper.map(user, User.class);
     }
 
     public void createUser(RequestUserDTO newUser) {

@@ -15,6 +15,7 @@ const myHeader = ref()
 
 const getUser = async () => {
     // console.log(jwtToken);
+    createHeader()
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
         method: "GET",
         headers: myHeader.value
@@ -23,7 +24,7 @@ const getUser = async () => {
 
     if (res.status === 401) {
         var errText = await res.json()
-        console.log(errText.message);
+        // console.log(errText.message);
         if (errText.message == "JWT Token has expired") {
             var tokenToLocal = localStorage.getItem("token")
             var tokenLocal = JSON.parse(tokenToLocal)
@@ -36,17 +37,21 @@ const getUser = async () => {
                 },
             })
             var tokenRes = await res.json()
-            console.log(tokenRes.message);
+            // console.log(tokenRes.message);
 
             if (tokenRes.message == "JWT Refresh Token has expired") {
                 myUser.setLogout()
-                appRouter.push({ name: "SignIn" })
+                setTimeout(() => {
+                    appRouter.push({ name: "SignIn" })
+                }, 500)
+            }else{
+                // newAccessToken = await res.json()
+                // console.log(newAccessToken);
+                tokenLocal.accessToken = tokenRes.token
+                localStorage.setItem('token', JSON.stringify(tokenLocal))
+                await getUser()
+
             }
-            // newAccessToken = await res.json()
-            // console.log(newAccessToken);
-            tokenLocal.accessToken = tokenRes.token
-            localStorage.setItem('token', JSON.stringify(tokenLocal))
-            await getUser()
 
         }
 
@@ -98,8 +103,8 @@ const deleteUser = async (delName) => {
 const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1)
 }
-onBeforeMount(async () => {
-    // jwtToken.value = localStorage.getItem('token')
+
+const createHeader = () => {
     if (localStorage.getItem('token') != null) {
         var tokenToLocal = localStorage.getItem("token")
         var tokenLocal = JSON.parse(tokenToLocal)
@@ -109,6 +114,10 @@ onBeforeMount(async () => {
             "Authorization": `Bearer ${tokenLocal.accessToken}`,
         })
     }
+}
+onBeforeMount(async () => {
+    // jwtToken.value = localStorage.getItem('token')
+    // createHeader()
     // console.log(myHeader.value);
     await getUser()
     // console.log(userList.value);

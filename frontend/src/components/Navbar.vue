@@ -58,33 +58,36 @@ const getName = async () => {
         if (tokenRes.message == "JWT Refresh Token has expired") {
           myUser.setLogout()
           // appRouter.push({ name: "SignIn" })
+        } else {
+          // newAccessToken = await res.json()
+          // console.log(newAccessToken);
+          tokenLocal.accessToken = tokenRes.token
+          localStorage.setItem('token', JSON.stringify(tokenLocal))
+          await getName()
+          // newAccessToken = await res.json()
+          // console.log(newAccessToken);
+          // tokenLocal.accessToken = newAccessToken.token
+          // localStorage.setItem('token', JSON.stringify(tokenLocal))
+          // getName()
         }
-        // newAccessToken = await res.json()
-        // console.log(newAccessToken);
-        tokenLocal.accessToken = tokenRes.token
-        localStorage.setItem('token', JSON.stringify(tokenLocal))
-        await getName()
-        // newAccessToken = await res.json()
-        // console.log(newAccessToken);
-        // tokenLocal.accessToken = newAccessToken.token
-        // localStorage.setItem('token', JSON.stringify(tokenLocal))
-        // getName()
       }
-    }
-    // console.log(res.status);
-    user.value = await res.json()
-    // console.log(user.value);
-    // user.value.map((e) => {
-    //   // console.log(e);
-    //   if (e.email == email.value) {
-    myUser.setLogin()
-    myUser.setUserName(user.value.name)
-    myUser.setUserEmail(user.value.email)
-    myUser.setUserRole(user.value.role)
-    // localStorage.setItem('name', e.name)
+    } else {
+      // console.log(res.status);
+      user.value = await res.json()
+      // console.log(user.value);
+      // user.value.map((e) => {
+      //   // console.log(e);
+      //   if (e.email == email.value) {
+      myUser.setLogin()
+      myUser.setUserName(user.value.name)
+      myUser.setUserEmail(user.value.email)
+      myUser.setUserRole(user.value.role)
+      // localStorage.setItem('name', e.name)
 
-    //   }
-    // })
+      //   }
+      // })
+    }
+
   }
 }
 

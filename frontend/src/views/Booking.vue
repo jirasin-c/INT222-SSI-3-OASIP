@@ -25,7 +25,7 @@ const isNotEmail = ref(false)
 const alertText = ref('')
 
 onUpdated(() => {
-    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
+    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + ('0' + (new Date().getDate())).slice(-2) + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
     // console.log(currentTime.value);
     // console.log(startTime.value);
     // const d = String(new Date().getMinutes())
@@ -47,7 +47,8 @@ onUpdated(() => {
 onBeforeMount(async () => {
     await getEventCategory()
     await getEvents()
-    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
+    // currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
+    currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + ('0' + (new Date().getDate())).slice(-2) + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
     // currentTime.value = new Date().getFullYear()+'-'+('0'+(new Date().getMonth()+1)).slice(-2)+"-"+new Date().getDate()+'T'+('0'+new Date().getHours()).slice(-2)+':'+('0'+new Date().getMinutes()).slice(-2)
     // console.log(myUser.userName);
     // console.log(myUser.userEmail);
@@ -199,16 +200,21 @@ const createEvent = async () => {
         console.log(startTime.value);
         // const utc = new Date(startTime.value).toISOString()
         // startTime.value = utc
-        console.log(startTime.value);
+        // console.log(startTime.value);
         if (confirm(`Are you sure to the create the event ?`)) {
             const utc = new Date(startTime.value).toISOString()
             // startTime.value = utc
+            // console.log(myUser.userID); 
+            var userToLocal = localStorage.getItem("user")
+            var userLocal = JSON.parse(userToLocal)
             const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
+                    // userID: myUser.userID,
+                    userID: userLocal.id,
                     bookingName: name.value,
                     bookingEmail: email.value,
                     eventStartTime: utc,

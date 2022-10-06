@@ -81,6 +81,7 @@ const getDetail = async (newUser) => {
   // params.name = newUser
   // detail.value = await res.json()
   // } else {
+  createHeader()
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${name}`, {
     method: "GET",
     // headers: {
@@ -252,8 +253,8 @@ const updateUser = async () => {
   }
 }
 
-onBeforeMount(async () => {
-  if (localStorage.getItem('token') != null) {
+const createHeader = () =>{
+    if (localStorage.getItem('token') != null) {
         var tokenToLocal = localStorage.getItem("token")
         var tokenLocal = JSON.parse(tokenToLocal)
         // console.log(tokenLocal);
@@ -262,6 +263,17 @@ onBeforeMount(async () => {
             "Authorization": `Bearer ${tokenLocal.accessToken}`,
         })
     }
+}
+onBeforeMount(async () => {
+  // if (localStorage.getItem('token') != null) {
+  //       var tokenToLocal = localStorage.getItem("token")
+  //       var tokenLocal = JSON.parse(tokenToLocal)
+  //       // console.log(tokenLocal);
+  //       myHeader.value = new Headers({
+  //           "content-type": "application/json",
+  //           "Authorization": `Bearer ${tokenLocal.accessToken}`,
+  //       })
+  //   }
   await getDetail()
   await getUser()
 })
