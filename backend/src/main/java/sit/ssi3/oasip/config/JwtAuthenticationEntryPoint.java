@@ -2,26 +2,53 @@ package sit.ssi3.oasip.config;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.impl.DefaultClaims;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
-    private static final long serialVersionUID = -7858869558953243875L;
+@Data
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
+//    private static final long serialVersionUID = -7858869558953243875L;
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
+    private ZonedDateTime date;
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+                         AuthenticationException authException) throws IOException, ServletException {
+        logger.error("Unauthorized error: {}", authException.getMessage());
+        final Map<String, Object> errors = new LinkedHashMap<>();
 
-        String message = request.getAttribute("exception").toString();
-        System.out.println(message);
+        response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getOutputStream().println("{ \"error\": \"" + authException.getMessage() + "\" }");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+        errors.put("timestamp", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        errors.put("status", response.getStatus());
+        errors.put("error", "UNAUTHORIZED");
+        errors.put("message", request.getAttribute("Errors"));
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(response.getOutputStream(), errors);
+        }catch (Exception e){
+            throw new ServletException();
+        }
     }
+
 }

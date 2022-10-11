@@ -1,7 +1,10 @@
 package sit.ssi3.oasip.configJwts;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class JwtRequest implements Serializable {
     private static final long serialVersionUID = 5926468583005150707L;
 
@@ -17,19 +20,5 @@ public class JwtRequest implements Serializable {
         this.setPassword(password);
     }
 
-    public String getUsername() {
-        return this.email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

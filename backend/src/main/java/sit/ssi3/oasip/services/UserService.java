@@ -9,6 +9,7 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.Enum.RoleEnum;
+import sit.ssi3.oasip.config.JwtTokenUtil;
 import sit.ssi3.oasip.dtos.RequestUserDTO;
 import sit.ssi3.oasip.dtos.RespondUserDTO;
 import sit.ssi3.oasip.dtos.UserDetailDTO;
@@ -19,6 +20,7 @@ import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,7 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private ListMapper listMapper;
+
     @Autowired
     private static final Validator validator =
             Validation.byDefaultProvider()
@@ -147,7 +150,6 @@ public class UserService {
         eventRepository.deleteAllByUser(user);
         userRepository.deleteUserByName(name);
     }
-
 
 
 }

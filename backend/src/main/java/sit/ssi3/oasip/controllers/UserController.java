@@ -11,6 +11,7 @@ import sit.ssi3.oasip.dtos.UserDetailDTO;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.services.UserService;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 
@@ -30,7 +31,6 @@ public class UserController {
     public UserDetailDTO  getUserByName(@PathVariable String name){
         return userService.getUserByName(name);
     }
-
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)

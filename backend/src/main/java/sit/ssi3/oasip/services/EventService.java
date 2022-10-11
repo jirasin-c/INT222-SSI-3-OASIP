@@ -6,18 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+import sit.ssi3.oasip.config.JwtTokenUtil;
 import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
+import sit.ssi3.oasip.entities.User;
+import sit.ssi3.oasip.exceptions.ValidationHandler;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.dtos.CreateEventDTO;
+import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +38,10 @@ public class EventService {
     private ListMapper listMapper;
     @Autowired
     private EventCategoryService eventCategoryService;
-
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private UserService userService;
     @Autowired
@@ -44,20 +52,81 @@ public class EventService {
                     .buildValidatorFactory()
                     .getValidator();
 
-    public List<EventDTO> getEvent(String sortBy) {
-        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
-        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+
+    public User getUserFromRequest(HttpServletRequest request) {
+        if (request.getHeader("Authorization") != null) {
+            String token = request.getHeader("Authorization").substring(7);
+            String userEmail = jwtTokenUtil.getUsernameFromToken(token);
+            return  userRepository.findByEmail(userEmail);
+        }
+        return null;
     }
 
-    public EventDTO getEventById(Integer eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Event ID " + eventId + "Does not Exits"
-                )
-        );
-        return modelMapper.map(event, EventDTO.class);
+    public List<EventDTO> getEvent(String sortBy, HttpServletRequest request) {
+
+        User userOwner = getUserFromRequest(request);
+
+
+        List<Event> eventList = new ArrayList<>();
+//        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
+        if (userOwner.getRole().equals("admin")){
+            System.out.println("เข้า admin");
+            eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
+        } else if (userOwner.getRole().equals("student")) {
+            System.out.println("เข้า student");
+            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
+        } else if (userOwner.getRole().equals("lecturer")){
+            System.out.println("เข้า lecturer");
+            List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
+            System.out.println(categoriesId);
+            eventList = eventRepository.findAllByEventCategory(categoriesId);
+        }
+        
+        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
+        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+//        User userOwner = getUserFromRequest(request);
+//        System.out.println(userOwner.getEmail());
+//        List<Event> eventList = new ArrayList<>();
+
+//        if (userOwner.getRole().equals("admin")){
+//            System.out.println("เข้า admin");
+//            eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
+//        } else if (userOwner.getRole().equals("student")) {
+//            System.out.println("เข้า student");
+//            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
+//        }
+//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+
     }
+
+
+
+    public Object getEventById(HttpServletRequest request, Integer bookingId) {
+//        Event event = eventRepository.findById(eventId).orElseThrow(() ->
+//                new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND, "Event ID " + eventId + "Does not Exits"
+//                )
+//        );
+//        return modelMapper.map(event, EventDTO.class);
+//    }
+
+    User userOwner = getUserFromRequest(request);
+    Event event = eventRepository.findById(bookingId)
+            .orElseThrow(()->new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Customer id "+ bookingId+
+                    "Does Not Exist !!!"
+            ));
+
+        if (userOwner.getRole().equals("student")) {
+        if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+            return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+        }
+    }
+        return modelMapper.map(event, EventDTO.class);
+}
 
     public List<EventDTO> getEventByCategoryId(Integer categoryId) {
         List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
@@ -132,7 +201,16 @@ public class EventService {
     }
 
 
-    public Event createEvent(CreateEventDTO newEvent) {
+    public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent) {
+        User userOwner = getUserFromRequest(request);
+
+        if (userOwner != null) {
+            if (userOwner.getRole().equals("student")) {
+                if (!userOwner.getEmail().equals(newEvent.getBookingEmail())) {
+                    return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "the booking email must be the same as student's email");
+                }
+            }
+        }
         // map event dto request to event
         Event event = new Event();
         event.setId(null);
@@ -182,17 +260,36 @@ public class EventService {
         return this.eventRepository.saveAndFlush(event); // return success service
     }
 
-    public void cancelEvent(Integer eventId) {
-        eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
-        eventRepository.deleteById(eventId);
+    public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
+        User userOwner = getUserFromRequest(request);
+        Event event = eventRepository.findById(bookingId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Event ID " + bookingId + " Does Not Exits!!!"));
+
+        if (userOwner.getRole().equals("student")) {
+            if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            }
+
+        }
+        eventRepository.deleteById(bookingId);
+        return  event;
     }
 
-    public EventDTO updateEvent(EventEditDTO updateEvent, Integer eventId) {
+    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, Integer bookingId) {
+        User userOwner = getUserFromRequest(request);
+
         Event newEvent = modelMapper.map(updateEvent, Event.class);
-        Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
+        Event event = eventRepository.findById(bookingId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Event ID " + bookingId + " Does Not Exits!!!"));
         event.setOverlapped(false);
+
+        if (userOwner.getRole().equals("student")) {
+            if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            }
+
+        }
+
         eventRepository.saveAndFlush(event);
 
         // validate event field

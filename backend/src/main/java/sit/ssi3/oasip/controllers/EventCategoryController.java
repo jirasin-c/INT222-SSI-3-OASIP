@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/event-categories")
 public class EventCategoryController {
+
     @Autowired
     private EventCategoryService eventCategoryService;
 

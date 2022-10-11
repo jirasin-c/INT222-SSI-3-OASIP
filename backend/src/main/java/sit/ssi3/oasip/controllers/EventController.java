@@ -11,6 +11,8 @@ import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.services.EventService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -21,13 +23,21 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("")
-    public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
-        return eventService.getEvent(sortBy);
+//    public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy){
+//        return eventService.getEvent(sortBy);
+//    }
+    public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy,@Valid HttpServletRequest request) {
+        return eventService.getEvent(sortBy,request);
     }
 
+
     @GetMapping("/{eventId}")
-    public EventDTO getEventByID(@PathVariable Integer eventId){
-        return eventService.getEventById(eventId);
+//    public EventDTO getEventByID(@PathVariable Integer eventId){
+//        return eventService.getEventById(eventId);
+//    }
+
+    public Object getEventByID(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
+        return eventService.getEventById(request, bookingId);
     }
 
     @GetMapping("/")
@@ -52,20 +62,31 @@ public class EventController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Event> createEvent(@RequestBody CreateEventDTO newEvent) {
-        Event newEventSaved = eventService.createEvent(newEvent);
-        return new ResponseEntity<Event>(newEventSaved, HttpStatus.OK);
+//    public ResponseEntity<Event> createEvent(@RequestBody CreateEventDTO newEvent) {
+//        Event newEventSaved = eventService.createEvent(newEvent);
+//        return new ResponseEntity<Event>(newEventSaved, HttpStatus.OK);
+//    }
+
+    public Object create(@Valid HttpServletRequest request, @Valid @RequestBody CreateEventDTO newEvent) {
+        return eventService.createEvent(request, newEvent);
     }
 
     @DeleteMapping("/{eventId}")
-    public void cancelEvent(@PathVariable Integer eventId){
-        eventService.cancelEvent(eventId);
+//    public void cancelEvent(@PathVariable Integer eventId){
+//        eventService.cancelEvent(eventId);
+//    }
+    public Object delete(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
+        return eventService.cancelEvent(request, bookingId);
     }
 
     @PutMapping("/{eventId}")
-    public EventDTO updateEvent(@RequestBody EventEditDTO updateEvent, @PathVariable Integer eventId) {
-        return eventService.updateEvent(updateEvent, eventId);
+//    public EventDTO updateEvent(@RequestBody EventEditDTO updateEvent, @PathVariable Integer eventId) {
+//        return eventService.updateEvent(updateEvent, eventId);
+//
+//    }
 
+    public Object update(@Valid HttpServletRequest request, @Valid @RequestBody EventEditDTO updateEvent, @PathVariable Integer bookingId) {
+        return eventService.updateEvent(request, updateEvent, bookingId);
     }
 
 
