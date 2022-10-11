@@ -36,8 +36,8 @@ public class EventController {
 //        return eventService.getEventById(eventId);
 //    }
 
-    public Object getEventByID(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
-        return eventService.getEventById(request, bookingId);
+    public Object getEventByID(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
+        return eventService.getEventById(request, eventId);
     }
 
     @GetMapping("/")
@@ -75,8 +75,8 @@ public class EventController {
 //    public void cancelEvent(@PathVariable Integer eventId){
 //        eventService.cancelEvent(eventId);
 //    }
-    public Object delete(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
-        return eventService.cancelEvent(request, bookingId);
+    public Object delete(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
+        return eventService.cancelEvent(request, eventId);
     }
 
     @PutMapping("/{eventId}")
@@ -85,8 +85,8 @@ public class EventController {
 //
 //    }
 
-    public Object update(@Valid HttpServletRequest request, @Valid @RequestBody EventEditDTO updateEvent, @PathVariable Integer bookingId) {
-        return eventService.updateEvent(request, updateEvent, bookingId);
+    public Object update(@Valid HttpServletRequest request, @Valid @RequestBody EventEditDTO updateEvent, @PathVariable Integer eventId) {
+        return eventService.updateEvent(request, updateEvent, eventId);
     }
 
 

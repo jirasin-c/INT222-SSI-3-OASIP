@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+import sit.ssi3.oasip.Enum.RoleEnum;
 import sit.ssi3.oasip.config.JwtTokenUtil;
 import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.exceptions.ValidationHandler;
+import sit.ssi3.oasip.repositories.EventCategoryOwnerRepository;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.repositories.UserRepository;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class EventService {
+    @Autowired
+    private EventCategoryOwnerRepository eventCategoryOwnerRepository;
     @Autowired
     private EventRepository eventRepository;
     @Autowired
@@ -63,26 +67,28 @@ public class EventService {
         return null;
     }
 
-    public List<EventDTO> getEvent(String sortBy, HttpServletRequest request) {
-
+    public List<EventDTO> getEvent(String sortBy,HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
+        RoleEnum userRole = userOwner.getRole();
+//        List<Event> eventList = new ArrayList<>();
+        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
+
+//        if (userOwner.getRole().equals("admin")){
+        if (userRole.equals(RoleEnum.admin)){
+            eventList = eventRepository.findAll(Sort.by(sortBy).descending());
+
+        } else if (userRole.equals(RoleEnum.student)) {
+//            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
+               eventList = eventRepository.findAllByBookingEmail(userOwner.getEmail());
 
 
-        List<Event> eventList = new ArrayList<>();
-//        List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
-        if (userOwner.getRole().equals("admin")){
-            System.out.println("เข้า admin");
-            eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
-        } else if (userOwner.getRole().equals("student")) {
-            System.out.println("เข้า student");
-            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
-        } else if (userOwner.getRole().equals("lecturer")){
-            System.out.println("เข้า lecturer");
+        } else if (userRole.equals(RoleEnum.lecturer)){
+
             List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
             System.out.println(categoriesId);
             eventList = eventRepository.findAllByEventCategory(categoriesId);
         }
-        
+
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
         return listMapper.mapList(eventList, EventDTO.class, modelMapper);
 
@@ -104,7 +110,7 @@ public class EventService {
 
 
 
-    public Object getEventById(HttpServletRequest request, Integer bookingId) {
+    public Object getEventById(HttpServletRequest request, Integer eventId) {
 //        Event event = eventRepository.findById(eventId).orElseThrow(() ->
 //                new ResponseStatusException(
 //                        HttpStatus.NOT_FOUND, "Event ID " + eventId + "Does not Exits"
@@ -114,13 +120,14 @@ public class EventService {
 //    }
 
     User userOwner = getUserFromRequest(request);
-    Event event = eventRepository.findById(bookingId)
+    RoleEnum userRole = userOwner.getRole();
+    Event event = eventRepository.findById(eventId)
             .orElseThrow(()->new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Customer id "+ bookingId+
+                    HttpStatus.NOT_FOUND, "Event ID "+ eventId+
                     "Does Not Exist !!!"
             ));
 
-        if (userOwner.getRole().equals("student")) {
+        if (userRole.equals(RoleEnum.student)) {
         if (!userOwner.getEmail().equals(event.getBookingEmail())) {
             return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
         }
@@ -203,9 +210,9 @@ public class EventService {
 
     public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent) {
         User userOwner = getUserFromRequest(request);
-
+        RoleEnum userRole = userOwner.getRole();
         if (userOwner != null) {
-            if (userOwner.getRole().equals("student")) {
+            if (userRole.equals(RoleEnum.student)) {
                 if (!userOwner.getEmail().equals(newEvent.getBookingEmail())) {
                     return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "the booking email must be the same as student's email");
                 }
@@ -257,33 +264,35 @@ public class EventService {
         // return when error message contains
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
         // custom error response
-        return this.eventRepository.saveAndFlush(event); // return success service
+        this.eventRepository.saveAndFlush(event); // return success service
+        return null;
     }
 
-    public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer bookingId) {
+    public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
         User userOwner = getUserFromRequest(request);
-        Event event = eventRepository.findById(bookingId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event ID " + bookingId + " Does Not Exits!!!"));
+        RoleEnum userRole = userOwner.getRole();
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
 
-        if (userOwner.getRole().equals("student")) {
+        if (userRole.equals(RoleEnum.student)) {
             if (!userOwner.getEmail().equals(event.getBookingEmail())) {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
 
         }
-        eventRepository.deleteById(bookingId);
-        return  event;
+        eventRepository.deleteById(eventId);
+        return  null;
     }
 
-    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, Integer bookingId) {
+    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, Integer eventId) {
         User userOwner = getUserFromRequest(request);
-
+        RoleEnum userRole = userOwner.getRole();
         Event newEvent = modelMapper.map(updateEvent, Event.class);
-        Event event = eventRepository.findById(bookingId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event ID " + bookingId + " Does Not Exits!!!"));
+        Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
         event.setOverlapped(false);
 
-        if (userOwner.getRole().equals("student")) {
+        if (userRole.equals(RoleEnum.student)) {
             if (!userOwner.getEmail().equals(event.getBookingEmail())) {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
