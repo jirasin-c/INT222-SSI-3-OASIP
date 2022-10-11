@@ -120,9 +120,9 @@ CREATE TABLE `user` (
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `role` enum('admin','lecturer','student') NOT NULL,
-  `createdOn` datetime NOT NULL,
-  `updatedOn` datetime NOT NULL,
+  `role` enum('admin','lecturer','student') DEFAULT 'student' NOT NULL,
+  `createdOn` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  `updatedOn` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`userID`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   UNIQUE KEY `email_UNIQUE` (`email`)
