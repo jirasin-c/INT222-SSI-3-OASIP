@@ -1,2 +1,2 @@
 FROM mysql
-COPY ./oasipDump.sql /docker-entrypoint-initdb.d/
+COPY ./OasipDatabase.sql /docker-entrypoint-initdb.d/
