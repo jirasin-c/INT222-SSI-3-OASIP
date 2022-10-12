@@ -23,6 +23,19 @@ const isPast = ref(false)
 const isOverlapped = ref(false)
 const isNotEmail = ref(false)
 const alertText = ref('')
+const myHeader = ref()
+
+const createHeader = () => {
+    if (localStorage.getItem('token') != null) {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // console.log(tokenLocal);
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.accessToken}`,
+        })
+    }
+}
 
 onUpdated(() => {
     currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + ('0' + (new Date().getDate())).slice(-2) + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
@@ -30,8 +43,14 @@ onUpdated(() => {
     // console.log(startTime.value);
     // const d = String(new Date().getMinutes())
     // console.log(d.padStart(2,'0'));
+    // console.log(categoryID.value);
+    // console.log(selectedCategory.value);
+    // console.log(eventCategory.value);
+    // console.log(selectedCategory.value);
     eventCategory.value.filter((findID) => {
-        if (findID.eventCategoryName === selectedCategory.value) {
+        // console.log(findID.eventCategoryName);
+        if (findID.eventCategoryName.trim() === selectedCategory.value) {
+            // console.log('ตรง');
             categoryID.value = findID.id
             // duration.value = eventCategory.value.eventDuration
             duration.value = findID.eventDuration
@@ -41,6 +60,9 @@ onUpdated(() => {
             // console.log(categoryName.value);
         }
     });
+    // console.log(categoryID.value);
+    // console.log(selectedCategory.value);
+    // console.log(categoryName.value);
     // validateOverlapped()
     // console.log(isOverlapped.value);
 })
@@ -207,14 +229,13 @@ const createEvent = async () => {
             // console.log(myUser.userID); 
             var userToLocal = localStorage.getItem("user")
             var userLocal = JSON.parse(userToLocal)
+            createHeader()
             const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
                 method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
+                headers: myHeader.value,
                 body: JSON.stringify({
                     // userID: myUser.userID,
-                    userID: userLocal.id,
+                    // userID: userLocal.id,
                     bookingName: name.value,
                     bookingEmail: email.value,
                     eventStartTime: utc,
@@ -243,12 +264,20 @@ const createEvent = async () => {
     }
 }
 const getEventCategory = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`)
+    createHeader()
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`,{
+    method: "GET",
+    headers: myHeader.value
+  })
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }
 const getEvents = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+    createHeader()
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
+    method: "GET",
+    headers: myHeader.value
+  })
     events.value = await res.json()
     // console.log(events.value);
 }

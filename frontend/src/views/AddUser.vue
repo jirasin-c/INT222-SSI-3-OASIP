@@ -19,7 +19,7 @@ const password = ref('')
 const rePassword = ref('')
 const passwordUnmatch = ref(false)
 const errText = ref('')
-
+const myHeader = ref()
 // onUpdated(() => {
 //     console.log(isShowPassword.value);
 // })
@@ -27,6 +27,18 @@ const errText = ref('')
 //     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/`)
 //     user.value = await res.json()
 // }
+
+const createHeader = () => {
+  if (localStorage.getItem('token') != null) {
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
+    // console.log(tokenLocal);
+    myHeader.value = new Headers({
+      "content-type": "application/json",
+      "Authorization": `Bearer ${tokenLocal.accessToken}`,
+    })
+  }
+}
 
 const passwordCheckMatch = (checkedPass) => {
     // console.log(checkedPass);
@@ -157,12 +169,10 @@ const creatUser = async () => {
         }
         // console.log('Name: ' + name.value.trim(), 'Email: ' + email.value, 'Role:' + selectedRole.value,);
         // success.value = true
-
+        createHeader()
         const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
             method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
+            headers: myHeader.value,
             body: JSON.stringify({
                 name: name.value.trim(),
                 email: email.value.trim(),

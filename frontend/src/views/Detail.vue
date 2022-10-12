@@ -35,11 +35,23 @@ const compareDate = (editDate, currentTime) => {
   }
 
 }
+const myHeader = ref()
+const createHeader = () => {
+  if (localStorage.getItem('token') != null) {
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
+    // console.log(tokenLocal);
+    myHeader.value = new Headers({
+      "content-type": "application/json",
+      "Authorization": `Bearer ${tokenLocal.accessToken}`,
+    })
+  }
+}
 
 onUpdated(() => {
   // currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2)
   currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + ('0' + (new Date().getDate())).slice(-2) + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + (String(new Date().getMinutes() + 1).padStart(2, '0'))
-  
+
   // eventCategory.value.filter((findID) => {
   // if (findID.eventCategoryName === getEventCategoryName.value) {
   duration.value = eventCategory.value.eventDuration
@@ -47,7 +59,11 @@ onUpdated(() => {
   // });
 })
 const getEvents = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+  createHeader()
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
+      method: "GET",
+      headers: myHeader.value
+    })
   events.value = await res.json()
   // console.log(events.value);
 }
@@ -59,7 +75,12 @@ const getEventCategory = async () => {
 
 const getDetailById = async () => {
   // console.log(bookingId);
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`);
+  createHeader()
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`,{
+    method: 'GET',
+    headers: myHeader.value,
+  }
+  );
   selectedEvent.value = await res.json();
   // console.log(selectedEvent.value);
   // getEventCategoryName.value =
@@ -138,11 +159,10 @@ const updateEvent = async () => {
   }
   // if(selectedEvent.value.eventStartTime == )
   if (confirm(`Are you sure to update the booking information ?`)) {
+    createHeader()
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${selectedEvent.value.id}`, {
       method: 'PUT',
-      headers: {
-        'content-type': 'application/json'
-      },
+      headers: myHeader.value,
       body: JSON.stringify({
         eventStartTime: editDate.value,
         eventNotes: editNote.value,
@@ -238,7 +258,8 @@ window.onbeforeunload = function () {
               <label for="notes">
                 Notes:
               </label>
-            <p v-if="selectedEvent.eventNotes != ''" v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes }}
+            <p v-if="selectedEvent.eventNotes != ''" v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes
+            }}
             </p>
             <p v-else v-show="!isEdit" class="inline-block">NO MESSAGE.</p>
             <p>

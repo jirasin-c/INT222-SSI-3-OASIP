@@ -16,39 +16,66 @@ const isFindeNoByPass = ref(false)
 const isFindeNoByDate = ref(false)
 const startTime = ref()
 const filterType = ref("Select type")
+const myHeader = ref()
+
+const createHeader = () => {
+    if (localStorage.getItem('token') != null) {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // console.log(tokenLocal);
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.accessToken}`,
+        })
+    }
+}
 
 const getEvent = async () => {
-  isFindeNoByCategory.value = false
-  isFindeNoByUpComing.value = false;
-  isFindeNoByPass.value = false
-  isFindeNoByDate.value = false
-  isEmpty.value = false
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`);
-  event.value = await res.json();
-
-  if (res.status == 404) {
-    isEmpty.value = true;
-    event.value = []
-  } else {
-    isEmpty.value = false;
-  }
-
-  event.value.filter((e) => {
-    const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      year: "2-digit",
-      hour: "numeric",
-      minute: "numeric",
+  if (localStorage.getItem('token') != null){
+    isFindeNoByCategory.value = false
+    isFindeNoByUpComing.value = false;
+    isFindeNoByPass.value = false
+    isFindeNoByDate.value = false
+    isEmpty.value = false
+    createHeader()
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
+      method: "GET",
+      headers: myHeader.value
     });
-    e.eventStartTime = localDate;
-  });
+    event.value = await res.json();
+  
+    if (res.status == 404 || res.status == 401) {
+      isEmpty.value = true;
+      event.value = []
+    } else {
+      isEmpty.value = false;
+    }
+  
+    event.value.filter((e) => {
+      const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "2-digit",
+        hour: "numeric",
+        minute: "numeric",
+      });
+      e.eventStartTime = localDate;
+    });
+  }else{
+    isEmpty.value = true;
+      event.value = []
+  }
 
 }
 
 const getEventCategory = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`,{
+    method: "GET",
+    headers: {
+      "content-type": "application/json",
+    }
+  });
   eventCategory.value = await res.json()
 }
 
@@ -201,8 +228,10 @@ const getDetail = (id) => {
 const cancelEvent = async (id) => {
   id.event.stopPropagation()
   if (confirm(`Are you sure to delete Event name: ${id.deleteName} ?`)) {
+    createHeader()
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${id.deleteId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: myHeader.value
     })
     if (res.status === 200) {
       event.value = event.value.filter((e) => e.id !== id.deleteId)

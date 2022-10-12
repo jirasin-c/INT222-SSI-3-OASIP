@@ -24,12 +24,18 @@ const getUser = async () => {
 
     if (res.status === 401) {
         var errText = await res.json()
+        var startWithJwt = /^JWT expired/
+        // console.log(startWithJwt.test(errText.message));
+        // if (errText.message.match(startWithJwt)) {
+        //     console.log('match');
+        // }
         // console.log(errText.message);
-        if (errText.message == "JWT Token has expired") {
+        // if (errText.message == "JWT Token has expired") {
+        if (errText.message.match(startWithJwt)) {
             var tokenToLocal = localStorage.getItem("token")
             var tokenLocal = JSON.parse(tokenToLocal)
             // var newAccessToken = ""
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refreshtoken`, {
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
                 method: "GET",
                 headers: {
                     "content-type": "application/json",
@@ -37,17 +43,17 @@ const getUser = async () => {
                 },
             })
             var tokenRes = await res.json()
-            // console.log(tokenRes.message);
+            console.log(tokenRes.message);
 
-            if (tokenRes.message == "JWT Refresh Token has expired") {
+            if (tokenRes.message == "Refresh token was expired. Please make a new signin request") {
                 myUser.setLogout()
                 setTimeout(() => {
                     appRouter.push({ name: "SignIn" })
                 }, 500)
-            }else{
+            } else {
                 // newAccessToken = await res.json()
                 // console.log(newAccessToken);
-                tokenLocal.accessToken = tokenRes.token
+                tokenLocal.accessToken = tokenRes.accessToken
                 localStorage.setItem('token', JSON.stringify(tokenLocal))
                 await getUser()
 

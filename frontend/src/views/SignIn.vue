@@ -22,59 +22,71 @@ const jwtToken = ref()
 const users = ref()
 const toSetUser = ref()
 
-const getUserToState = async () => {
+const getUserToState = async (role, email) => {
+  // console.log("role " + role + "email" + email);
+  var roleStr = role.toString()
+  roleStr = roleStr.split("_").pop() 
+  // console.log(roleStr);
   var userLocal = {
-    id: null,
-    name: "",
+    // id: null,
+    // name: "",
     email: "",
     role: ""
   }
-  var tokenToLocal = localStorage.getItem("token")
-  var tokenLocal = JSON.parse(tokenToLocal)
+  // var tokenToLocal = localStorage.getItem("token")
+  // var tokenLocal = JSON.parse(tokenToLocal)
+  myUser.setLogin()
+  myUser.setUserEmail(email)
+  myUser.setUserRole(roleStr)
+  userLocal.email = email
+  userLocal.role = roleStr
+  localStorage.setItem('user', JSON.stringify(userLocal))
+
   // console.log(tokenLocal.accessToken);
   // console.log(tokenLocal.refreshToken);
   // console.log(userLocal);
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users`, {
-    method: "GET",
-    headers: {
-      "content-type": "application/json",
-      "Authorization": `Bearer ${tokenLocal.accessToken}`
-    },
-  })
+  // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${email}`, {
+  //   method: "GET",
+  //   headers: {
+  //     "content-type": "application/json",
+  //     "Authorization": `Bearer ${tokenLocal.accessToken}`
+  //   },
+  // })
+  // console.log(res);
 
-  users.value = await res.json()
-  users.value.map((e) => {
-    // console.log(e);
-    // if (params.email !== undefined && params.password !== undefined) {
-    //   if (e.email == params.email) {
-    //     myUser.setLogin()
-    //     myUser.setUserID(e.id)
-    //     myUser.setUserName(e.name)
-    //     myUser.setUserRole(e.role)
-    //     userLocal.id = e.id
-    //     userLocal.name = e.name
-    //     userLocal.role = e.role
-    //     localStorage.setItem('user', JSON.stringify(userLocal))
+  // users.value = await res.json()
+  // users.value.map((e) => {
+  //   // console.log(e);
+  //   // if (params.email !== undefined && params.password !== undefined) {
+  //   //   if (e.email == params.email) {
+  //   //     myUser.setLogin()
+  //   //     myUser.setUserID(e.id)
+  //   //     myUser.setUserName(e.name)
+  //   //     myUser.setUserRole(e.role)
+  //   //     userLocal.id = e.id
+  //   //     userLocal.name = e.name
+  //   //     userLocal.role = e.role
+  //   //     localStorage.setItem('user', JSON.stringify(userLocal))
 
-    //   }
-    // }
+  //   //   }
+  //   // }
 
-    if (e.email == email.value) {
-      myUser.setLogin()
-      myUser.setUserID(e.id)
-      myUser.setUserName(e.name)
-      myUser.setUserEmail(e.email)
-      myUser.setUserRole(e.role)
-      userLocal.id = e.id
-      userLocal.name = e.name
-      userLocal.email = e.email
-      userLocal.role = e.role
-      localStorage.setItem('user', JSON.stringify(userLocal))
+  //   if (e.email == email.value) {
+  //     myUser.setLogin()
+  //     myUser.setUserID(e.id)
+  //     myUser.setUserName(e.name)
+  //     myUser.setUserEmail(e.email)
+  //     myUser.setUserRole(e.role)
+  //     userLocal.id = e.id
+  //     userLocal.name = e.name
+  //     userLocal.email = e.email
+  //     userLocal.role = e.role
+  //     localStorage.setItem('user', JSON.stringify(userLocal))
 
 
-    }
-  })
-  // console.log(user.value);
+  //   }
+  // })
+  // // console.log(user.value);
 
 
 
@@ -105,7 +117,7 @@ const checkMatch = async () => {
     }
     return;
   }
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login/`, {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/login`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -118,22 +130,23 @@ const checkMatch = async () => {
   // const res = {
   //     status: 200
   // }
+  // console.log(res);
   if (res.status === 200) {
     isChecked.value = true;
     isMatch.value = true;
     isNotSignedIn.value = false;
     jwtToken.value = await res.json()
     // console.log(detail.value);
-    // console.log(jwtToken.value);
+    // console.log(jwtToken.value.roles);
     var token = {
-      accessToken : "",
-      refreshToken : ""
+      accessToken: "",
+      refreshToken: ""
     }
-    token.accessToken = jwtToken.value.token
+    token.accessToken = jwtToken.value.accessToken
     token.refreshToken = jwtToken.value.refreshToken
     localStorage.setItem('token', JSON.stringify(token))
     // console.log(localStorage.getItem("token"));
-    await getUserToState()
+    await getUserToState(jwtToken.value.roles, email.value)
     // myUser.setUserName('qq')
     // myUser.setLogin()
     setTimeout(() => appRouter.push({ name: "Home" }), 1000);
