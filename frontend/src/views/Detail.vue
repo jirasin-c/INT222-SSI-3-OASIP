@@ -6,6 +6,7 @@ import IcEmail from "../icons/IcBaselineEmail.vue";
 import IcTimer from "../icons/IcBaselineTimer.vue";
 import IcCalendar from "../icons/BiCalendarDateFill.vue";
 import IcNote from "../icons/PhNoteFill.vue";
+import { useRouter } from 'vue-router';
 const selectedEvent = ref([]);
 const events = ref([])
 const eventCategory = ref([])
@@ -22,6 +23,8 @@ const isPast = ref(false)
 const isOverlapped = ref(false)
 const duration = ref()
 const exceptDate = ref(null)
+
+const appRouter = useRouter()
 const compareDate = (editDate, currentTime) => {
   if (editDate > currentTime) {
     isPast.value = false
@@ -81,6 +84,9 @@ const getDetailById = async () => {
     headers: myHeader.value,
   }
   );
+  if (res.status == 403) {
+    return appRouter.push({name: "Home"})
+  }
   selectedEvent.value = await res.json();
   // console.log(selectedEvent.value);
   // getEventCategoryName.value =

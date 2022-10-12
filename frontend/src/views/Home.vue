@@ -44,10 +44,42 @@ const getEvent = async () => {
     });
     event.value = await res.json();
   
-    if (res.status == 404 || res.status == 401) {
+    if (res.status == 404) {
       isEmpty.value = true;
       event.value = []
-    } else {
+
+    }else if(res.status == 401){
+      var errText = await res.json()
+        var startWithJwt = /^JWT expired/
+        if (errText.message.match(startWithJwt)) {
+            var tokenToLocal = localStorage.getItem("token")
+            var tokenLocal = JSON.parse(tokenToLocal)
+            // var newAccessToken = ""
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": `Bearer ${tokenLocal.refreshToken}`
+                },
+            })
+            var tokenRes = await res.json()
+            if (tokenRes.message == "Refresh token was expired. Please make a new signin request") {
+                myUser.setLogout()
+                setTimeout(() => {
+                    appRouter.push({ name: "SignIn" })
+                }, 500)
+            } else {
+                // newAccessToken = await res.json()
+                // console.log(newAccessToken);
+                tokenLocal.accessToken = tokenRes.accessToken
+                localStorage.setItem('token', JSON.stringify(tokenLocal))
+                await getEvent()
+
+            }
+
+        }
+    } 
+    else {
       isEmpty.value = false;
     }
   
