@@ -80,8 +80,9 @@ public class AuthenticationService {
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(oldUser.getEmail());
                 final String token = jwtTokenUtil.generateToken(userDetails);
                 final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
-
-                return ResponseEntity.ok(new JwtResponse("Login Success", token, refreshToken));
+                List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(new JwtResponse("Login Success", token, refreshToken, roles));
 
             } else {
                 return ValidationLoginHandler.showError(HttpStatus.UNAUTHORIZED, "Password NOT Matched");
@@ -99,9 +100,10 @@ public class AuthenticationService {
         UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(userEmail);
         String accessToken = jwtTokenUtil.generateToken(userDetails);
         String refreshToken = jwtTokenUtil.extractJwtFromRequest(request);
-
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                .collect(Collectors.toList());
         if(jwtTokenUtil.validateToken(requestRefreshToken, userDetails)){
-            return ResponseEntity.ok(new JwtResponse("Refresh Token Successfully", accessToken, refreshToken));
+            return ResponseEntity.ok(new JwtResponse("Refresh Token Successfully", accessToken, refreshToken,roles));
         }
         return Respond.respond(HttpStatus.NOT_FOUND, "Can't find Refresh Token");
     }

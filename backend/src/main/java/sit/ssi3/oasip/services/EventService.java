@@ -228,7 +228,8 @@ public class EventService {
         event.setBookingEmail(newEvent.getBookingEmail());
         event.setEventCategoryID(newEvent.getEventCategoryID() == null ? null : eventCategoryService.getEventcategoryByID(newEvent.getEventCategoryID()));
         event.setEventStartTime(newEvent.getEventStartTime());
-        event.setUser(userService.getUserByID(newEvent.getUserID()));
+//        event.setUser(userService.getUserByID(newEvent.getUserID()));
+        event.setUser(userService.getUserByEmail(newEvent.getBookingEmail()));
         event.setOverlapped(false);
 
         // find all event

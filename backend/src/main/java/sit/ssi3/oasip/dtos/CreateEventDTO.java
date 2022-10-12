@@ -14,7 +14,7 @@ public class CreateEventDTO implements Serializable {
     private Integer eventDuration;
     private String eventNotes;
     private Integer eventCategoryID;
-    private Integer userID;
+//    private Integer userID;
 }
 
 

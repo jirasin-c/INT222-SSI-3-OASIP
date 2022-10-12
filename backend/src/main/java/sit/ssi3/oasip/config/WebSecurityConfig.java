@@ -46,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .exceptionHandling().accessDeniedHandler(new JwtAccessDenied()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers(HttpMethod.POST, "/api/login",  "api/events").permitAll()
+                .antMatchers("/api/event-categories/**", "/api/events").permitAll()
                 .antMatchers("/api/users" ,"/api/users/**","/api/match/**").hasRole("admin")
 //                .antMatchers("/api/events/**").hasRole("student")
                 .antMatchers(HttpMethod.POST ,  "/api/events/**" ).access("hasRole('admin') or hasRole('student')")

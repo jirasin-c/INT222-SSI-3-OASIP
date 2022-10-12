@@ -69,6 +69,14 @@ public class UserService {
         return modelMapper.map(user, User.class);
     }
 
+    public User getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+//        Eventcategory eventcategory = eventCategoryRepository.findById(categoryID).orElseThrow(() ->
+//                new RuntimeException(categoryID + " Does not Exist !!!"));
+        if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email" + email + " Does not Exits");
+        return modelMapper.map(user, User.class);
+    }
+
     public void createUser(RequestUserDTO newUser) {
         if (newUser.getRole().length() == 0) {
             newUser.setRole("student");
