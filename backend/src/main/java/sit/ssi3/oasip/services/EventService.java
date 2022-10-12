@@ -79,7 +79,7 @@ public class EventService {
 
         } else if (userRole.equals(RoleEnum.student)) {
 //            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
-               eventList = eventRepository.findAllByBookingEmail(userOwner.getEmail());
+               eventList = eventRepository.findAllByBookingEmailOrderByEventStartTimeDesc(userOwner.getEmail());
 
 
         } else if (userRole.equals(RoleEnum.lecturer)){
