@@ -8,7 +8,7 @@ import UserList from "../views/UserList.vue";
 import UserDetail from "../views/UserDetail.vue";
 import AddUser from "../views/AddUser.vue";
 import SignIn from "../views/SignIn.vue";
-import MatchPass from "../views/MatchPass.vue"
+import MatchPass from "../views/MatchPass.vue";
 const history = createWebHistory("/ssi3/");
 // const history = createWebHistory();
 // async function removeQueryParams(to) {
@@ -38,11 +38,39 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+    beforeEnter: (to, form) => {
+      var userLocal = {
+        // id: null,
+        // name: "",
+        email: "",
+        role: "",
+      };
+      if (localStorage.getItem("token") == null) {
+        // myUser.setLogin();
+        // myUser.setUserEmail(email);
+        // myUser.setUserRole("guest");
+        // userLocal.email = email;
+        userLocal.role = 'guest';
+        localStorage.setItem("user", JSON.stringify(userLocal));
+      }
+    },
   },
   {
     path: "/event-detail/:bookingId",
     name: "Detail",
     component: Detail,
+    beforeEnter: (to, form) => {
+      // const myUser = useUser();
+      // console.log(myUser.userRole);
+      // if (myUser.userRole != "admin"){
+      //   return {name: "Home"}
+      // }
+      var userToLocal = localStorage.getItem("user");
+      var userLocal = JSON.parse(userToLocal);
+      if (localStorage.getItem("user") == null) {
+        return { name: "Home" };
+      }
+    },
   },
   {
     path: "/bookings/",
@@ -71,10 +99,10 @@ const routes = [
       var userToLocal = localStorage.getItem("user");
       var userLocal = JSON.parse(userToLocal);
       if (localStorage.getItem("user") == null) {
-        return {name: "SignIn"};
+        return { name: "SignIn" };
       }
       if (localStorage.getItem("user") != null && userLocal.role != "admin") {
-        return {name: "Home"};
+        return { name: "Home" };
       }
     },
   },
@@ -83,7 +111,7 @@ const routes = [
     path: "/user-detail/:name",
     name: "UserDetail",
     component: UserDetail,
-    beforeEnter: (to,form)=>{
+    beforeEnter: (to, form) => {
       // const myUser = useUser();
       // console.log(myUser.userRole);
       // if (myUser.userRole != "admin"){
@@ -92,12 +120,12 @@ const routes = [
       var userToLocal = localStorage.getItem("user");
       var userLocal = JSON.parse(userToLocal);
       if (localStorage.getItem("user") == null) {
-        return {name: "Home"};
+        return { name: "Home" };
       }
       if (localStorage.getItem("user") != null && userLocal.role != "admin") {
-        return {name: "Home"};
+        return { name: "Home" };
       }
-    }
+    },
     // beforeEnter: [removeQueryParams, removeHash],
   },
   {
@@ -112,10 +140,10 @@ const routes = [
       var userToLocal = localStorage.getItem("user");
       var userLocal = JSON.parse(userToLocal);
       if (localStorage.getItem("user") == null) {
-        return {name: "Home"};
+        return { name: "Home" };
       }
       if (localStorage.getItem("user") != null && userLocal.role != "admin") {
-        return {name: "Home"};
+        return { name: "Home" };
       }
     },
   },
@@ -123,11 +151,12 @@ const routes = [
     path: "/sign-in/",
     name: "SignIn",
     component: SignIn,
-  },{
+  },
+  {
     path: "/match-pass/",
     name: "MatchPass",
     component: MatchPass,
-    beforeEnter: (to,from) =>{
+    beforeEnter: (to, from) => {
       // const myUser = useUser()
       // if (myUser.userRole != "admin") {
       //     return { name: "Home" };
@@ -135,12 +164,12 @@ const routes = [
       var userToLocal = localStorage.getItem("user");
       var userLocal = JSON.parse(userToLocal);
       if (localStorage.getItem("user") == null) {
-        return {name: "Home"};
+        return { name: "Home" };
       }
       if (localStorage.getItem("user") != null && userLocal.role != "admin") {
-        return {name: "Home"};
+        return { name: "Home" };
       }
-    }
+    },
   },
 ];
 

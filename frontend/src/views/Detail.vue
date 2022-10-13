@@ -63,10 +63,10 @@ onUpdated(() => {
 })
 const getEvents = async () => {
   createHeader()
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
-      method: "GET",
-      headers: myHeader.value
-    })
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+    method: "GET",
+    headers: myHeader.value
+  })
   events.value = await res.json()
   // console.log(events.value);
 }
@@ -79,13 +79,43 @@ const getEventCategory = async () => {
 const getDetailById = async () => {
   // console.log(bookingId);
   createHeader()
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`,{
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`, {
     method: 'GET',
     headers: myHeader.value,
   }
   );
-  if (res.status == 403) {
-    return appRouter.push({name: "Home"})
+  if (res.status == 403 || res.status == 404) {
+    return appRouter.push({ name: "Home" })
+  } else if (res.status == 401) {
+    var errText = await res.json()
+    var startWithJwt = /^JWT expired/
+    if (errText.message.match(startWithJwt)) {
+      var tokenToLocal = localStorage.getItem("token")
+      var tokenLocal = JSON.parse(tokenToLocal)
+      // var newAccessToken = ""
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          "Authorization": `Bearer ${tokenLocal.refreshToken}`
+        },
+      })
+      var tokenRes = await res.json()
+      if (tokenRes.message == "Refresh token was expired. Please make a new signin request") {
+        myUser.setLogout()
+        setTimeout(() => {
+          appRouter.push({ name: "SignIn" })
+        }, 500)
+      } else {
+        // newAccessToken = await res.json()
+        // console.log(newAccessToken);
+        tokenLocal.accessToken = tokenRes.accessToken
+        localStorage.setItem('token', JSON.stringify(tokenLocal))
+        await getDetailById()
+
+      }
+
+    }
   }
   selectedEvent.value = await res.json();
   // console.log(selectedEvent.value);
