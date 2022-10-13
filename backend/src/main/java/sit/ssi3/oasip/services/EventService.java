@@ -57,35 +57,32 @@ public class EventService {
                     .getValidator();
 
 
-
     public User getUserFromRequest(HttpServletRequest request) {
         if (request.getHeader("Authorization") != null) {
             String token = request.getHeader("Authorization").substring(7);
             String userEmail = jwtTokenUtil.getUsernameFromToken(token);
-            return  userRepository.findByEmail(userEmail);
+            return userRepository.findByEmail(userEmail);
         }
         return null;
     }
 
-    public List<EventDTO> getEvent(String sortBy,HttpServletRequest request) {
+    public List<EventDTO> getEvent(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         RoleEnum userRole = userOwner.getRole();
 //        List<Event> eventList = new ArrayList<>();
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
 
 //        if (userOwner.getRole().equals("admin")){
-        if (userRole.equals(RoleEnum.admin)){
+        if (userRole.equals(RoleEnum.admin)) {
             eventList = eventRepository.findAll(Sort.by(sortBy).descending());
 
         } else if (userRole.equals(RoleEnum.student)) {
 //            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
-               eventList = eventRepository.findAllByBookingEmailOrderByEventStartTimeDesc(userOwner.getEmail());
+            eventList = eventRepository.findAllByBookingEmailOrderByEventStartTimeDesc(userOwner.getEmail());
 
 
-        } else if (userRole.equals(RoleEnum.lecturer)){
-
+        } else if (userRole.equals(RoleEnum.lecturer)) {
             List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
-            System.out.println(categoriesId);
             eventList = eventRepository.findAllByEventCategory(categoriesId);
         }
 
@@ -109,7 +106,6 @@ public class EventService {
     }
 
 
-
     public Object getEventById(HttpServletRequest request, Integer eventId) {
 //        Event event = eventRepository.findById(eventId).orElseThrow(() ->
 //                new ResponseStatusException(
@@ -119,27 +115,48 @@ public class EventService {
 //        return modelMapper.map(event, EventDTO.class);
 //    }
 
-    User userOwner = getUserFromRequest(request);
-    RoleEnum userRole = userOwner.getRole();
-    Event event = eventRepository.findById(eventId)
-            .orElseThrow(()->new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Event ID "+ eventId+
-                    "Does Not Exist !!!"
-            ));
+        User userOwner = getUserFromRequest(request);
+        RoleEnum userRole = userOwner.getRole();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Event ID " + eventId +
+                        "Does Not Exist !!!"
+                ));
 
         if (userRole.equals(RoleEnum.student)) {
-        if (!userOwner.getEmail().equals(event.getBookingEmail())) {
-            return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            }
         }
-    }
-        return modelMapper.map(event, EventDTO.class);
-}
+//            if (userRole.equals(RoleEnum.lecturer)) {
+//                if (!userOwner.getEmail()) {
+//                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
+//                }
+//            }
 
-    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
-        List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
-        //Exception handling
-        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+                return modelMapper.map(event, EventDTO.class);
+            }
+
+
+
+//    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
+//        List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
+//        //Exception handling
+//        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
+//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+//    }
+
+    public List<EventDTO> getEventByCategory (ArrayList id){
+        ArrayList<Event> filterEventList = new ArrayList<>();
+        List<Event> eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
+        for(Event event : eventList){
+            for(Object idCate : id){
+                if(event.getEventCategoryID().getId() == idCate){
+                    filterEventList.add(event);
+                }
+            }
+        }
+        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
     }
 
     public List<EventDTO> getEventUpComing(String sortBy) {

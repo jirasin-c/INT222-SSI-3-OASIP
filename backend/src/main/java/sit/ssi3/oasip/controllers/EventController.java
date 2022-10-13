@@ -49,13 +49,14 @@ public class EventController {
 //    }
 
     public Object getEventByID(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
+
         return eventService.getEventById(request, eventId);
     }
 
-    @GetMapping("/")
-    public List<EventDTO> getEventByCategoryId(@RequestParam("categoryId") Integer categoryId){
-        return eventService.getEventByCategoryId(categoryId);
-    }
+//    @GetMapping("/")
+//    public List<EventDTO> getEventByCategoryId(@RequestParam("categoryId") Integer categoryId){
+//        return eventService.getEventByCategoryId(categoryId);
+//    }
 
     @GetMapping("/upComing")
     public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy){

@@ -16,14 +16,13 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Integer> {
-    List<Event> findByEventCategoryID_Id(Integer eventCatecoryId);
-
-    @Query("select a from Event a where a.bookingEmail = :ownerEmail order by a.eventStartTime DESC")
-    List<Event> findAllByOwner(@Param("ownerEmail") String ownerEmail);
+    List<Event> findByEventCategoryID_Id(Integer eventCategoryId);
+    List<Event> findAllByOrderByEventStartTimeDesc();
 
     List<Event> findAllByBookingEmailOrderByEventStartTimeDesc(String email);
 
-    @Query("select a from Event a where a.eventCategoryID in :idCate")
+//    List<Event> findAllByEventCategoryID(List<Integer> eventCategoryId);
+    @Query("select a from Event a where a.eventCategoryID.id in :idCate")
     List<Event> findAllByEventCategory(@Param("idCate") List<Integer> idCate);
 
 
