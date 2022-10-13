@@ -14,9 +14,12 @@ import sit.ssi3.oasip.config.JwtTokenUtil;
 import sit.ssi3.oasip.dtos.EventDTO;
 import sit.ssi3.oasip.dtos.EventEditDTO;
 import sit.ssi3.oasip.entities.Event;
+import sit.ssi3.oasip.entities.Eventcategory;
+import sit.ssi3.oasip.entities.Eventcategoryowner;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.exceptions.ValidationHandler;
 import sit.ssi3.oasip.repositories.EventCategoryOwnerRepository;
+import sit.ssi3.oasip.repositories.EventCategoryRepository;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.repositories.UserRepository;
@@ -36,6 +39,8 @@ public class EventService {
     private EventCategoryOwnerRepository eventCategoryOwnerRepository;
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EventCategoryRepository eventCategoryRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -128,11 +133,41 @@ public class EventService {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
         }
-//            if (userRole.equals(RoleEnum.lecturer)) {
-//                if (!userOwner.getEmail()) {
+            if (userRole.equals(RoleEnum.lecturer)) {
+                List<Integer> categoryID = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
+                List<Eventcategory> categoryList = eventCategoryRepository.findAllById(categoryID);
+                Eventcategory findEvent = event.getEventCategoryID();
+//
+//                System.out.println("1" +  categoryID);
+//
+//                System.out.println("3" + findEvent);
+
+                categoryList = categoryList.stream().filter(e->{
+//                    System.out.println("f ID" + e.getId());
+//                    System.out.println("n ID" + findEvent.getId());
+                    if (e.getId() == findEvent.getId()){
+                        return true;
+                    }
+                    return false;
+                }).collect(Collectors.toList());
+
+//                System.out.println("2" + categoryList);
+//                eventList = eventList.stream().filter(oldEvent -> {
+//                    Date startTime = new Date(oldEvent.getEventStartTime().getTime());
+//
+//                    if (currentDate.compareTo(startTime) <= 0) {
+//                        return true;
+//                    }
+//                    return false;
+//                }).collect(Collectors.toList());
+//                System.out.println("2" + c);
+//                if (!userOwner.get) {
 //                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
 //                }
-//            }
+                if (categoryList.size() == 0) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
+                }
+            }
 
                 return modelMapper.map(event, EventDTO.class);
             }

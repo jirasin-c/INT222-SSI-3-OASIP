@@ -9,12 +9,12 @@ public class Eventcategoryowner {
     private EventcategoryownerId id;
 
     @MapsId("eventCategoryID")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "eventCategoryID", nullable = false)
     private Eventcategory eventCategoryID;
 
     @MapsId("userID")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "userID", nullable = false)
     private User userID;
 
