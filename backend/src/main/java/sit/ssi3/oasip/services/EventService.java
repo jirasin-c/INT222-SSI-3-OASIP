@@ -165,7 +165,7 @@ public class EventService {
 //                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
 //                }
                 if (categoryList.size() == 0) {
-                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
                 }
             }
 
@@ -181,18 +181,18 @@ public class EventService {
 //        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
 //    }
 
-    public List<EventDTO> getEventByCategory (ArrayList id){
-        ArrayList<Event> filterEventList = new ArrayList<>();
-        List<Event> eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
-        for(Event event : eventList){
-            for(Object idCate : id){
-                if(event.getEventCategoryID().getId() == idCate){
-                    filterEventList.add(event);
-                }
-            }
-        }
-        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
-    }
+//    public List<EventDTO> getEventByCategory (ArrayList id){
+//        ArrayList<Event> filterEventList = new ArrayList<>();
+//        List<Event> eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
+//        for(Event event : eventList){
+//            for(Object idCate : id){
+//                if(event.getEventCategoryID().getId() == idCate){
+//                    filterEventList.add(event);
+//                }
+//            }
+//        }
+//        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
+//    }
 
     public List<EventDTO> getEventUpComing(String sortBy) {
         Date currentDate = new Date();
@@ -269,6 +269,9 @@ public class EventService {
                     return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "the booking email must be the same as student's email");
                 }
             }
+            if (userRole.equals(RoleEnum.lecturer)) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            }
         }
         // map event dto request to event
         Event event = new Event();
@@ -333,6 +336,9 @@ public class EventService {
             }
 
         }
+        if (userRole.equals(RoleEnum.lecturer)) {
+            return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+        }
         eventRepository.deleteById(eventId);
         return  null;
     }
@@ -347,6 +353,9 @@ public class EventService {
 
         if (userRole.equals(RoleEnum.student)) {
             if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+            }
+            if (userRole.equals(RoleEnum.lecturer)) {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
 

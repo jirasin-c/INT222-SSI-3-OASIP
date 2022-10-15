@@ -1,5 +1,6 @@
 package sit.ssi3.oasip.controllers;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -86,12 +87,20 @@ public class EventController {
                 HttpStatus.NOT_FOUND, "Customer id "+ categoryId+
                 "Does Not Exist !!!"
         ));
-        Date date = newEvent.getEventStartTime();
-//        String formattedDate = date.format(DateTimeFormatter.ofPattern("dd-MMM-yy-hh-mm"));
-        String header = "You have made a new appointment for 1 event.";
+
+        Date startTime = new Date(newEvent.getEventStartTime().getTime());
+        Date endTime = new Date(startTime.getTime()+ (newEvent.getEventDuration()*60000));
+        String category = eventCategory.getEventCategoryName();
+
+
+        String header = "[OASIP] " + category + " @ " + startTime + " - " + endTime;
         String body = "Your appointment has been registered successfully. \n \n" +
-                "Details  \n" + "Name : " + newEvent.getBookingName() + "\n" +"Clinic : " + eventCategory.getEventCategoryName() +
-                "\n" + "Date : " + date + "\n" + "Note : " + newEvent.getEventNotes();
+                "Details" +
+                "\n" + "Booking Name : " + newEvent.getBookingName() +
+                "\n" + "Event Category : " + eventCategory.getEventCategoryName() +
+                "\n" + "When : " + startTime + " - " + endTime +
+                "\n" + "Event Notes : " + newEvent.getEventNotes();
+
         emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
         return eventService.createEvent(request, newEvent);
     }
