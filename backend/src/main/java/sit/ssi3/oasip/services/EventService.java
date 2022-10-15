@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.ssi3.oasip.Enum.RoleEnum;
 import sit.ssi3.oasip.config.JwtTokenUtil;
@@ -23,6 +24,7 @@ import sit.ssi3.oasip.repositories.EventCategoryRepository;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.dtos.CreateEventDTO;
 import sit.ssi3.oasip.repositories.UserRepository;
+import sit.ssi3.oasip.storage.StorageService;
 import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +55,10 @@ public class EventService {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private StorageService storageService;
+//    @Autowired
+//    private Validator validator;
     @Autowired
     private static final Validator validator =
             Validation.byDefaultProvider()
@@ -260,7 +266,7 @@ public class EventService {
     }
 
 
-    public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent) {
+    public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent, MultipartFile file) {
         User userOwner = getUserFromRequest(request);
         RoleEnum userRole = userOwner.getRole();
         if (userOwner != null) {
@@ -270,7 +276,7 @@ public class EventService {
                 }
             }
             if (userRole.equals(RoleEnum.lecturer)) {
-                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
         }
         // map event dto request to event
@@ -288,7 +294,7 @@ public class EventService {
         event.setOverlapped(false);
 
         // find all event
-        List<Event> eventList = this.eventRepository.findByEventCategoryID_Id(newEvent.getEventCategoryID() );
+        List<Event> eventList = this.eventRepository.findByEventCategoryID_Id(newEvent.getEventCategoryID());
         if (newEvent.getEventStartTime() != null && event.getEventDuration() != null) {
 
             // check event overlapped
@@ -320,8 +326,16 @@ public class EventService {
         // return when error message contains
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
         // custom error response
-        this.eventRepository.saveAndFlush(event); // return success service
-        return null;
+
+        Event addedEvent = eventRepository.saveAndFlush(event);
+        if (file != null) {
+            if (!file.isEmpty()) {
+                storageService.store(file, addedEvent.getId());
+                return "create event and upload file : " + file.getOriginalFilename() + " successful";
+            }
+            //        this.eventRepository.saveAndFlush(event); // return success service
+        }
+        return "create event successful";
     }
 
     public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
@@ -340,10 +354,11 @@ public class EventService {
             return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
         }
         eventRepository.deleteById(eventId);
+        storageService.deleteFileById(eventId);
         return  null;
     }
 
-    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, Integer eventId) {
+    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, MultipartFile file, Integer eventId) {
         User userOwner = getUserFromRequest(request);
         RoleEnum userRole = userOwner.getRole();
         Event newEvent = modelMapper.map(updateEvent, Event.class);
@@ -361,7 +376,12 @@ public class EventService {
 
         }
 
-        eventRepository.saveAndFlush(event);
+        Event updatedEvent = eventRepository.saveAndFlush(event);
+        if(file.isEmpty()){
+            storageService.deleteFileById(updatedEvent.getId());
+        }else{
+            storageService.store(file, updatedEvent.getId());
+        }
 
         // validate event field
         Set<ConstraintViolation<Event>> violations = validator.validate(event);
@@ -371,6 +391,7 @@ public class EventService {
         // return when error message contains
         if (violations.size() > 0) throw new ConstraintViolationException(violations);
         return modelMapper.map(event, EventDTO.class);
+
     }
 
     private Event mapEvent(Event existingEvent, Event updateEvent) {

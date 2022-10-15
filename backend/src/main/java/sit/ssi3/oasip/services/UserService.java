@@ -16,6 +16,7 @@ import sit.ssi3.oasip.dtos.UserDetailDTO;
 import sit.ssi3.oasip.entities.Eventcategory;
 import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.exceptions.ConstraintException;
+import sit.ssi3.oasip.exceptions.ValidationHandler;
 import sit.ssi3.oasip.repositories.EventRepository;
 import sit.ssi3.oasip.repositories.UserRepository;
 import sit.ssi3.oasip.utils.ListMapper;
@@ -38,6 +39,8 @@ public class UserService {
     private ModelMapper modelMapper;
     @Autowired
     private ListMapper listMapper;
+    @Autowired
+    private  JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private static final Validator validator =
@@ -49,6 +52,17 @@ public class UserService {
 
     private Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
 
+
+
+
+    public User getUserFromRequest(HttpServletRequest request) {
+        if (request.getHeader("Authorization") != null) {
+            String token = request.getHeader("Authorization").substring(7);
+            String userEmail = jwtTokenUtil.getUsernameFromToken(token);
+            return  userRepository.findByEmail(userEmail);
+        }
+        return null;
+    }
 
     public List<RespondUserDTO> getUser(String sortBy) {
         List<User> userList = userRepository.findAll(Sort.by(sortBy).ascending());
@@ -77,7 +91,15 @@ public class UserService {
         return modelMapper.map(user, User.class);
     }
 
-    public void createUser(RequestUserDTO newUser) {
+    public Object createUser(HttpServletRequest request,RequestUserDTO newUser) {
+        User userOwner = getUserFromRequest(request);
+
+        if (userOwner != null) {
+            if (userOwner.getRole().equals("student") || userOwner.getRole().equals("lecturer")) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission to add new user");
+            }
+        }
+
         if (newUser.getRole().length() == 0) {
             newUser.setRole("student");
         }
@@ -106,6 +128,7 @@ public class UserService {
         if (violations.size() > 0) throw new ConstraintException(violations);
 //         custom error response
          this.userRepository.saveAndFlush(user); // return success service
+         return null;
     }
 
     public RequestUserDTO updateUser(RequestUserDTO updateUser, String name) {

@@ -12,6 +12,8 @@ import sit.ssi3.oasip.entities.User;
 import sit.ssi3.oasip.services.UserService;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -27,6 +29,8 @@ public class UserController {
         return userService.getUser(sortBy);
     }
 
+
+
     @GetMapping("/{name}")
     public UserDetailDTO  getUserByName(@PathVariable String name){
         return userService.getUserByName(name);
@@ -34,10 +38,14 @@ public class UserController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity createUser(@RequestBody RequestUserDTO newUser) {
-        userService.createUser(newUser);
-        return new ResponseEntity(HttpStatus.OK);
+//    public ResponseEntity createUser(@RequestBody RequestUserDTO newUser) {
+//        userService.createUser(newUser);
+//        return new ResponseEntity(HttpStatus.OK);
+//    }
+    public Object create(HttpServletRequest request, @Valid @RequestBody RequestUserDTO  newUser) {
+        return userService.createUser(request, newUser);
     }
+
 
     @PutMapping("/{name}")
     public RequestUserDTO updateUser(@RequestBody RequestUserDTO updateUser, @PathVariable String name){
