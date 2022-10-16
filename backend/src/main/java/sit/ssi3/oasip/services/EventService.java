@@ -29,7 +29,6 @@ import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -80,17 +79,13 @@ public class EventService {
     public List<EventDTO> getEvent(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         RoleEnum userRole = userOwner.getRole();
-//        List<Event> eventList = new ArrayList<>();
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
 
-//        if (userOwner.getRole().equals("admin")){
         if (userRole.equals(RoleEnum.admin)) {
             eventList = eventRepository.findAll(Sort.by(sortBy).descending());
 
         } else if (userRole.equals(RoleEnum.student)) {
-//            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
             eventList = eventRepository.findAllByBookingEmailOrderByEventStartTimeDesc(userOwner.getEmail());
-
 
         } else if (userRole.equals(RoleEnum.lecturer)) {
             List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
@@ -99,33 +94,10 @@ public class EventService {
 
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
         return listMapper.mapList(eventList, EventDTO.class, modelMapper);
-
-//        User userOwner = getUserFromRequest(request);
-//        System.out.println(userOwner.getEmail());
-//        List<Event> eventList = new ArrayList<>();
-
-//        if (userOwner.getRole().equals("admin")){
-//            System.out.println("เข้า admin");
-//            eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
-//        } else if (userOwner.getRole().equals("student")) {
-//            System.out.println("เข้า student");
-//            eventList = eventRepository.findAllByOwner(userOwner.getEmail());
-//        }
-//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
-
-
     }
 
 
     public Object getEventById(HttpServletRequest request, Integer eventId) {
-//        Event event = eventRepository.findById(eventId).orElseThrow(() ->
-//                new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND, "Event ID " + eventId + "Does not Exits"
-//                )
-//        );
-//        return modelMapper.map(event, EventDTO.class);
-//    }
-
         User userOwner = getUserFromRequest(request);
         RoleEnum userRole = userOwner.getRole();
         Event event = eventRepository.findById(eventId)
@@ -143,33 +115,13 @@ public class EventService {
                 List<Integer> categoryID = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
                 List<Eventcategory> categoryList = eventCategoryRepository.findAllById(categoryID);
                 Eventcategory findEvent = event.getEventCategoryID();
-//
-//                System.out.println("1" +  categoryID);
-//
-//                System.out.println("3" + findEvent);
-
                 categoryList = categoryList.stream().filter(e->{
-//                    System.out.println("f ID" + e.getId());
-//                    System.out.println("n ID" + findEvent.getId());
                     if (e.getId() == findEvent.getId()){
                         return true;
                     }
                     return false;
                 }).collect(Collectors.toList());
 
-//                System.out.println("2" + categoryList);
-//                eventList = eventList.stream().filter(oldEvent -> {
-//                    Date startTime = new Date(oldEvent.getEventStartTime().getTime());
-//
-//                    if (currentDate.compareTo(startTime) <= 0) {
-//                        return true;
-//                    }
-//                    return false;
-//                }).collect(Collectors.toList());
-//                System.out.println("2" + c);
-//                if (!userOwner.get) {
-//                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event ka");
-//                }
                 if (categoryList.size() == 0) {
                     return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
                 }
@@ -328,6 +280,8 @@ public class EventService {
         // custom error response
 
         Event addedEvent = eventRepository.saveAndFlush(event);
+        System.out.println("aa " +addedEvent.getEventStartTime() );
+
         if (file != null) {
             if (!file.isEmpty()) {
                 storageService.store(file, addedEvent.getId());

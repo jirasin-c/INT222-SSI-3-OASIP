@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -88,15 +90,41 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
-    @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
-    }
+//    @Override
+//    public Path load(String filename) {
+//        return rootLocation.resolve(filename);
+//
+//    }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Path load(Integer eventId, String filename) {
+        return rootLocation.resolve(String.valueOf(eventId)).resolve(filename);
+    }
+
+//    @Override
+//    public Resource loadAsResource(String filename) {
+//        try {
+//            Path file = load(filename);
+//            System.out.println("oo" + file);
+//            Resource resource = new UrlResource(file.toUri());
+//            System.out.println("oooo" +resource);
+//            if (resource.exists() || resource.isReadable()) {
+//                return resource;
+//            }
+//            else {
+//                throw new StorageFileNotFoundException(
+//                        "Could not read file: " + filename);
+//            }
+//        }
+//        catch (MalformedURLException e) {
+//            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+//        }
+//    }
+
+    @Override
+    public Resource loadAsResource(Integer eventId, String filename) {
         try {
-            Path file = load(filename);
+            Path file = load(eventId, filename);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
@@ -110,6 +138,21 @@ public class FileSystemStorageService implements StorageService {
         catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename, e);
         }
+    }
+
+    @Override
+    public List<String> listFileName(Integer eventId) {
+        File folder = new File(rootLocation.resolve(String.valueOf(eventId)).toUri());
+        List<File> listOfFiles = List.of(folder.listFiles());
+        List<String> listOfFilenames = new ArrayList<>();
+
+        for (File file : listOfFiles) {
+            if (file.isFile()) {
+                listOfFilenames.add(file.getName());
+                System.out.println(listOfFilenames);
+            }
+        }
+        return listOfFilenames;
     }
 
     @Override

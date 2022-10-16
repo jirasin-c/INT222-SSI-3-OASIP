@@ -1,6 +1,6 @@
 package sit.ssi3.oasip.controllers;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
@@ -22,8 +22,6 @@ import sit.ssi3.oasip.services.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -89,7 +87,6 @@ public class EventController {
         Date startTime = new Date(newEvent.getEventStartTime().getTime());
         Date endTime = new Date(startTime.getTime()+ (newEvent.getEventDuration()*60000));
         String category = eventCategory.getEventCategoryName();
-
 
         String header = "[OASIP] " + category + " @ " + startTime + " - " + endTime;
         String body = "Your appointment has been registered successfully. \n \n" +

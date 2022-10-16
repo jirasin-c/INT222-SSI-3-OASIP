@@ -31,15 +31,12 @@ public class EventCategoryService {
         return listMapper.mapList(eventCategoryList, EventcategoryDTO.class, modelMapper);
     }
 
-    
     public EventcategoryDTO getEventCategoryByName(String categoryName) {
         Eventcategory eventcategory = eventCategoryRepository.findByEventCategoryNameEquals(categoryName);
         //Exception handling
         if (eventcategory == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event category not found");
         return modelMapper.map(eventcategory, EventcategoryDTO.class);
-
     }
-
 
     public Eventcategory getEventcategoryByID(Integer categoryID) {
         Eventcategory eventcategory = eventCategoryRepository.findById(categoryID).orElseThrow(() ->

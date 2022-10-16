@@ -4,6 +4,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Stream;
 
 public interface StorageService {
@@ -14,9 +15,13 @@ public interface StorageService {
 
     Stream<Path> loadAll();
 
-    Path load(String filename);
+//    Path load(String filename);
+    Path load(Integer eventId, String filename);
 
-    Resource loadAsResource(String filename);
+//    Resource loadAsResource(String filename);
+    Resource loadAsResource(Integer eventId, String filename);
+
+    List<String> listFileName(Integer eventId);
 
     void deleteAll();
 
