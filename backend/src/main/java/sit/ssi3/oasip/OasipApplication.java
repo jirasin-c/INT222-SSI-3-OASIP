@@ -21,8 +21,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class OasipApplication {
 
-    @Autowired
-    private EmailSenderService emailSenderService;
 
     public static void main(String[] args) throws IOException {
         TimeZone tz = TimeZone.getTimeZone("Asia/Bangkok");

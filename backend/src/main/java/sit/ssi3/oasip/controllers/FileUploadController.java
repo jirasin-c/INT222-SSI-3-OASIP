@@ -1,6 +1,18 @@
 package sit.ssi3.oasip.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,10 +27,8 @@ import sit.ssi3.oasip.storage.StorageException;
 import sit.ssi3.oasip.storage.StorageFileNotFoundException;
 import sit.ssi3.oasip.storage.StorageService;
 
+
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -43,17 +53,6 @@ public class FileUploadController {
         return "uploadForm";
     }
 
-
-//        @GetMapping("/{filename:.+}")
-//        @ResponseBody
-//        public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-//            Resource file = storageService.loadAsResource(filename);
-////            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-////                    "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-//            return  ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(file);
-//        }
-
-
     @GetMapping("/{eventId}")
     public ResponseEntity<Object> listFileName(@PathVariable Integer eventId) {
         List<String> filenames = storageService.listFileName(eventId);
@@ -63,7 +62,7 @@ public class FileUploadController {
 
     @GetMapping(path = "/{eventId}/{filename:.+}", produces = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable Integer eventId, @PathVariable String filename, HttpServletRequest request) {
+    public ResponseEntity<Resource> serveFile(@PathVariable Integer eventId, @PathVariable String filename, HttpServletRequest request){
 
         Resource file = storageService.loadAsResource(eventId, filename);
 
@@ -77,7 +76,7 @@ public class FileUploadController {
         }
 
         // Fallback to the default content type if type could not be determined
-        if (contentType == null) {
+        if(contentType == null) {
             contentType = "application/octet-stream";
         }
 
@@ -108,6 +107,6 @@ public class FileUploadController {
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
     }
-}
 
+}
 

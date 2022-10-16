@@ -15,10 +15,8 @@ public interface StorageService {
 
     Stream<Path> loadAll();
 
-//    Path load(String filename);
     Path load(Integer eventId, String filename);
 
-//    Resource loadAsResource(String filename);
     Resource loadAsResource(Integer eventId, String filename);
 
     List<String> listFileName(Integer eventId);

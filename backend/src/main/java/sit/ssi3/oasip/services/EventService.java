@@ -280,14 +280,13 @@ public class EventService {
         // custom error response
 
         Event addedEvent = eventRepository.saveAndFlush(event);
-        System.out.println("aa " +addedEvent.getEventStartTime() );
 
         if (file != null) {
             if (!file.isEmpty()) {
                 storageService.store(file, addedEvent.getId());
                 return "create event and upload file : " + file.getOriginalFilename() + " successful";
             }
-            //        this.eventRepository.saveAndFlush(event); // return success service
+//                    this.eventRepository.saveAndFlush(event); // return success service
         }
         return "create event successful";
     }

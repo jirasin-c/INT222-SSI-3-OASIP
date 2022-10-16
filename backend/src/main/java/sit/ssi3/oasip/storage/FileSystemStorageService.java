@@ -14,12 +14,10 @@ import java.util.stream.Stream;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -90,36 +88,10 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
-//    @Override
-//    public Path load(String filename) {
-//        return rootLocation.resolve(filename);
-//
-//    }
-
     @Override
     public Path load(Integer eventId, String filename) {
         return rootLocation.resolve(String.valueOf(eventId)).resolve(filename);
     }
-
-//    @Override
-//    public Resource loadAsResource(String filename) {
-//        try {
-//            Path file = load(filename);
-//            System.out.println("oo" + file);
-//            Resource resource = new UrlResource(file.toUri());
-//            System.out.println("oooo" +resource);
-//            if (resource.exists() || resource.isReadable()) {
-//                return resource;
-//            }
-//            else {
-//                throw new StorageFileNotFoundException(
-//                        "Could not read file: " + filename);
-//            }
-//        }
-//        catch (MalformedURLException e) {
-//            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
-//        }
-//    }
 
     @Override
     public Resource loadAsResource(Integer eventId, String filename) {
