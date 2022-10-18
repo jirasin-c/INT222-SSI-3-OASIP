@@ -1,6 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `oasip` /*!40100 DEFAULT CHARACTER SET utf8 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `oasip`;
-
 -- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: oasip
@@ -33,12 +32,9 @@ CREATE TABLE `event` (
   `eventDuration` int NOT NULL,
   `eventNotes` varchar(500) DEFAULT NULL,
   `eventCategoryID` int NOT NULL,
-  `User_ID` int NOT NULL,
   PRIMARY KEY (`eventID`),
   KEY `fk_Event_EventCategory1_idx` (`eventCategoryID`),
-  KEY `fk_Event_User2_idx` (`User_ID`),
-  CONSTRAINT `fk_Event_EventCategory1` FOREIGN KEY (`eventCategoryID`) REFERENCES `eventcategory` (`eventCategoryID`),
-  CONSTRAINT `fk_Event_User2` FOREIGN KEY (`User_ID`) REFERENCES `user` (`userID`)
+  CONSTRAINT `fk_Event_EventCategory1` FOREIGN KEY (`eventCategoryID`) REFERENCES `eventcategory` (`eventCategoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,7 +44,7 @@ CREATE TABLE `event` (
 
 LOCK TABLES `event` WRITE;
 /*!40000 ALTER TABLE `event` DISABLE KEYS */;
-INSERT INTO `event` VALUES (1,'Somchai Jaidee(OR-7)','somchai.jai@mail.kmutt.ac.th','2022-05-23 13:30:00',30,'',2,2),(2,'Somsri Rakdee(SJ-3)','somsri.rak@mail.kmutt.ac.th','2022-04-27 09:30:00',30,'ขอปรึกษาปัญหาเพื่อนไม่ช่วยงาน',1,3),(3,'สมเกียรติ ขยันเรียน กลุ่ม TT-4','somkiat.kay@kmutt.ac.th','2022-05-23 16:30:05',15,'',3,4);
+INSERT INTO `event` VALUES (1,'Somchai Jaidee(OR-7)','somchai.jai@mail.kmutt.ac.th','2022-05-23 13:30:00',30,'',2),(2,'Somsri Rakdee(SJ-3)','somsri.rak@mail.kmutt.ac.th','2022-04-27 09:30:00',30,'ขอปรึกษาปัญหาเพื่อนไม่ช่วยงาน',1),(3,'สมเกียรติ ขยันเรียน กลุ่ม TT-4','somkiat.kay@kmutt.ac.th','2022-05-23 16:30:05',15,'',3);
 /*!40000 ALTER TABLE `event` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,7 +71,7 @@ CREATE TABLE `eventcategory` (
 
 LOCK TABLES `eventcategory` WRITE;
 /*!40000 ALTER TABLE `eventcategory` DISABLE KEYS */;
-INSERT INTO `eventcategory` VALUES (1,'Project Management Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย project management clinic ในวิชา INT221 integrated project I ให้นักศึกษาเตรียมเอกสารที่เกี่ยวข้องเพื่อแสดงระหว่างขอคำปรึกษา',30),(2,'DevOps/Infra Clinic','Use this event category for DevOps/Infra clinic.',20),(3,'Database Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย database clinic ในวิชา INT221 integrated project I',15),(4,'Client-side Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย client-side clinic ในวิชา INT221 integrated project I',30),(5,'Server-side Clinic','',30);
+INSERT INTO `eventcategory` VALUES (1,'Project Management Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย project management clinic ในวิชา INT221 integrated project I ให้นักศึกษาเตรียมเอกสารที่เกี่ยวข้องเพื่อแสดงระหว่างขอคำปรึกษา',30),(2,' DevOps/Infra Clinic','Use this event category for DevOps/Infra clinic.',20),(3,' Database Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย database clinic ในวิชา INT221 integrated project I',15),(4,' Client-side Clinic','ตารางนัดหมายนี้ใช้สำหรับนัดหมาย client-side clinic ในวิชา INT221 integrated project I',30),(5,' Server-side Clinic','',30);
 /*!40000 ALTER TABLE `eventcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,7 +116,7 @@ CREATE TABLE `user` (
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `role` enum('admin','lecturer','student') DEFAULT 'student' NOT NULL,
+  `role` enum('admin','lecturer','student') NOT NULL,
   `createdOn` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `updatedOn` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (`userID`),
@@ -148,7 +144,8 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-10-12  1:35:27
+-- Dump completed on 2022-10-18 23:46:08
+
 CREATE USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'trimitr56';
 GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%';
 flush privileges;

@@ -31,14 +31,11 @@ public class EventController {
     @Autowired
     private EventService eventService;
     @Autowired
-    private EmailSenderService emailSenderService;
-    @Autowired
     private EventCategoryRepository eventCategoryRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+
 
     @GetMapping("")
-    public List<EventDTO> getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy,@Valid HttpServletRequest request) {
+    public Object getEvent(@RequestParam(defaultValue = "eventStartTime") String sortBy,@Valid HttpServletRequest request) {
         return eventService.getEvent(sortBy,request);
     }
 

@@ -76,10 +76,16 @@ public class EventService {
         return null;
     }
 
-    public List<EventDTO> getEvent(String sortBy, HttpServletRequest request) {
+    public Object getEvent(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
+        if(userOwner == null){
+            return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
+        }
+
+
         RoleEnum userRole = userOwner.getRole();
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
+
 
         if (userRole.equals(RoleEnum.admin)) {
             eventList = eventRepository.findAll(Sort.by(sortBy).descending());
@@ -99,6 +105,9 @@ public class EventService {
 
     public Object getEventById(HttpServletRequest request, Integer eventId) {
         User userOwner = getUserFromRequest(request);
+        if(userOwner == null){
+            return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
+        }
         RoleEnum userRole = userOwner.getRole();
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -220,8 +229,9 @@ public class EventService {
 
     public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent, MultipartFile file) {
         User userOwner = getUserFromRequest(request);
-        RoleEnum userRole = userOwner.getRole();
-        if (userOwner != null) {
+        if(userOwner != null){
+            RoleEnum userRole = userOwner.getRole();
+
             if (userRole.equals(RoleEnum.student)) {
                 if (!userOwner.getEmail().equals(newEvent.getBookingEmail())) {
                     return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "the booking email must be the same as student's email");
@@ -231,6 +241,8 @@ public class EventService {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
         }
+
+
         // map event dto request to event
         Event event = new Event();
         event.setId(null);
@@ -242,7 +254,7 @@ public class EventService {
         event.setEventCategoryID(newEvent.getEventCategoryID() == null ? null : eventCategoryService.getEventcategoryByID(newEvent.getEventCategoryID()));
         event.setEventStartTime(newEvent.getEventStartTime());
 //        event.setUser(userService.getUserByID(newEvent.getUserID()));
-        event.setUser(userService.getUserByEmail(newEvent.getBookingEmail()));
+//        event.setUser(userService.getUserByEmail(newEvent.getBookingEmail()));
         event.setOverlapped(false);
 
         // find all event
@@ -293,6 +305,9 @@ public class EventService {
 
     public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
         User userOwner = getUserFromRequest(request);
+        if(userOwner == null){
+            return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
+        }
         RoleEnum userRole = userOwner.getRole();
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
@@ -313,6 +328,9 @@ public class EventService {
 
     public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, MultipartFile file, Integer eventId) {
         User userOwner = getUserFromRequest(request);
+        if(userOwner == null){
+            return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
+        }
         RoleEnum userRole = userOwner.getRole();
         Event newEvent = modelMapper.map(updateEvent, Event.class);
         Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(

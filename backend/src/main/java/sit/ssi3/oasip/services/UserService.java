@@ -178,7 +178,7 @@ public class UserService {
 //        System.out.println(name);
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
 //        eventRepository.deleteEventsByUserId(user.getId());
-        eventRepository.deleteAllByUser(user);
+//        eventRepository.deleteAllByUser(user);
         userRepository.deleteUserByName(name);
     }
 

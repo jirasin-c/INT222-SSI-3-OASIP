@@ -52,8 +52,8 @@ public class Event {
     private boolean isOverlapped;
 
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "User_ID")
-    private User user;
+//    @ManyToOne(optional = false)
+//    @JoinColumn(name = "User_ID")
+//    private User user;
 
 }

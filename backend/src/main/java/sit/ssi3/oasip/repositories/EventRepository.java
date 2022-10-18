@@ -29,6 +29,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 //    @Modifying
 //    @Query("delete from Event e where e.user.id = ?1")
 //    void deleteEventsByUserId(Integer id);
-    @Transactional
-    void deleteAllByUser(User user);
+//    @Transactional
+//    void deleteAllByUser(User user);
 }
