@@ -27,72 +27,72 @@ const getName = async () => {
     // console.log(userLocal);
     myUser.setLogin()
 
-      myUser.setUserEmail(userLocal.email)
-      myUser.setUserRole(userLocal.role)
-  //   const fetchName = userLocal.name
-  //   var tokenToLocal = localStorage.getItem("token")
-  //   var tokenLocal = JSON.parse(tokenToLocal)
-  //   // console.log(localStorage.getItem("token"));
-  //   // console.log(localStorage.getItem("name"));
-  //   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${fetchName}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "content-type": "application/json",
-  //       "Authorization": `Bearer ${tokenLocal.accessToken}`
-  //     },
-  //   })
+    myUser.setUserEmail(userLocal.email)
+    myUser.setUserRole(userLocal.role)
+    //   const fetchName = userLocal.name
+    //   var tokenToLocal = localStorage.getItem("token")
+    //   var tokenLocal = JSON.parse(tokenToLocal)
+    //   // console.log(localStorage.getItem("token"));
+    //   // console.log(localStorage.getItem("name"));
+    //   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/users/${fetchName}`, {
+    //     method: "GET",
+    //     headers: {
+    //       "content-type": "application/json",
+    //       "Authorization": `Bearer ${tokenLocal.accessToken}`
+    //     },
+    //   })
 
-  //   if (res.status === 401) {
-  //     var errText = await res.json()
-  //     console.log(errText.message);
-  //     if (errText.message == "JWT Token has expired") {
-  //       var tokenToLocal = localStorage.getItem("token")
-  //       var tokenLocal = JSON.parse(tokenToLocal)
-  //       // var newAccessToken = ""
-  //       const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refreshtoken`, {
-  //         method: "GET",
-  //         headers: {
-  //           "content-type": "application/json",
-  //           "Authorization": `Bearer ${tokenLocal.refreshToken}`
-  //         },
-  //       })
-  //       var tokenRes = await res.json()
-  //       console.log(tokenRes.message);
+    //   if (res.status === 401) {
+    //     var errText = await res.json()
+    //     console.log(errText.message);
+    //     if (errText.message == "JWT Token has expired") {
+    //       var tokenToLocal = localStorage.getItem("token")
+    //       var tokenLocal = JSON.parse(tokenToLocal)
+    //       // var newAccessToken = ""
+    //       const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refreshtoken`, {
+    //         method: "GET",
+    //         headers: {
+    //           "content-type": "application/json",
+    //           "Authorization": `Bearer ${tokenLocal.refreshToken}`
+    //         },
+    //       })
+    //       var tokenRes = await res.json()
+    //       console.log(tokenRes.message);
 
-  //       if (tokenRes.message == "JWT Refresh Token has expired") {
-  //         myUser.setLogout()
-  //         // appRouter.push({ name: "SignIn" })
-  //       } else {
-  //         // newAccessToken = await res.json()
-  //         // console.log(newAccessToken);
-  //         tokenLocal.accessToken = tokenRes.token
-  //         localStorage.setItem('token', JSON.stringify(tokenLocal))
-  //         await getName()
-  //         // newAccessToken = await res.json()
-  //         // console.log(newAccessToken);
-  //         // tokenLocal.accessToken = newAccessToken.token
-  //         // localStorage.setItem('token', JSON.stringify(tokenLocal))
-  //         // getName()
-  //       }
-  //     }
-  //   } else {
-  //     // console.log(res.status);
-  //     user.value = await res.json()
-  //     // console.log(user.value);
-  //     // user.value.map((e) => {
-  //     //   // console.log(e);
-  //     //   if (e.email == email.value) {
-  //     myUser.setLogin()
-  //     myUser.setUserName(user.value.name)
-  //     myUser.setUserEmail(user.value.email)
-  //     myUser.setUserRole(user.value.role)
-  //     // localStorage.setItem('name', e.name)
+    //       if (tokenRes.message == "JWT Refresh Token has expired") {
+    //         myUser.setLogout()
+    //         // appRouter.push({ name: "SignIn" })
+    //       } else {
+    //         // newAccessToken = await res.json()
+    //         // console.log(newAccessToken);
+    //         tokenLocal.accessToken = tokenRes.token
+    //         localStorage.setItem('token', JSON.stringify(tokenLocal))
+    //         await getName()
+    //         // newAccessToken = await res.json()
+    //         // console.log(newAccessToken);
+    //         // tokenLocal.accessToken = newAccessToken.token
+    //         // localStorage.setItem('token', JSON.stringify(tokenLocal))
+    //         // getName()
+    //       }
+    //     }
+    //   } else {
+    //     // console.log(res.status);
+    //     user.value = await res.json()
+    //     // console.log(user.value);
+    //     // user.value.map((e) => {
+    //     //   // console.log(e);
+    //     //   if (e.email == email.value) {
+    //     myUser.setLogin()
+    //     myUser.setUserName(user.value.name)
+    //     myUser.setUserEmail(user.value.email)
+    //     myUser.setUserRole(user.value.role)
+    //     // localStorage.setItem('name', e.name)
 
-  //     //   }
-  //     // })
-  //   }
+    //     //   }
+    //     // })
+    //   }
 
-   }
+  }
 }
 
 onBeforeMount(async () => {
@@ -123,7 +123,8 @@ onBeforeMount(async () => {
           </router-link>
         </div>
         <div class="ml-5">
-          <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg">BOOKS</router-link>
+          <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg"
+            v-show="myUser.userRole != 'lecturer' ">BOOKS</router-link>
           <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
           </router-link>
           <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
@@ -133,8 +134,7 @@ onBeforeMount(async () => {
       </div>
       <div class="mr-20" v-if="myUser.isLogin == true">
         <!-- <router-link :to="{ name: 'UserDetail', params: { name: myUser.userName } }" -->
-        <button
-          class="btn btn-ghost normal-case text-lg hover:btn-primary ">
+        <button class="btn btn-ghost normal-case text-lg hover:btn-primary ">
           Welcome: {{myUser.userEmail}}
         </button>
         <button @click="logout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT

@@ -19,70 +19,72 @@ const filterType = ref("Select type")
 const myHeader = ref()
 
 const createHeader = () => {
-    if (localStorage.getItem('token') != null) {
-        var tokenToLocal = localStorage.getItem("token")
-        var tokenLocal = JSON.parse(tokenToLocal)
-        // console.log(tokenLocal);
-        myHeader.value = new Headers({
-            "content-type": "application/json",
-            "Authorization": `Bearer ${tokenLocal.accessToken}`,
-        })
-    }
+  if (localStorage.getItem('token') != null) {
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
+    // console.log(tokenLocal);
+    myHeader.value = new Headers({
+      "content-type": "application/json",
+      "Authorization": `Bearer ${tokenLocal.accessToken}`,
+    })
+  }
 }
 
 const getEvent = async () => {
-  if (localStorage.getItem('token') != null){
+  if (localStorage.getItem('token') != null) {
     isFindeNoByCategory.value = false
     isFindeNoByUpComing.value = false;
     isFindeNoByPass.value = false
     isFindeNoByDate.value = false
     isEmpty.value = false
     createHeader()
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
       method: "GET",
       headers: myHeader.value
     });
-    event.value = await res.json();
-  
-    if (res.status == 404) {
+
+    if (res.status === 404) {
       isEmpty.value = true;
       event.value = []
 
-    }else if(res.status == 401){
-      var errText = await res.json()
-        var startWithJwt = /^JWT expired/
-        if (errText.message.match(startWithJwt)) {
-            var tokenToLocal = localStorage.getItem("token")
-            var tokenLocal = JSON.parse(tokenToLocal)
-            // var newAccessToken = ""
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
-                method: "GET",
-                headers: {
-                    "content-type": "application/json",
-                    "Authorization": `Bearer ${tokenLocal.refreshToken}`
-                },
-            })
-            var tokenRes = await res.json()
-            if (tokenRes.message == "Refresh token was expired. Please make a new signin request") {
-                myUser.setLogout()
-                setTimeout(() => {
-                    appRouter.push({ name: "SignIn" })
-                }, 500)
-            } else {
-                // newAccessToken = await res.json()
-                // console.log(newAccessToken);
-                tokenLocal.accessToken = tokenRes.accessToken
-                localStorage.setItem('token', JSON.stringify(tokenLocal))
-                await getEvent()
+    }
 
-            }
+    if (res.status === 401 || res.status === 500) {
+      var errText = await res.json()
+      var startWithJwt = /^JWT expired/
+      if (errText.message.match(startWithJwt)) {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // var newAccessToken = ""
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/refresh`, {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.refreshToken}`
+          },
+        })
+        var tokenRes = await res.json()
+        if (tokenRes.message == "Refresh token was expired. Please make a new signin request") {
+          myUser.setLogout()
+          setTimeout(() => {
+            appRouter.push({ name: "Home" })
+          }, 500)
+        } else {
+          // newAccessToken = await res.json()
+          // console.log(newAccessToken);
+          tokenLocal.accessToken = tokenRes.accessToken
+          localStorage.setItem('token', JSON.stringify(tokenLocal))
+          await getEvent()
 
         }
-    } 
+
+      }
+    }
     else {
+      event.value = await res.json();
       isEmpty.value = false;
     }
-  
+
     event.value.filter((e) => {
       const localDate = new Date(e.eventStartTime).toLocaleString("th-TH", {
         weekday: "short",
@@ -94,15 +96,15 @@ const getEvent = async () => {
       });
       e.eventStartTime = localDate;
     });
-  }else{
+  } else {
     isEmpty.value = true;
-      event.value = []
+    event.value = []
   }
 
 }
 
 const getEventCategory = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`,{
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`, {
     method: "GET",
     headers: {
       "content-type": "application/json",
