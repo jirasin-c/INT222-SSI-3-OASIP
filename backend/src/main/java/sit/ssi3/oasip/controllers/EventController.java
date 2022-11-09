@@ -32,6 +32,8 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
 
     @GetMapping("")
@@ -92,6 +94,7 @@ public class EventController {
                 "\n" + "Event Category : " + eventCategory.getEventCategoryName() +
                 "\n" + "When : " + startTime + " - " + endTime +
                 "\n" + "Event Notes : " + newEvent.getEventNotes();
+
 
 //        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
 

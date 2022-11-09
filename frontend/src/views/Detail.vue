@@ -23,6 +23,8 @@ const isPast = ref(false)
 const isOverlapped = ref(false)
 const duration = ref()
 const exceptDate = ref(null)
+const roleToLocal = localStorage.getItem("user")
+const roleLocal = JSON.parse(roleToLocal)
 
 const appRouter = useRouter()
 const compareDate = (editDate, currentTime) => {
@@ -84,7 +86,7 @@ const getDetailById = async () => {
     headers: myHeader.value,
   }
   );
-  if (res.status == 403 || res.status == 404) {
+  if (res.status == 403 || res.status == 404 || res.status == 401) {
     return appRouter.push({ name: "Home" })
   } else if (res.status == 401) {
     var errText = await res.json()
@@ -330,7 +332,7 @@ window.onbeforeunload = function () {
             </p> -->
           </div>
           <div class="card-actions justify-end m-5">
-            <button class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
+            <button v-if="roleLocal.role != 'lecturer'" class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
             <button class="btn btn-accent border-none " @click="isEdit = true, updateEvent()"
               v-show="isEdit">Apply</button>
             <button class="btn btn-secondary border-none "

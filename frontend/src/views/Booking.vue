@@ -24,11 +24,21 @@ const isOverlapped = ref(false)
 const isNotEmail = ref(false)
 const alertText = ref('')
 const myHeader = ref()
+// const formData = new FormData()
 
 const createHeader = () => {
+    var userToLocal = localStorage.getItem("user")
+    var userLocal = JSON.parse(userToLocal)
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
+    if (userLocal.role == "guest") {
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+        })
+    }
     if (localStorage.getItem('token') != null) {
-        var tokenToLocal = localStorage.getItem("token")
-        var tokenLocal = JSON.parse(tokenToLocal)
+        // var tokenToLocal = localStorage.getItem("token")
+        // var tokenLocal = JSON.parse(tokenToLocal)
         // console.log(tokenLocal);
         myHeader.value = new Headers({
             "content-type": "application/json",
@@ -230,19 +240,37 @@ const createEvent = async () => {
             var userToLocal = localStorage.getItem("user")
             var userLocal = JSON.parse(userToLocal)
             createHeader()
+            // if (userLocal.role == "guest") {
+            const formData = new FormData()
+            myHeader.value = new Headers({
+                "accept": "*/*",
+                // "content-Type": "multipart/form-data"
+            })
+            formData.append('event', `{"bookingName": "${name.value}",
+                    "bookingEmail": "${email.value}",
+                    "eventStartTime": "${utc}",
+                    "eventDuration": ${duration.value},
+                    "eventNotes": "${notes.value}",
+                    "eventCategoryID": ${categoryID.value}}`)
+            formData.append('file', '')
+            // }
+            // const formData = new FormData()
+
             const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
                 method: 'POST',
                 headers: myHeader.value,
-                body: JSON.stringify({
-                    // userID: myUser.userID,
-                    // userID: userLocal.id,
-                    bookingName: name.value,
-                    bookingEmail: email.value,
-                    eventStartTime: utc,
-                    eventDuration: duration.value,
-                    eventNotes: notes.value,
-                    eventCategoryID: categoryID.value,
-                })
+                body: formData
+                // body: JSON.stringify({
+                //     // userID: myUser.userID,
+                //     // userID: userLocal.id,
+                //     bookingName: name.value,
+                //     bookingEmail: email.value,
+                //     eventStartTime: utc,
+                //     eventDuration: duration.value,
+                //     eventNotes: notes.value,
+                //     eventCategoryID: categoryID.value,
+                // },
+                // )
             })
             if (res.status === 200) {
                 startTime.value = null
@@ -265,20 +293,25 @@ const createEvent = async () => {
 }
 const getEventCategory = async () => {
     createHeader()
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`,{
-    method: "GET",
-    headers: myHeader.value
-  })
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/event-categories`, {
+        method: "GET",
+        headers: myHeader.value
+    })
     eventCategory.value = await res.json()
     // console.log(eventCategory.value);
 }
 const getEvents = async () => {
     createHeader()
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`,{
-    method: "GET",
-    headers: myHeader.value
-  })
-    events.value = await res.json()
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+        method: "GET",
+        headers: myHeader.value
+    })
+    if (res.status == 401) {
+        events.value = []
+    } else {
+        events.value = await res.json()
+    }
+
     // console.log(events.value);
 }
 

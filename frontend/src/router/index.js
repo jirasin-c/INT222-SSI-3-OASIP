@@ -70,12 +70,27 @@ const routes = [
       if (localStorage.getItem("user") == null) {
         return { name: "Home" };
       }
+      // if (localStorage.getItem("user") != null && userLocal.role == "lecturer") {
+      //   return { name: "Home" };
+      // }
     },
   },
   {
     path: "/bookings/",
     name: "Booking",
     component: Booking,
+    beforeEnter: (to, form) => {
+      // const myUser = useUser();
+      // console.log(myUser.userRole);
+      // if (myUser.userRole != "admin"){
+      //   return {name: "Home"}
+      // }
+      var userToLocal = localStorage.getItem("user");
+      var userLocal = JSON.parse(userToLocal);
+      if (localStorage.getItem("user") != null && userLocal.role == "lecturer") {
+        return { name: "Home" };
+      }
+    },
   },
   {
     path: "/categories/",

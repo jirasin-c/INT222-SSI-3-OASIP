@@ -8,6 +8,10 @@ const prop = defineProps({
     require: true,
   },
 });
+const roleToLocal = localStorage.getItem("user")
+const roleLocal = JSON.parse(roleToLocal)
+// console.log(roleLocal.role != "lecturer");
+
 defineEmits(["viewDetail", "deleteEvent"]);
 </script>
 
@@ -32,7 +36,8 @@ defineEmits(["viewDetail", "deleteEvent"]);
 
             </div>
           </div>
-          <div class="justify-self-end flex bg-slate-100 hover:bg-slate-600 rounded-full  w-9 h-9 lg:w-auto lg:h-14">
+          <div  v-show="roleLocal.role != 'lecturer'"
+          class="justify-self-end flex bg-slate-100 hover:bg-slate-600 rounded-full  w-9 h-9 lg:w-auto lg:h-14">
             <button
               @click="$emit('deleteEvent', { deleteId: booking.id, deleteName: booking.bookingName, event: $event })">
               <RiDeleteBin6Line class=" mx-2 lg:mx-3" />
