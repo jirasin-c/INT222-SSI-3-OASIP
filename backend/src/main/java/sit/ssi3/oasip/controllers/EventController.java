@@ -51,18 +51,18 @@ public class EventController {
     }
 
     @GetMapping("/upComing")
-    public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy){
-        return eventService.getEventUpComing(sortBy);
+    public  List<EventDTO> getEventUpComing(@RequestParam(defaultValue = "eventStartTime") String sortBy,HttpServletRequest request){
+        return eventService.getEventUpComing(sortBy,request);
     }
 
     @GetMapping("/past")
-    public  List<EventDTO> getEventPast(@RequestParam(defaultValue ="eventStartTime") String sortBy){
-        return eventService.getEventPast(sortBy);
+    public  List<EventDTO> getEventPast(@RequestParam(defaultValue ="eventStartTime") String sortBy,HttpServletRequest request){
+        return eventService.getEventPast(sortBy,request);
     }
 
     @GetMapping("/day")
-    public List<EventDTO> getListDay(@RequestParam("dateEvent") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateEvent, @RequestParam(defaultValue = "eventStartTime") String sortBy){
-        return  eventService.getListDay(dateEvent,sortBy);
+    public List<EventDTO> getListDay(@RequestParam("dateEvent") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateEvent, @RequestParam(defaultValue = "eventStartTime") String sortBy,HttpServletRequest request){
+        return  eventService.getListDay(dateEvent,sortBy,request);
     }
 
 //    @PostMapping("")
@@ -94,6 +94,7 @@ public class EventController {
                 "\n" + "Event Notes : " + newEvent.getEventNotes();
 
 //        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
+
         return eventService.createEvent(request, newEvent,file);
     }
 

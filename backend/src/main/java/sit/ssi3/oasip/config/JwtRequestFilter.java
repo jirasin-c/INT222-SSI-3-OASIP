@@ -56,6 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }catch (MalformedJwtException e){
                 request.setAttribute("Errors", e.getMessage());
+
             }catch (SignatureException e){
                 request.setAttribute("Errors", e.getMessage());
             }

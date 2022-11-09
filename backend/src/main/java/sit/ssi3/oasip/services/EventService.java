@@ -29,6 +29,7 @@ import sit.ssi3.oasip.utils.ListMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -161,7 +162,8 @@ public class EventService {
 //        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
 //    }
 
-    public List<EventDTO> getEventUpComing(String sortBy) {
+    public List<EventDTO> getEventUpComing(String sortBy,HttpServletRequest request) {
+        User userOwner = getUserFromRequest(request);
         Date currentDate = new Date();
         // find all event
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
@@ -176,11 +178,14 @@ public class EventService {
             return false;
         }).collect(Collectors.toList());
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+        List<Event> eventListFilter = eventListByRole(eventList, userOwner);
+        return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
 
     }
 
-    public List<EventDTO> getEventPast(String sortBy) {
+    public List<EventDTO> getEventPast(String sortBy,HttpServletRequest request) {
+        User userOwner = getUserFromRequest(request);
         Date currentDate = new Date();
 
         //Find all event
@@ -198,14 +203,17 @@ public class EventService {
 
         //Exception handling
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+
+        List<Event> eventListFilter = eventListByRole(eventList, userOwner);
+        return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
 
     }
 
-    public List<EventDTO> getListDay(Date dateEvent, String sortBy) {
+    public List<EventDTO> getListDay(Date dateEvent, String sortBy,HttpServletRequest request) {
+        User userOwner = getUserFromRequest(request);
         if (dateEvent == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "dateEvent is null");
-
 
         Date specifiedDate = new Date();
         specifiedDate.setTime(dateEvent.getTime());
@@ -223,7 +231,9 @@ public class EventService {
 
         //Exception handling
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
+        List<Event> eventListFilter = eventListByRole(eventList, userOwner);
+        return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
     }
 
 
@@ -374,5 +384,26 @@ public class EventService {
         return existingEvent;
     }
 
+    public List<Event> eventListByRole(List<Event> eventList, User userOwner) {
+        List<Event> eventListFilter = new ArrayList<>();
 
+        if (userOwner.getRole().equals("admin")){
+            eventListFilter = eventList;
+        } else if (userOwner.getRole().equals("student")) {
+            for(Event event : eventList){
+                if (event.getBookingEmail().equals(userOwner.getEmail())) {
+                    eventListFilter.add(event);
+                }
+            }
+        } else if (userOwner.getRole().equals("lecturer")){
+            List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
+            for(Event event : eventList){
+                if (categoriesId.contains(event.getEventCategoryID().getId())) {
+                    eventListFilter.add(event);
+                }
+            }
+        }
+        return eventListFilter;
+    }
 }
+
