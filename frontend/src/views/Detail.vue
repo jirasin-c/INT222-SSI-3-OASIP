@@ -25,6 +25,9 @@ const duration = ref()
 const exceptDate = ref(null)
 const roleToLocal = localStorage.getItem("user")
 const roleLocal = JSON.parse(roleToLocal)
+const imgName = ref()
+const showImg = ref()
+const imageObjectURL = ref([])
 
 const appRouter = useRouter()
 const compareDate = (editDate, currentTime) => {
@@ -81,6 +84,38 @@ const getEventCategory = async () => {
 const getDetailById = async () => {
   // console.log(bookingId);
   createHeader()
+  const res2 = await fetch(`${import.meta.env.VITE_BASE_URL}api/files/${bookingId}`, {
+    method: 'GET',
+    headers: myHeader.value,
+  }
+  );
+  if (res2.status != 200) {
+    imgName.value = ''
+  } else {
+    imgName.value = await res2.json()
+    imgName.value = imgName.value.toString()
+    // console.log(imgName.value);
+  }
+
+
+  const res3 = await fetch(`${import.meta.env.VITE_BASE_URL}api/files/${bookingId}/${imgName.value}`, {
+    method: 'GET',
+    headers: myHeader.value,
+  }
+  );
+  if (res3.status != 200) {
+    showImg.value = ''
+    // console.log(imageObjectURL.value);
+  } else {
+    showImg.value = await res3.blob()
+    // console.log(showImg.value);
+    // console.log(showImg.value.type);
+    imageObjectURL.value = URL.createObjectURL(showImg.value);
+    // console.log(imageObjectURL.value);
+  }
+
+
+
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${bookingId}`, {
     method: 'GET',
     headers: myHeader.value,
@@ -330,9 +365,26 @@ window.onbeforeunload = function () {
                   </label>
                 </p>
             </p> -->
+            <p class="flex">
+              <!-- <IcEmail class="inline-block mr-5 " /> -->
+              <label> File name: 
+                <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary">{{imgName}}</a>
+                <span v-show="imageObjectURL.length == 0" class="text-secondary text-lg">No file.</span>
+              </label>
+            <div class="pl-5 avatar flex" v-show="imageObjectURL.length > 0 && (showImg.type == 'image/png' || showImg.type == 'image/jpeg' )">
+              <div class="w-96 h-64 rounded-xl">
+                <img :src="imageObjectURL" width="300" height="300" alt="">
+              </div>
+            </div>
+            </p>
+
+            <!-- <img :src="{showImg}" alt="">
+            <img :src="{imgName}" alt=""> -->
+            <!-- <img src="image" alt=""> -->
           </div>
           <div class="card-actions justify-end m-5">
-            <button v-if="roleLocal.role != 'lecturer'" class="btn btn-secondary border-none " @click="isEdit = !isEdit" v-show="!isEdit">Edit</button>
+            <button v-if="roleLocal.role != 'lecturer'" class="btn btn-secondary border-none " @click="isEdit = !isEdit"
+              v-show="!isEdit">Edit</button>
             <button class="btn btn-accent border-none " @click="isEdit = true, updateEvent()"
               v-show="isEdit">Apply</button>
             <button class="btn btn-secondary border-none "

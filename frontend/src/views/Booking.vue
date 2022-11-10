@@ -24,6 +24,13 @@ const isOverlapped = ref(false)
 const isNotEmail = ref(false)
 const alertText = ref('')
 const myHeader = ref()
+const file = ref({})
+const isFileInputed = ref(false)
+const isLarger10 = ref(false)
+const size = ref(0)
+const currentPath = ref('')
+const imageURL = ref([])
+// const isDeleteFile = ref(false)
 // const formData = new FormData()
 
 const createHeader = () => {
@@ -149,6 +156,7 @@ const validateEmail = () => {
 // }
 
 const createEvent = async () => {
+
     isOverlapped.value = false
     const compareStartTime = new Date(startTime.value).toLocaleString()
     const compareStartTimeISO = new Date(startTime.value)
@@ -222,7 +230,10 @@ const createEvent = async () => {
         alert("Start time is in the past, Please select new date")
         return
     }
-
+    if (isLarger10.value == true) {
+        alert("The file size cannot be larget than 10 MB.")
+        return
+    }
     // if (name.value.length == 100 || notes.value.length == 500 || email.value.length == 100 ) {
     //     startTime.value = startTime.value
     //     alert("Field longer string can't be event.")
@@ -252,7 +263,7 @@ const createEvent = async () => {
                     "eventDuration": ${duration.value},
                     "eventNotes": "${notes.value}",
                     "eventCategoryID": ${categoryID.value}}`)
-            formData.append('file', '')
+            formData.append('file', file.value)
             // }
             // const formData = new FormData()
 
@@ -315,6 +326,126 @@ const getEvents = async () => {
     // console.log(events.value);
 }
 
+const onFileSelected = (e) => {
+    // console.log(Object.keys(file.value).length === 0 && file.value.constructor === Object);
+    isLarger10.value = false
+    isFileInputed.value = false
+    if (Object.keys(file.value).length === 0 && file.value.constructor === Object) {
+        // console.log("ยังไม่มี");
+        file.value = e.target.files[0]
+        currentPath.value = e.target.value
+        // console.log(currentPath.value);
+        if (file.value.size > 10485760) {
+            // console.log("เกิน");
+            e.target.value = null
+            file.value = {}
+            isFileInputed.value = false
+            // console.log(e.target.files);
+            isLarger10.value = true
+            return
+        }
+        const newImgURL = []
+        newImgURL.push(URL.createObjectURL(file.value))
+        // console.log(newImgURL);
+        imageURL.value = newImgURL
+        // console.log(imageURL.value);
+        isFileInputed.value = true
+        size.value = formatBytes(file.value.size)
+    } else {
+        // console.log("มีแล้ว");
+        // console.log(e.target.files.length == 0);
+        if (e.target.files.length == 0) {
+            isFileInputed.value = true
+            return
+        }
+
+        let checkFile = {}
+        checkFile = e.target.files[0]
+        if (checkFile.size > 10485760) {
+            // console.log("เกิน");
+            // console.log(file.value);
+            // console.log(e.target.files[0]);
+            // console.log(currentPath.value);
+
+            e.target.value = null
+            // console.log(e.target.value);
+            // file.value = {}
+            isFileInputed.value = true
+            // console.log(e.target.files);
+            isLarger10.value = true
+            return
+        }
+        file.value = checkFile
+        const newImgURL = []
+        newImgURL.push(URL.createObjectURL(file.value))
+        // console.log(newImgURL);
+        imageURL.value = newImgURL
+        // console.log(imageURL.value);
+        isFileInputed.value = true
+        size.value = formatBytes(file.value.size)
+    }
+    // console.log(file.value.size);
+    // console.log(file.value.type);
+    // console.log(e.target.files);
+    // console.log(e.target.value);
+    // isLarger10.value = false
+    // file.value = e.target.files[0]
+    // isFileInputed.value = true
+    // console.log(e.target.files);
+    // console.log(e.target.files[0]);
+    // console.log(file.value);
+
+
+
+    // if (file.value.size > 10485760) {
+    //     e.target.value = null
+    //     file.value = {}
+    //     isFileInputed.value = false
+    //     // console.log(e.target.files);
+    //     isLarger10.value = true
+    // } else {
+    //     file.value = e.target.files[0]
+    //     isFileInputed.value = true
+    //     size.value = formatBytes(file.value.size)
+    // }
+
+    // console.log(size.value);
+    // if (isDeleteFile.value == true) {
+    //     e.target.value = null
+    // }
+    // if (file.value.length > 0) {
+    //     isLarger10.value = true
+    // }else 
+    // if (file.value.size > 10485760) {
+    //     e.target.value = null
+    //     file.value = {}
+    //     isFileInputed.value = false
+    //     // console.log(e.target.files);
+    //     isLarger10.value = true
+    // }
+    // console.log(file.value);
+    // console.log(file.value.name);
+}
+const deleteFile = () => {
+    // isDeleteFile.value = true
+    document.getElementById('input').value = null
+    file.value = {}
+    isFileInputed.value = false
+    size.value = 0
+    imageURL.value = []
+}
+const formatBytes = (bytes, decimals = 2) => {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
 </script>
  
 <template>
@@ -355,7 +486,8 @@ const getEvents = async () => {
                                     </span>
                                 </label>
                                 <span class="text-sm text-red-500 pb-2"
-                                    v-show="compareDate(startTime,currentTime)">Start time must be in the future.</span>
+                                    v-show="compareDate(startTime, currentTime)">Start time must be in the
+                                    future.</span>
                                 <!-- <span class="text-sm text-red-500 pb-2" v-show="isOverlapped">Start time is overlapped.</span> -->
                                 <input type="datetime-local" placeholder="Type here"
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg"
@@ -365,14 +497,15 @@ const getEvents = async () => {
                                         Name : <span class="text-red-500">*</span>
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length==100">** A name must be 1
+                                <span class="text-sm text-yellow-500 pb-2" v-show="name.length == 100">** A name must be
+                                    1
                                     - 100 characters. **</span>
                                 <input type="text" placeholder="Type yourname..."
                                     class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
                                     id="name" maxlength="100" />
                                 <label class="label">
                                     <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{name.length}}/100</span>
+                                    <span class="label-text-alt">{{ name.length }}/100</span>
                                 </label>
                                 <label for="email" class="label">
                                     <span class="label-text text-base font-semibold">
@@ -381,7 +514,7 @@ const getEvents = async () => {
                                 </label>
                                 <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
                                     address.</span>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length==100">** An email must
+                                <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 100">** An email must
                                     be 1 - 100 characters. **</span>
                                 <input v-if="myUser.isLogin == false" type="email"
                                     placeholder="example@mail.kmutt.ac.th"
@@ -396,22 +529,53 @@ const getEvents = async () => {
                                     v-model="email" id="email" maxlength="100" />
                                 <label class="label">
                                     <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{email.length}}/100</span>
+                                    <span class="label-text-alt">{{ email.length }}/100</span>
                                 </label>
                                 <label for="notes" class="label">
                                     <span class="label-text text-base font-semibold">
                                         Notes :
                                     </span>
                                 </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length==500">** A notes must be
+                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length == 500">** A notes must
+                                    be
                                     1 - 500 characters. **</span>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
                                     class="textarea textarea-secondary  text-lg w-full overflow-auto"
                                     placeholder="Type something..." maxlength="500"></textarea>
                                 <label class="label">
                                     <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{notes.length}}/500</span>
+                                    <span class="label-text-alt">{{ notes.length }}/500</span>
                                 </label>
+                                <label for="input" class="label">
+                                    <span class="label-text text-base font-semibold text-secondary">
+                                        Maximun 10 MB.
+                                    </span>
+                                </label>
+                                <input type="file" class="file-input file-input-bordered w-full max-w-xs"
+                                    @change="onFileSelected" id="input" />
+                                <span class="text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
+                                    be large than 10 MB. **</span>
+                                <div class="pt-5 avatar flex"  v-if="file.type == 'image/png' || file.type == 'image/jpeg'">
+                                    <div class="w-96 h-64 rounded-xl">
+                                        <!-- <img :src="imageObjectURL" width="300" height="300" alt="">
+                                         -->
+                                        <img :src="imageURL" alt="" width="400" height="400">
+                                    </div>
+                                </div>
+
+                                <!-- <p>{{file.name}}</p> -->
+                                <ul v-show="isFileInputed">
+                                    <li class="text-sm flex justify-between mt-5">{{ file.name }}
+                                        <span class="text-secondary">{{ size }}</span>
+                                        <button @click="deleteFile">
+                                            <svg width="32" height="32" viewBox="0 0 24 24">
+                                                <path fill="currentColor"
+                                                    d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
+                                            </svg>
+                                        </button>
+                                    </li>
+                                </ul>
+
                             </div>
                         </div>
                         <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
@@ -422,7 +586,7 @@ const getEvents = async () => {
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Please fill {{alertText}} field.</span>
+                                <span>Please fill {{ alertText }} field.</span>
                             </div>
                         </div>
                         <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center"
