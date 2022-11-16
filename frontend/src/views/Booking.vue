@@ -230,10 +230,10 @@ const createEvent = async () => {
         alert("Start time is in the past, Please select new date")
         return
     }
-    if (isLarger10.value == true) {
-        alert("The file size cannot be larget than 10 MB.")
-        return
-    }
+    // if (isLarger10.value == true) {
+    //     alert("The file size cannot be larget than 10 MB.")
+    //     return
+    // }
     // if (name.value.length == 100 || notes.value.length == 500 || email.value.length == 100 ) {
     //     startTime.value = startTime.value
     //     alert("Field longer string can't be event.")
@@ -428,11 +428,15 @@ const onFileSelected = (e) => {
 }
 const deleteFile = () => {
     // isDeleteFile.value = true
-    document.getElementById('input').value = null
-    file.value = {}
-    isFileInputed.value = false
-    size.value = 0
-    imageURL.value = []
+    if (confirm("Are you sure to remove this file?")) {
+        document.getElementById('input').value = null
+        file.value = {}
+        isFileInputed.value = false
+        size.value = 0
+        imageURL.value = []
+    }else{
+        return
+    }
 }
 const formatBytes = (bytes, decimals = 2) => {
     if (!+bytes) return '0 Bytes'

@@ -337,6 +337,8 @@ public class EventService {
     }
 
     public Object updateEvent(HttpServletRequest request, CreateEventDTO updateEvent, MultipartFile file, Integer eventId) {
+//        System.out.println("file " + file.getOriginalFilename());
+//        System.out.println("file " + file.getName());
         User userOwner = getUserFromRequest(request);
         if (userOwner == null) {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
@@ -359,7 +361,7 @@ public class EventService {
 
             Event updatedEvent = eventRepository.saveAndFlush(event);
 
-            if (file != null) {
+            if (file.getOriginalFilename() != null) {
                 if (!file.isEmpty()) {
                     storageService.store(file, updatedEvent.getId());
                     return file.getOriginalFilename();
@@ -373,6 +375,7 @@ public class EventService {
         }
 
         if (updateEvent != null) {
+            storageService.deleteFileById(eventId);
             Event editEvent = modelMapper.map(updateEvent, Event.class);
 
             Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, editEvent)).orElseThrow(() -> new ResponseStatusException(
@@ -400,7 +403,7 @@ public class EventService {
             return modelMapper.map(event, EventDTO.class);
 
         }else{
-            if (file != null) {
+            if (file.getOriginalFilename() != null) {
                 if (!file.isEmpty()) {
                     storageService.store(file, eventId);
                     return file.getOriginalFilename();

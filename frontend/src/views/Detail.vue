@@ -25,9 +25,18 @@ const duration = ref()
 const exceptDate = ref(null)
 const roleToLocal = localStorage.getItem("user")
 const roleLocal = JSON.parse(roleToLocal)
-const imgName = ref()
+const fileName = ref()
 const showImg = ref()
 const imageObjectURL = ref([])
+const imageURL = ref([])
+const beforeImageURL = ref([])
+const file = ref({})
+const beforeEditFile = ref({})
+const isFileInputed = ref(false)
+const isLarger10 = ref(false)
+const size = ref(0)
+const beforeSize = ref(0)
+const currentPath = ref('')
 
 const appRouter = useRouter()
 const compareDate = (editDate, currentTime) => {
@@ -90,15 +99,15 @@ const getDetailById = async () => {
   }
   );
   if (res2.status != 200) {
-    imgName.value = ''
+    fileName.value = ''
   } else {
-    imgName.value = await res2.json()
-    imgName.value = imgName.value.toString()
-    // console.log(imgName.value);
+    fileName.value = await res2.json()
+    fileName.value = fileName.value.toString()
+    console.log(fileName.value);
   }
 
 
-  const res3 = await fetch(`${import.meta.env.VITE_BASE_URL}api/files/${bookingId}/${imgName.value}`, {
+  const res3 = await fetch(`${import.meta.env.VITE_BASE_URL}api/files/${bookingId}/${fileName.value}`, {
     method: 'GET',
     headers: myHeader.value,
   }
@@ -108,10 +117,21 @@ const getDetailById = async () => {
     // console.log(imageObjectURL.value);
   } else {
     showImg.value = await res3.blob()
-    // console.log(showImg.value);
+    console.log(showImg.value);
     // console.log(showImg.value.type);
     imageObjectURL.value = URL.createObjectURL(showImg.value);
-    // console.log(imageObjectURL.value);
+    console.log(imageObjectURL.value);
+    imageURL.value[0] = (imageObjectURL.value)
+    beforeImageURL.value = imageURL.value
+    isFileInputed.value = true
+    console.log(imageURL.value);
+    size.value = formatBytes(showImg.value.size)
+    beforeSize.value = size.value
+    file.value = {
+      name: fileName.value,
+      type: showImg.value.type
+    }
+    beforeEditFile.value = file.value
   }
 
 
@@ -184,6 +204,15 @@ const getDetailById = async () => {
 };
 
 const updateEvent = async () => {
+  console.log(editDate.value);
+  console.log(beforeEditDate.value);
+  console.log(editNote.value);
+  console.log(beforeEditNote.value);
+  if (editDate.value == beforeEditDate.value && editNote.value == beforeEditNote.value && beforeEditFile.value.name == file.value.name && beforeEditFile.value.type == file.value.type) {
+    isLarger10.value = false
+    isEdit.value = false
+    return
+  }
   isOverlapped.value = false
   const compareStartTime = new Date(editDate.value).toLocaleString()
   const compareStartTimeISO = new Date(editDate.value)
@@ -232,19 +261,37 @@ const updateEvent = async () => {
   }
   // if(selectedEvent.value.eventStartTime == )
   if (confirm(`Are you sure to update the booking information ?`)) {
-    createHeader()
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${selectedEvent.value.id}`, {
-      method: 'PUT',
-      headers: myHeader.value,
-      body: JSON.stringify({
-        eventStartTime: editDate.value,
-        eventNotes: editNote.value,
+    // createHeader()
+    const utc = new Date(editDate.value).toISOString()
+    const formData = new FormData()
+    if (localStorage.getItem('token') != null) {
+      var tokenToLocal = localStorage.getItem("token")
+      var tokenLocal = JSON.parse(tokenToLocal)
+      // console.log(tokenLocal);
+      myHeader.value = new Headers({
+        "accept": "*/*",
+        "Authorization": `Bearer ${tokenLocal.accessToken}`,
       })
+    }
+    formData.append('event', `{
+                    "eventStartTime": "${utc}",
+                    "eventNotes": "${notes.value}"
+                  }`)
+    if (Object.keys(file.value).length === 0 && file.value.constructor === Object) {
+      formData.append('file', null)
+    } else {
+      formData.append('file', file.value)
+    }
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/${selectedEvent.value.id}`, {
+      method: 'PATCH',
+      headers: myHeader.value,
+      body: formData
     })
     if (res.status === 200) {
       alert("Event updated successfully")
       getDetailById()
       isEdit.value = false
+      isLarger10.value = false
     } else {
       alert("Event can't updated, please fill the require field")
       isEdit.value = true
@@ -253,12 +300,146 @@ const updateEvent = async () => {
     isEdit.value = true
   }
 }
+
+const onFileSelected = (e) => {
+  // console.log(Object.keys(file.value).length === 0 && file.value.constructor === Object);
+  isLarger10.value = false
+  isFileInputed.value = false
+  if (Object.keys(file.value).length === 0 && file.value.constructor === Object) {
+    // console.log("ยังไม่มี");
+    console.log(e.target.files[0]);
+    file.value = e.target.files[0]
+    currentPath.value = e.target.value
+    // console.log(currentPath.value);
+    if (file.value.size > 10485760) {
+      // console.log("เกิน");
+      e.target.value = null
+      file.value = {}
+      isFileInputed.value = false
+      // console.log(e.target.files);
+      isLarger10.value = true
+      return
+    }
+    const newImgURL = []
+    console.log(file.value);
+    console.log(URL.createObjectURL(file.value));
+    newImgURL.push(URL.createObjectURL(file.value))
+    console.log(newImgURL);
+    imageURL.value = newImgURL
+    console.log(imageURL.value);
+    isFileInputed.value = true
+    size.value = formatBytes(file.value.size)
+  } else {
+    // console.log("มีแล้ว");
+    // console.log(e.target.files.length == 0);
+    if (e.target.files.length == 0) {
+      isFileInputed.value = true
+      return
+    }
+
+    let checkFile = {}
+    checkFile = e.target.files[0]
+    if (checkFile.size > 10485760) {
+      // console.log("เกิน");
+      // console.log(file.value);
+      // console.log(e.target.files[0]);
+      // console.log(currentPath.value);
+
+      e.target.value = null
+      // console.log(e.target.value);
+      // file.value = {}
+      isFileInputed.value = true
+      // console.log(e.target.files);
+      isLarger10.value = true
+      return
+    }
+    file.value = checkFile
+    const newImgURL = []
+    newImgURL.push(URL.createObjectURL(file.value))
+    // console.log(newImgURL);
+    imageURL.value = newImgURL
+    console.log(imageURL.value);
+    isFileInputed.value = true
+    size.value = formatBytes(file.value.size)
+  }
+  // console.log(file.value.size);
+  // console.log(file.value.type);
+  // console.log(e.target.files);
+  // console.log(e.target.value);
+  // isLarger10.value = false
+  // file.value = e.target.files[0]
+  // isFileInputed.value = true
+  // console.log(e.target.files);
+  // console.log(e.target.files[0]);
+  // console.log(file.value);
+
+
+
+  // if (file.value.size > 10485760) {
+  //     e.target.value = null
+  //     file.value = {}
+  //     isFileInputed.value = false
+  //     // console.log(e.target.files);
+  //     isLarger10.value = true
+  // } else {
+  //     file.value = e.target.files[0]
+  //     isFileInputed.value = true
+  //     size.value = formatBytes(file.value.size)
+  // }
+
+  // console.log(size.value);
+  // if (isDeleteFile.value == true) {
+  //     e.target.value = null
+  // }
+  // if (file.value.length > 0) {
+  //     isLarger10.value = true
+  // }else 
+  // if (file.value.size > 10485760) {
+  //     e.target.value = null
+  //     file.value = {}
+  //     isFileInputed.value = false
+  //     // console.log(e.target.files);
+  //     isLarger10.value = true
+  // }
+  // console.log(file.value);
+  // console.log(file.value.name);
+}
+const deleteFile = () => {
+  // isDeleteFile.value = true
+  // console.log(file.value);
+  if (confirm("Are you sure to remove this file?")) {
+    document.getElementById('input').value = null
+    file.value = {}
+    isFileInputed.value = false
+    console.log(size.value);
+    console.log(beforeSize.value);
+    size.value = 0
+    console.log(size.value);
+    console.log(beforeSize.value);
+    imageURL.value = []
+  }else{
+    return
+  }
+
+}
+const formatBytes = (bytes, decimals = 2) => {
+  if (!+bytes) return '0 Bytes'
+
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
 onBeforeMount(async () => {
   await getDetailById();
   await getEventCategory()
   await getEvents()
   currentTime.value = new Date().getFullYear() + '-' + ('0' + (new Date().getMonth() + 1)).slice(-2) + "-" + new Date().getDate() + 'T' + ('0' + new Date().getHours()).slice(-2) + ':' + ('0' + new Date().getMinutes()).slice(-2)
-
+  console.log(file.value);
+  console.log(beforeEditFile.value);
 });
 
 window.onbeforeunload = function () {
@@ -365,13 +546,47 @@ window.onbeforeunload = function () {
                   </label>
                 </p>
             </p> -->
-            <p class="flex">
+            <p class="" v-if="isEdit">
+              <!-- <label>File name:</label> -->
+              <label for="input" class="label">
+                <span class="label-text text-base font-semibold text-secondary flex">
+                  Maximun 10 MB.
+                </span>
+              </label>
+              <input type="file" class="flex file-input file-input-bordered w-full max-w-xs" @change="onFileSelected"
+                id="input" />
+              <span class="flex text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
+                be large than 10 MB. **</span>
+            <div class="pt-5 avatar flex"
+              v-if="(file.type == 'image/png' || file.type == 'image/jpeg') && imageURL.length > 0">
+              <div class="flex w-96 h-64 rounded-xl">
+                <!-- <img :src="imageObjectURL" width="300" height="300" alt="">
+                                         -->
+                <img :src="imageURL" alt="" width="400" height="400">
+              </div>
+            </div>
+
+            <!-- <p>{{file.name}}</p> -->
+            <ul v-show="isFileInputed">
+              <li class="text-sm flex justify-between mt-5">{{ file.name }}
+                <span class="text-secondary">{{ size }}</span>
+                <button @click="deleteFile">
+                  <svg width="32" height="32" viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                      d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+            </p>
+            <p class="flex" v-else>
               <!-- <IcEmail class="inline-block mr-5 " /> -->
-              <label> File name: 
-                <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary">{{imgName}}</a>
+              <label> File name:
+                <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary">{{ fileName }}</a>
                 <span v-show="imageObjectURL.length == 0" class="text-secondary text-lg">No file.</span>
               </label>
-            <div class="pl-5 avatar flex" v-show="imageObjectURL.length > 0 && (showImg.type == 'image/png' || showImg.type == 'image/jpeg' )">
+            <div class="pl-5 avatar flex"
+              v-show="imageObjectURL.length > 0 && (showImg.type == 'image/png' || showImg.type == 'image/jpeg')">
               <div class="w-96 h-64 rounded-xl">
                 <img :src="imageObjectURL" width="300" height="300" alt="">
               </div>
@@ -388,7 +603,7 @@ window.onbeforeunload = function () {
             <button class="btn btn-accent border-none " @click="isEdit = true, updateEvent()"
               v-show="isEdit">Apply</button>
             <button class="btn btn-secondary border-none "
-              @click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote"
+              @click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote, file = beforeEditFile, imageURL = beforeImageURL, size = beforeSize, fileName == '' ? isFileInputed = false : isFileInputed = true"
               v-show="isEdit">Cancel</button>
             <router-link :to="{ name: 'Home' }"><button
                 class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500">Go

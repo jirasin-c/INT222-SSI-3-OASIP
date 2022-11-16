@@ -3,6 +3,7 @@ import EventCard from "../components/EventCard.vue";
 import ShowSelectedEvent from "../components/ShowSelectedEvent.vue";
 import { useRouter } from 'vue-router';
 import { onBeforeMount, onUpdated, ref } from "vue";
+import { useUser } from "../stores/user";
 const appRouter = useRouter()
 const event = ref([]);
 const eventFilter = ref([])
@@ -17,6 +18,7 @@ const isFindeNoByDate = ref(false)
 const startTime = ref()
 const filterType = ref("Select type")
 const myHeader = ref()
+const myUser = useUser()
 
 const createHeader = () => {
   if (localStorage.getItem('token') != null) {
