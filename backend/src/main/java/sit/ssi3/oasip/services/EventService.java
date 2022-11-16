@@ -1,5 +1,6 @@
 package sit.ssi3.oasip.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class EventService {
     private UserService userService;
     @Autowired
     private StorageService storageService;
-//    @Autowired
+    //    @Autowired
 //    private Validator validator;
     @Autowired
     private static final Validator validator =
@@ -79,7 +80,7 @@ public class EventService {
 
     public Object getEvent(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
-        if(userOwner == null){
+        if (userOwner == null) {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
         }
 
@@ -106,7 +107,7 @@ public class EventService {
 
     public Object getEventById(HttpServletRequest request, Integer eventId) {
         User userOwner = getUserFromRequest(request);
-        if(userOwner == null){
+        if (userOwner == null) {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
         }
         RoleEnum userRole = userOwner.getRole();
@@ -121,25 +122,24 @@ public class EventService {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
         }
-            if (userRole.equals(RoleEnum.lecturer)) {
-                List<Integer> categoryID = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
-                List<Eventcategory> categoryList = eventCategoryRepository.findAllById(categoryID);
-                Eventcategory findEvent = event.getEventCategoryID();
-                categoryList = categoryList.stream().filter(e->{
-                    if (e.getId() == findEvent.getId()){
-                        return true;
-                    }
-                    return false;
-                }).collect(Collectors.toList());
-
-                if (categoryList.size() == 0) {
-                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+        if (userRole.equals(RoleEnum.lecturer)) {
+            List<Integer> categoryID = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
+            List<Eventcategory> categoryList = eventCategoryRepository.findAllById(categoryID);
+            Eventcategory findEvent = event.getEventCategoryID();
+            categoryList = categoryList.stream().filter(e -> {
+                if (e.getId() == findEvent.getId()) {
+                    return true;
                 }
-            }
+                return false;
+            }).collect(Collectors.toList());
 
-                return modelMapper.map(event, EventDTO.class);
+            if (categoryList.size() == 0) {
+                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
             }
+        }
 
+        return modelMapper.map(event, EventDTO.class);
+    }
 
 
 //    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
@@ -162,7 +162,7 @@ public class EventService {
 //        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
 //    }
 
-    public List<EventDTO> getEventUpComing(String sortBy,HttpServletRequest request) {
+    public List<EventDTO> getEventUpComing(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         Date currentDate = new Date();
         // find all event
@@ -184,7 +184,7 @@ public class EventService {
 
     }
 
-    public List<EventDTO> getEventPast(String sortBy,HttpServletRequest request) {
+    public List<EventDTO> getEventPast(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         Date currentDate = new Date();
 
@@ -210,7 +210,7 @@ public class EventService {
 
     }
 
-    public List<EventDTO> getListDay(Date dateEvent, String sortBy,HttpServletRequest request) {
+    public List<EventDTO> getListDay(Date dateEvent, String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         if (dateEvent == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "dateEvent is null");
@@ -218,7 +218,7 @@ public class EventService {
         Date specifiedDate = new Date();
         specifiedDate.setTime(dateEvent.getTime());
         Date endTime = new Date();
-        endTime.setTime(specifiedDate.getTime() + 86400000 );
+        endTime.setTime(specifiedDate.getTime() + 86400000);
 
         // find all event
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).ascending());
@@ -239,7 +239,7 @@ public class EventService {
 
     public Object createEvent(HttpServletRequest request, CreateEventDTO newEvent, MultipartFile file) {
         User userOwner = getUserFromRequest(request);
-        if(userOwner != null){
+        if (userOwner != null) {
             RoleEnum userRole = userOwner.getRole();
 
             if (userRole.equals(RoleEnum.student)) {
@@ -315,7 +315,7 @@ public class EventService {
 
     public Object cancelEvent(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
         User userOwner = getUserFromRequest(request);
-        if(userOwner == null){
+        if (userOwner == null) {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
         }
         RoleEnum userRole = userOwner.getRole();
@@ -333,54 +333,101 @@ public class EventService {
         }
         eventRepository.deleteById(eventId);
         storageService.deleteFileById(eventId);
-        return  null;
+        return null;
     }
 
     public Object updateEvent(HttpServletRequest request, CreateEventDTO updateEvent, MultipartFile file, Integer eventId) {
         User userOwner = getUserFromRequest(request);
-        if(userOwner == null){
+        if (userOwner == null) {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
         }
         RoleEnum userRole = userOwner.getRole();
-        Event newEvent = modelMapper.map(updateEvent, Event.class);
-        Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
-        event.setOverlapped(false);
 
-        if (userRole.equals(RoleEnum.student)) {
-            if (!userOwner.getEmail().equals(event.getBookingEmail())) {
-                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+        if(updateEvent != null && file != null) {
+            Event newEvent = modelMapper.map(updateEvent, Event.class);
+            Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
+            event.setOverlapped(false);
+            if (userRole.equals(RoleEnum.student)) {
+                if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+                }
+                if (userRole.equals(RoleEnum.lecturer)) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+                }
             }
-            if (userRole.equals(RoleEnum.lecturer)) {
-                return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
-            }
 
-        }
+            Event updatedEvent = eventRepository.saveAndFlush(event);
 
-        Event updatedEvent = eventRepository.saveAndFlush(event);
-
-        if(file != null) {
-            if (!file.isEmpty()) {
-                storageService.store(file, updatedEvent.getId());
-                return file.getOriginalFilename();
+            if (file != null) {
+                if (!file.isEmpty()) {
+                    storageService.store(file, updatedEvent.getId());
+                    return file.getOriginalFilename();
+                } else {
+                    storageService.deleteFileById(updatedEvent.getId());
+                }
             } else {
                 storageService.deleteFileById(updatedEvent.getId());
+
             }
-        } else {
-            storageService.deleteFileById(updatedEvent.getId());
+        }
+
+        if (updateEvent != null) {
+            Event editEvent = modelMapper.map(updateEvent, Event.class);
+
+            Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, editEvent)).orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Event ID " + eventId + " Does Not Exits!!!"));
+            event.setOverlapped(false);
+
+            if (userRole.equals(RoleEnum.student)) {
+                if (!userOwner.getEmail().equals(event.getBookingEmail())) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+                }
+                if (userRole.equals(RoleEnum.lecturer)) {
+                    return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+                }
+
+            }
+            eventRepository.saveAndFlush(event);
+
+            // validate event field
+            Set<ConstraintViolation<Event>> violations = validator.validate(event);
+            for (ConstraintViolation<Event> violation : violations) {
+                System.out.println(violation.getMessage());
+            }
+            // return when error message contains
+            if (violations.size() > 0) throw new ConstraintViolationException(violations);
+            return modelMapper.map(event, EventDTO.class);
+
+        }else{
+            if (file != null) {
+                if (!file.isEmpty()) {
+                    storageService.store(file, eventId);
+                    return file.getOriginalFilename();
+                } else {
+                    storageService.deleteFileById(eventId);
+                }
+            } else {
+                storageService.deleteFileById(eventId);
+            }
+
         }
 
 
-        // validate event field
-        Set<ConstraintViolation<Event>> violations = validator.validate(event);
-        for (ConstraintViolation<Event> violation : violations) {
-            System.out.println(violation.getMessage());
-        }
-        // return when error message contains
-        if (violations.size() > 0) throw new ConstraintViolationException(violations);
-        return modelMapper.map(event, EventDTO.class);
+
+    return null;
+
+
+
+
+
 
     }
+
+
+
+
+
 
     private Event mapEvent(Event existingEvent, Event updateEvent) {
         if (updateEvent.getEventNotes() != null)

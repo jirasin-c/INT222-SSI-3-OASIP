@@ -107,11 +107,14 @@ public class EventController {
     }
 
     @PatchMapping("/{eventId}")
-    public Object update(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam("file") MultipartFile file, @PathVariable Integer eventId) throws JsonProcessingException {
+    public Object update(@Valid HttpServletRequest request, @RequestParam(name = "event", required = false) String updateEvent, @RequestParam(name = "file", required = false) MultipartFile file, @PathVariable Integer eventId) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
-        CreateEventDTO editEvent  = objectMapper.readValue(event,CreateEventDTO.class);
 
+        CreateEventDTO editEvent = null;
+        if(updateEvent != null) {
+         editEvent = objectMapper.readValue(updateEvent,CreateEventDTO.class);}
+        
         return eventService.updateEvent(request, editEvent, file, eventId);
     }
 
