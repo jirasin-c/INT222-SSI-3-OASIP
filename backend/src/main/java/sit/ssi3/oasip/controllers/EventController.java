@@ -106,19 +106,14 @@ public class EventController {
         return eventService.cancelEvent(request, eventId);
     }
 
-    @PutMapping("/{eventId}")
-//    public Object update(@Valid HttpServletRequest request, @Valid @RequestBody EventEditDTO updateEvent, @PathVariable Integer eventId) {
-//        return eventService.updateEvent(request, updateEvent, eventId);
-//    }
-
-    public Object update(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam("file") MultipartFile file, @PathVariable Integer bookingId) throws JsonProcessingException {
+    @PatchMapping("/{eventId}")
+    public Object update(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam("file") MultipartFile file, @PathVariable Integer eventId) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
-        EventEditDTO editEvent  = objectMapper.readValue(event,EventEditDTO.class);
+        CreateEventDTO editEvent  = objectMapper.readValue(event,CreateEventDTO.class);
 
-        return eventService.updateEvent(request, editEvent, file, bookingId);
+        return eventService.updateEvent(request, editEvent, file, eventId);
     }
-
 
 
 }

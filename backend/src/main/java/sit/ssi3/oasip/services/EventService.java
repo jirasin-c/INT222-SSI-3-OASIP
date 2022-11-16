@@ -336,7 +336,7 @@ public class EventService {
         return  null;
     }
 
-    public Object updateEvent(HttpServletRequest request, EventEditDTO updateEvent, MultipartFile file, Integer eventId) {
+    public Object updateEvent(HttpServletRequest request, CreateEventDTO updateEvent, MultipartFile file, Integer eventId) {
         User userOwner = getUserFromRequest(request);
         if(userOwner == null){
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
@@ -358,11 +358,18 @@ public class EventService {
         }
 
         Event updatedEvent = eventRepository.saveAndFlush(event);
-        if(file.isEmpty()){
+
+        if(file != null) {
+            if (!file.isEmpty()) {
+                storageService.store(file, updatedEvent.getId());
+                return file.getOriginalFilename();
+            } else {
+                storageService.deleteFileById(updatedEvent.getId());
+            }
+        } else {
             storageService.deleteFileById(updatedEvent.getId());
-        }else{
-            storageService.store(file, updatedEvent.getId());
         }
+
 
         // validate event field
         Set<ConstraintViolation<Event>> violations = validator.validate(event);
