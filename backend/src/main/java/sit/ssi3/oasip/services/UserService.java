@@ -52,9 +52,6 @@ public class UserService {
 
     private Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
 
-
-
-
     public User getUserFromRequest(HttpServletRequest request) {
         if (request.getHeader("Authorization") != null) {
             String token = request.getHeader("Authorization").substring(7);
@@ -77,16 +74,12 @@ public class UserService {
     }
     public User getUserByID(Integer id) {
         User user = userRepository.findById(id).orElseThrow(()-> new RuntimeException(id + "Does not Exist !!!"));
-//        Eventcategory eventcategory = eventCategoryRepository.findById(categoryID).orElseThrow(() ->
-//                new RuntimeException(categoryID + " Does not Exist !!!"));
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ID" + id + " Does not Exits");
         return modelMapper.map(user, User.class);
     }
 
     public User getUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
-//        Eventcategory eventcategory = eventCategoryRepository.findById(categoryID).orElseThrow(() ->
-//                new RuntimeException(categoryID + " Does not Exist !!!"));
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email" + email + " Does not Exits");
         return modelMapper.map(user, User.class);
     }
@@ -99,7 +92,6 @@ public class UserService {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission to add new user");
             }
         }
-
         if (newUser.getRole().length() == 0) {
             newUser.setRole("student");
         }
@@ -174,11 +166,7 @@ public class UserService {
 
     public void deleteUser(String name) {
         User user = userRepository.findByName(name);
-//        System.out.println(user);
-//        System.out.println(name);
         if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name " + name + " Does not Exits");
-//        eventRepository.deleteEventsByUserId(user.getId());
-//        eventRepository.deleteAllByUser(user);
         userRepository.deleteUserByName(name);
     }
 

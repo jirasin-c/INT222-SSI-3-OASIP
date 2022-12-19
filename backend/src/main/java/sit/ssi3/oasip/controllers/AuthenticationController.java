@@ -19,11 +19,13 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    //get token
     @PostMapping("/login")
     public ResponseEntity Login(@Valid @RequestBody LoginDTO requestUser) throws Exception {
         return authenticationService.login(requestUser);
     }
 
+    //adminใช้ check password
     @PostMapping("/match")
     public ResponseEntity Match(@Valid @RequestBody LoginDTO requestUser) throws Exception {
         return authenticationService.match(requestUser);

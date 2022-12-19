@@ -52,15 +52,14 @@ public class EventCategoryService {
         return null;
     }
 
+
     public List<EventcategoryDTO> getEventCategory(String sortBy,HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         List<Eventcategory> eventCategoryList = eventCategoryRepository.findAll(Sort.by(sortBy).descending());
-
         List<Eventcategory> eventCategoryFilter = new ArrayList<>();
 
         if (userOwner != null) {
             if (userOwner.getRole().equals("lecturer")){
-                System.out.println("เข้า lecturer");
                 List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.getId());
                 for(Eventcategory category : eventCategoryList){
                     if (categoriesId.contains(category.getId())) {
@@ -74,14 +73,14 @@ public class EventCategoryService {
             eventCategoryFilter = eventCategoryList;
         }
 
-        //Exception handling
         if (eventCategoryList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event category not found");
         return listMapper.mapList(eventCategoryList, EventcategoryDTO.class, modelMapper);
     }
 
+
     public EventcategoryDTO getEventCategoryByName(String categoryName) {
         Eventcategory eventcategory = eventCategoryRepository.findByEventCategoryNameEquals(categoryName);
-        //Exception handling
+
         if (eventcategory == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Event category not found");
         return modelMapper.map(eventcategory, EventcategoryDTO.class);
     }

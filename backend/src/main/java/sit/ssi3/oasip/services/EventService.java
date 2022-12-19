@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,8 +59,7 @@ public class EventService {
     private UserService userService;
     @Autowired
     private StorageService storageService;
-    //    @Autowired
-//    private Validator validator;
+
     @Autowired
     private static final Validator validator =
             Validation.byDefaultProvider()
@@ -84,10 +84,8 @@ public class EventService {
             return ValidationHandler.showError(HttpStatus.UNAUTHORIZED, "You not have permission this event");
         }
 
-
         RoleEnum userRole = userOwner.getRole();
         List<Event> eventList = eventRepository.findAll(Sort.by(sortBy).descending());
-
 
         if (userRole.equals(RoleEnum.admin)) {
             eventList = eventRepository.findAll(Sort.by(sortBy).descending());
@@ -141,27 +139,6 @@ public class EventService {
         return modelMapper.map(event, EventDTO.class);
     }
 
-
-//    public List<EventDTO> getEventByCategoryId(Integer categoryId) {
-//        List<Event> eventList = eventRepository.findByEventCategoryID_Id(categoryId);
-//        //Exception handling
-//        if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
-//    }
-
-//    public List<EventDTO> getEventByCategory (ArrayList id){
-//        ArrayList<Event> filterEventList = new ArrayList<>();
-//        List<Event> eventList = eventRepository.findAllByOrderByEventStartTimeDesc();
-//        for(Event event : eventList){
-//            for(Object idCate : id){
-//                if(event.getEventCategoryID().getId() == idCate){
-//                    filterEventList.add(event);
-//                }
-//            }
-//        }
-//        return listMapper.mapList(filterEventList, EventDTO.class, modelMapper);
-//    }
-
     public List<EventDTO> getEventUpComing(String sortBy, HttpServletRequest request) {
         User userOwner = getUserFromRequest(request);
         Date currentDate = new Date();
@@ -178,7 +155,6 @@ public class EventService {
             return false;
         }).collect(Collectors.toList());
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
         List<Event> eventListFilter = eventListByRole(eventList, userOwner);
         return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
 
@@ -203,8 +179,6 @@ public class EventService {
 
         //Exception handling
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
-
         List<Event> eventListFilter = eventListByRole(eventList, userOwner);
         return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
 
@@ -231,7 +205,6 @@ public class EventService {
 
         //Exception handling
         if (eventList.size() == 0) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Events not found");
-//        return listMapper.mapList(eventList, EventDTO.class, modelMapper);
         List<Event> eventListFilter = eventListByRole(eventList, userOwner);
         return listMapper.mapList(eventListFilter, EventDTO.class, modelMapper);
     }
@@ -252,7 +225,6 @@ public class EventService {
             }
         }
 
-
         // map event dto request to event
         Event event = new Event();
         event.setId(null);
@@ -263,8 +235,6 @@ public class EventService {
         event.setBookingEmail(newEvent.getBookingEmail());
         event.setEventCategoryID(newEvent.getEventCategoryID() == null ? null : eventCategoryService.getEventcategoryByID(newEvent.getEventCategoryID()));
         event.setEventStartTime(newEvent.getEventStartTime());
-//        event.setUser(userService.getUserByID(newEvent.getUserID()));
-//        event.setUser(userService.getUserByEmail(newEvent.getBookingEmail()));
         event.setOverlapped(false);
 
         // find all event
@@ -303,12 +273,12 @@ public class EventService {
 
         Event addedEvent = eventRepository.saveAndFlush(event);
 
+        //create with file?
         if (file != null) {
             if (!file.isEmpty()) {
                 storageService.store(file, addedEvent.getId());
                 return "create event and upload file : " + file.getOriginalFilename() + " successful";
             }
-//                    this.eventRepository.saveAndFlush(event); // return success service
         }
         return "create event successful";
     }
@@ -331,8 +301,8 @@ public class EventService {
         if (userRole.equals(RoleEnum.lecturer)) {
             return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
         }
-        eventRepository.deleteById(eventId);
-        storageService.deleteFileById(eventId);
+        eventRepository.deleteById(eventId); //delete event
+        storageService.deleteFileById(eventId); //delete file
         return null;
     }
 
@@ -343,6 +313,7 @@ public class EventService {
         }
         RoleEnum userRole = userOwner.getRole();
 
+        //update file and event
         if(updateEvent != null && file != null) {
             Event newEvent = modelMapper.map(updateEvent, Event.class);
             Event event = eventRepository.findById(eventId).map(o -> mapEvent(o, newEvent)).orElseThrow(() -> new ResponseStatusException(
@@ -372,6 +343,7 @@ public class EventService {
             }
         }
 
+        //update only event
         if (updateEvent != null) {
             Event editEvent = modelMapper.map(updateEvent, Event.class);
 
@@ -399,6 +371,7 @@ public class EventService {
             if (violations.size() > 0) throw new ConstraintViolationException(violations);
             return modelMapper.map(event, EventDTO.class);
 
+         //update only file
         }else{
             if (file != null) {
                 if (!file.isEmpty()) {
@@ -412,22 +385,8 @@ public class EventService {
             }
 
         }
-
-
-
     return null;
-
-
-
-
-
-
     }
-
-
-
-
-
 
     private Event mapEvent(Event existingEvent, Event updateEvent) {
         if (updateEvent.getEventNotes() != null)
