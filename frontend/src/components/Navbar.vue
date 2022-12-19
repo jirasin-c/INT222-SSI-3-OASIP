@@ -136,9 +136,10 @@ onBeforeMount(async () => {
         <span class="ml-3 text-xl">TRIMITR</span>
       </router-link>
       <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
-        <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Book</router-link>
+        <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900">Book</router-link>
         <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
-        <router-link :to="{ name: '' }" class="mr-5 hover:text-gray-900">User list</router-link>
+        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900">User list</router-link>
+        <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Events</router-link>
       </nav>
       <router-link :to="{ name: 'SignIn' }"
         class="inline-flex items-center bg-green-300 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">Sign In
