@@ -15,7 +15,7 @@
               your teacher. Try out our features or click "Book Now" below to begin.</p>
             <div class="flex justify-center">
               <router-link :to="{name: 'Booking'}"
-                class="inline-flex text-white bg-sky-400 border-0 py-2 px-6 focus:outline-none hover:bg-sky-500  rounded text-lg">BOOK
+                class="inline-flex text-white bg-sky-400 border-0 py-2 px-6 focus:outline-none hover:bg-sky-500 rounded-lg text-lg">BOOK
                 NOW</router-link>
               <router-link :to="{ name: 'EventList' }"
                 class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded-lg text-lg">
