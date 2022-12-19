@@ -138,7 +138,7 @@ onBeforeMount(async () => {
       <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
         <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole != 'lecturer'">Book</router-link>
         <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
-        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole == 'admin'">User list</router-link>
+        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole == 'admin'">Users</router-link>
         <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Events</router-link>
       </nav>
       <div v-show="myUser.isLogin == true">

@@ -578,8 +578,8 @@ const formatBytes = (bytes, decimals = 2) => {
                         </div>
                         <div class="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
                             <a class="text-indigo-500">napasuay@email.com</a>
-                            <p class="leading-normal my-5">Ban Khun Bam
-                                <br>Nameg Planet, MN 56301
+                            <p class="leading-normal my-5">Napasorn, Jirasin, Naruebet
+                                <br>School of Information Technology, KMUTT
                             </p>
                             <span class="inline-flex">
                                 <a class="text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
