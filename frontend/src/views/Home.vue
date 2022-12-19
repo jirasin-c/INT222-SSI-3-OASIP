@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import { onBeforeMount, onUpdated, ref } from "vue";
 import { useUser } from "../stores/user";
 import { Breadcrumb } from 'flowbite-vue'
+import router from "../router";
 const appRouter = useRouter()
 const event = ref([]);
 const eventFilter = ref([])
@@ -302,12 +303,15 @@ onUpdated(() => {
             <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Talk with your instructors,
               <br class="hidden lg:inline-block">make your works better
             </h1>
-            <p class="mb-8 leading-relaxed">The OASIP Application makes it simple for you to schedule a session with your teacher. Try out our features or click "Book Now" below to begin.</p>
+            <p class="mb-8 leading-relaxed">The OASIP Application makes it simple for you to schedule a session with
+              your teacher. Try out our features or click "Book Now" below to begin.</p>
             <div class="flex justify-center">
-              <button
-                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">BOOK NOW</button>
-              <button
-                class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">all bookings</button>
+              <router-link :to="{name: 'Booking'}"
+                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">BOOK
+                NOW</router-link>
+              <router-link :to="{name: 'EventList'}"
+                class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">all
+                bookings</router-link>
             </div>
           </div>
           <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
@@ -315,81 +319,6 @@ onUpdated(() => {
           </div>
         </div>
       </section>
-    </div>
-    <div>
-      <div
-        class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        CURRENT BOOKING</div>
-
-      <div class="flex items-center mt-8 justify-end mr-16">
-
-        <div
-          class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
-          <div class="text-2xl font-extrabold m-2">
-            Filter by
-          </div>
-          <select class="select select-bordered w-36 max-w-xs mr-1" name="" id="" v-model="filterType"
-            @change="resetFilter">
-            <option select disabled>Select type</option>
-            <option>Category</option>
-            <option>Event status</option>
-            <option>Date</option>
-          </select>
-
-          <div class="mr-1">
-            <select class="select select-bordered w-full max-w-xs mr-1" name="" id="" v-model="selectCategory"
-              @change="filterCategory" v-show="filterType == 'Category'">
-              <option selected disabled>Select category</option>
-              <option selected>All category</option>
-              <option v-for="category in eventCategory" :key="category.id" :value="category.id">
-                {{ category.eventCategoryName }}</option>
-              <!-- <option value="" selected>All category</option>
-                <option value="" >Client-side</option>
-                <option value="" >All category</option> -->
-            </select>
-            <select class="select select-bordered w-full max-w-xs" name="" id="" v-model="categoryStatus"
-              @change="filterCategoryStatus" v-show="filterType == 'Event status'">
-              <option disabled selected>Select status</option>
-              <option>Up coming</option>
-              <option>Past</option>
-              <!-- <option v-for="category in eventCategory" :key="category.id" :value="category.id">{{category.eventCategoryName}}</option> -->
-              <!-- <option value="" selected>All category</option>
-                <option value="" >Client-side</option>
-                <option value="" >All category</option> -->
-            </select>
-            <input type="date" class="input input-bordered w-full max-w-xs text-lg" v-model="startTime" id="starttime"
-              @change="filterDay" v-show="filterType == 'Date'">
-          </div>
-          <button class="btn btn-secondary" v-show="filterType !== 'Select type'" @click="clearFilter">CLEAR</button>
-        </div>
-      </div>
-    </div>
-    <div class="flex flex-row h-screen">
-      <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
-        <div v-if="isEmpty" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">List currently empty.</p>
-        </div>
-        <div v-else-if="isFindeNoByCategory" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">No Schedule Events.</p>
-        </div>
-        <div v-else-if="isFindeNoByUpComing" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">No On-Going or
-            Upcoming Events.</p>
-        </div>
-        <div v-else-if="isFindeNoByPass" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">No Past Events.</p>
-        </div>
-        <div v-else-if="isFindeNoByDate" class="grid justify-items-center pt-72">
-          <p class="text-2xl text-gray-400">No Schedule Events.</p>
-        </div>
-
-
-        <!-- <div class=" columns-3 gap-6 w-[1700px] mx-auto space-y-6 pb-6 text-2xl mt-10 " id="style-1"> -->
-        <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
-          <EventCard :allBooking="event" @viewDetail="getDetail" @deleteEvent="cancelEvent"
-            class="grid grid-cols-1  md:grid md:grid-cols-3 md:gap-6 " />
-        </div>
-      </div>
     </div>
   </div>
 </template>
