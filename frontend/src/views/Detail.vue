@@ -119,6 +119,7 @@ const getDetailById = async () => {
     showImg.value = await res3.blob()
     console.log(showImg.value);
     // console.log(showImg.value.type);
+
     imageObjectURL.value = URL.createObjectURL(showImg.value);
     console.log(imageObjectURL.value);
     imageURL.value[0] = (imageObjectURL.value)
@@ -582,7 +583,8 @@ window.onbeforeunload = function () {
             <p class="flex" v-else>
               <!-- <IcEmail class="inline-block mr-5 " /> -->
               <label> File name:
-                <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary">{{ fileName }}</a>
+                <!-- <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary" >{{ fileName }}</a> -->
+                <a :href="imageObjectURL" class="flex text-lg link link-secondary" :download="fileName">{{ fileName }}</a>
                 <span v-show="imageObjectURL.length == 0" class="text-secondary text-lg">No file.</span>
               </label>
             <div class="pl-5 avatar flex"
