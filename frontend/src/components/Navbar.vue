@@ -101,7 +101,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <header class="text-black bg-white body-font">
+  <!-- <header class="text-black bg-white body-font">
     <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
       <a class="flex title-font font-small items-center text-black mb-4 md:mb-0 text">
         <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
@@ -121,6 +121,31 @@ onBeforeMount(async () => {
           v-show="myUser.userRole == 'admin'">USER LIST</router-link>
       </nav>
       <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+      </router-link>
+    </div>
+    <router-view></router-view>
+  </header> -->
+
+
+  <header class="text-gray-700 body-font border-b border-gray-200">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <router-link :to="{name: 'Home'}" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <div class="w-[40px] rounded-full">
+          <img src="../assets/trimitr.png" />
+        </div>
+        <span class="ml-3 text-xl">TRIMITR</span>
+      </router-link>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Book</router-link>
+        <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
+        <router-link :to="{ name: '' }" class="mr-5 hover:text-gray-900">User list</router-link>
+      </nav>
+      <router-link :to="{ name: 'SignIn' }"
+        class="inline-flex items-center bg-green-300 border-0 py-1 px-3 focus:outline-none hover:bg-gray-300 rounded text-base mt-4 md:mt-0">Sign In
+        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
       </router-link>
     </div>
     <router-view></router-view>
