@@ -25,7 +25,7 @@ const toSetUser = ref()
 const getUserToState = async (role, email) => {
   // console.log("role " + role + "email" + email);
   var roleStr = role.toString()
-  roleStr = roleStr.split("_").pop() 
+  roleStr = roleStr.split("_").pop()
   // console.log(roleStr);
   var userLocal = {
     // id: null,
@@ -190,151 +190,107 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <!-- <p>match pass</p> -->
-  <div class="w-full h-full bg-gray-500/20 p-10 flex justify-center mt-10">
-    <div class="card w-96 bg-base-100 shadow-xl">
-      <!-- <figure class="px-10 pt-10">
-                <img src="https://placeimg.com/400/225/arch" alt="Shoes" class="rounded-xl" />
-            </figure> -->
-      <div class="card-body items-center text-center">
-        <h2 class="card-title text-2xl">Sign In</h2>
-        <!-- <p>If a dog chews shoes whose shoes does he choose?</p> -->
-        <div class="form-control w-full max-w-xs">
-          <label for="email" class="label">
-            <span class="label-text text-base font-semibold">
-              Email : <span class="text-red-500">*</span>
-            </span>
-          </label>
-          <!-- <span class="text-sm text-red-500 pb-2" v-show="usedEmail">This email is already
-                                used.</span>
-                            <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
-                                address.</span>
-                            <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 50">** An email must be
-                                1
-                                - 50 characters. **<br>
-                                51st characters onwards will be cut off</span> -->
-          <input type="email" placeholder="example@mail.kmutt.ac.th"
-            class="input input-bordered input-secondary w-full max-w-xs text-lg mb-5" v-model="email" id="email"
-            @keypress.enter="checkMatch" />
-          <!-- <label class="label">
-                        <span class="label-text-alt"></span>
-                        <span class="label-text-alt">{{ email.length }}/50</span>
-                    </label> -->
-
-          <label for="password" class="label">
-            <span class="label-text text-base font-semibold">
-              Password : <span class="text-red-500">*</span>
-            </span>
-            <label class="swap">
-              <input type="checkbox" v-model="isShowPassword" />
-              <div class="swap-on text-sm">
-                <svg width="24" height="24" viewBox="0 0 512 512" class="inline">
-                  <path fill="currentColor"
-                    d="m63.998 86.005l21.998-21.998L447.999 426.01l-21.998 21.998zM259.34 192.09l60.57 60.57a64.07 64.07 0 0 0-60.57-60.57Zm-6.68 127.82l-60.57-60.57a64.07 64.07 0 0 0 60.57 60.57Z" />
-                  <path fill="currentColor"
-                    d="M256 352a96 96 0 0 1-92.6-121.34l-69.07-69.08C66.12 187.42 39.24 221.14 16 256c26.42 44 62.56 89.24 100.2 115.18C159.38 400.92 206.33 416 255.76 416A233.47 233.47 0 0 0 335 402.2l-53.61-53.6A95.84 95.84 0 0 1 256 352Zm0-192a96 96 0 0 1 92.6 121.34L419.26 352c29.15-26.25 56.07-61.56 76.74-96c-26.38-43.43-62.9-88.56-101.18-114.82C351.1 111.2 304.31 96 255.76 96a222.92 222.92 0 0 0-78.21 14.29l53.11 53.11A95.84 95.84 0 0 1 256 160Z" />
-                </svg>
-                Hide
-              </div>
-              <div class="swap-off text-sm">
-                <svg width="24" height="24" viewBox="0 0 512 512" class="inline">
-                  <circle cx="256" cy="256" r="64" fill="currentColor" />
-                  <path fill="currentColor"
-                    d="M490.84 238.6c-26.46-40.92-60.79-75.68-99.27-100.53C349 110.55 302 96 255.66 96c-42.52 0-84.33 12.15-124.27 36.11c-40.73 24.43-77.63 60.12-109.68 106.07a31.92 31.92 0 0 0-.64 35.54c26.41 41.33 60.4 76.14 98.28 100.65C162 402 207.9 416 255.66 416c46.71 0 93.81-14.43 136.2-41.72c38.46-24.77 72.72-59.66 99.08-100.92a32.2 32.2 0 0 0-.1-34.76ZM256 352a96 96 0 1 1 96-96a96.11 96.11 0 0 1-96 96Z" />
-                </svg>
-                Show
-              </div>
-            </label>
-          </label>
-          <input v-if="!isShowPassword" type="password" placeholder="••••••••" v-model="password"
-            class="input input-bordered input-secondary w-full max-w-xs text-2xl mb-7" id="password"
-            @keypress.enter="checkMatch" />
-          <input v-else type="text" v-model="password"
-            class="input input-bordered input-secondary w-full max-w-xs text-base mb-7" id="password"
-            @keypress.enter="checkMatch" />
-          <!-- <label class="label">
-                        <span class="label-text-alt"></span>
-                        <span class="label-text-alt">{{ password.length }}/14</span>
-                        <span class="label-text-alt">{{ password.length }} Characters.</span>
-                     </label> -->
-          <label class="label">
-            <span class="label-text-alt"></span>
-            <span class="label-text-alt">Don't have account? <router-link :to="{ name: 'AddUser' }"
-                class="text-blue-500 hover:underline">
-                Sign Up
-              </router-link></span>
-          </label>
-          <div v-show="isChecked" class="mb-3">
-            <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-if="!isMatch">
-              <div v-if="isExist">
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="ml-10">Password incorrect!</span>
-              </div>
-              <div v-else>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="mr-5">A user with specified email does not existed.</span>
-              </div>
-            </div>
-            <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-gray-50 self-center" v-else>
-              <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p class="ml-12">Login successful!</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center mb-5"
-            v-show="falseInput">
+  <section class="bg-gray-50 dark:bg-gray-900">
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div
+        class="w-full bg-white rounded-lg shadow dark:border md:mt-10 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            Sign in to your account
+          </h1>
+          <form class="space-y-4 md:space-y-6" @submit.prevent="checkMatch">
             <div>
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Please fill {{ alertText }} field.</span>
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+              <input type="email" name="email" id="email" v-model="email" @keypress.enter="checkMatch"
+                class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="example@mail.kmutt.ac.th" required="">
             </div>
-          </div>
+            <div>
+              <label for="password"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+              <input type="password" name="password" id="password" placeholder="••••••••" v-model="password"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-xl rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                required="">
+            </div>
+            <button type="submit" v-show="isNotSignedIn == true" @click="checkMatch"
+              class="w-full text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              Sign
+              in</button>
 
-          <div class="card-actions justify-center mt-3 w-full">
-            <button class="btn btn-secondary" v-show="isNotSignedIn == true" @click="checkMatch">
-              SIGN IN
-            </button>
-            <button v-show="isNotSignedIn == false" type="button"
-              class="flex items-center rounded-lg bg-green-700 px-4 py-2 text-white" disabled>
-              <svg class="mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-              </svg>
-              <span class="font-medium"> Redirecting... </span>
-            </button>
-          </div>
-          <div v-show="isNotSignedIn"  >
-              <div class="divider">OR</div>
-            <div class="card-actions justify-center mt-3 w-full">
-            <button class="btn btn-primary" v-show="isNotSignedIn == true">
-              SIGN IN WITH MICROSOFT
-            </button>
-          </div>
-          </div>
+            <div v-show="isChecked" class="mb-3">
+              <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center" v-if="!isMatch">
+                <!-- <div v-if="isExist">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="ml-10">Password incorrect!</span>
+                </div> -->
+                <div v-if="isExist"
+                  class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                  role="alert">
+                  <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="sr-only">Info</span>
+                  <div>
+                    Password incorrect!
+                  </div>
+                </div>
+                <div v-else
+                  class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                  role="alert">
+                  <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                  <span class="sr-only">Info</span>
+                  <div>
+                    A user with specified email does not existed.
+                  </div>
+                </div>
+              </div>
+              <div v-else
+                class="flex p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                role="alert">
+                <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                  viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                  Login successful!
+                </div>
+              </div>
+
+            </div>
+            <div class="flex card-actions justify-center mt-3 w-full">
+              <button v-show="isNotSignedIn == false" type="button"
+                class="flex items-center rounded-lg bg-green-700 px-4 py-2 text-white" disabled>
+                <svg class="mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
+                <span class="font-medium"> Redirecting... </span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+  
 </template>
 
 <style>
