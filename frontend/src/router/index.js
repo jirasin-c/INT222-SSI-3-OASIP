@@ -9,6 +9,7 @@ import UserDetail from "../views/UserDetail.vue";
 import AddUser from "../views/AddUser.vue";
 import SignIn from "../views/SignIn.vue";
 import MatchPass from "../views/MatchPass.vue";
+import EventList from "../views/EventList.vue"
 const history = createWebHistory("/ssi3/");
 // const history = createWebHistory();
 // async function removeQueryParams(to) {
@@ -186,6 +187,28 @@ const routes = [
       }
     },
   },
+  {
+    path: "/event-lists/",
+    name: "EventList",
+    component: EventList,
+    // beforeEnter: (to, form) => {
+    //   var userLocal = {
+    //     // id: null,
+    //     // name: "",
+    //     email: "",
+    //     role: "",
+    //   };
+    //   if (localStorage.getItem("token") == null) {
+    //     // myUser.setLogin();
+    //     // myUser.setUserEmail(email);
+    //     // myUser.setUserRole("guest");
+    //     // userLocal.email = email;
+    //     userLocal.role = 'guest';
+    //     localStorage.setItem("user", JSON.stringify(userLocal));
+    //   }
+    // },
+    
+  }
 ];
 
 const router = createRouter({ history, routes });

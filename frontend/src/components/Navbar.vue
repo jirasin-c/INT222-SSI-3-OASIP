@@ -101,54 +101,81 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="w-screen">
-    <div
-      class="navbar bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-primary-content flex justify-between">
-      <div>
-        <div class="hidden md:block md:w-auto">
-          <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
-            <div class="avatar pr-2">
-              <div class="w-[40px] rounded-full">
-                <img src="../assets/trimitr.png" />
-              </div>
-            </div>TRIMITR GROUP
-          </router-link>
-        </div>
-        <div class="md:hidden">
-          <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-sm mb-2">
+  <!-- <header class="text-black bg-white body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-small items-center text-black mb-4 md:mb-0 text">
+        <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
+          <div class="avatar pr-2">
             <div class="w-[40px] rounded-full">
               <img src="../assets/trimitr.png" />
-              trimitr
             </div>
-          </router-link>
+          </div>TRIMITR GROUP
+        </router-link>
+      </a>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg"
+          v-show="myUser.userRole != 'lecturer'">BOOKS</router-link>
+        <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
+        </router-link>
+        <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
+          v-show="myUser.userRole == 'admin'">USER LIST</router-link>
+      </nav>
+      <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+      </router-link>
+    </div>
+    <router-view></router-view>
+  </header> -->
+
+
+  <header class="text-gray-700 body-font border-b border-gray-200">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <router-link :to="{ name: 'Home' }" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+        <div class="w-[40px] rounded-full">
+          <img src="../assets/trimitr.png" />
         </div>
-        <div class="ml-5">
-          <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg"
-            v-show="myUser.userRole != 'lecturer' ">BOOKS</router-link>
-          <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
-          </router-link>
-          <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
-            v-show="myUser.userRole == 'admin' ">USER LIST</router-link>
-          <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
+        <span class="ml-3 text-xl">TRIMITR</span>
+      </router-link>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole != 'lecturer'">Book</router-link>
+        <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
+        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole == 'admin'">Users</router-link>
+        <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Events</router-link>
+      </nav>
+      <div v-show="myUser.isLogin == true">
+        <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
+          class="text-white bg-indigo-500 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-base px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          type="button">User<svg class="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg></button>
+        <div id="dropdownDivider"
+          class="hidden z-10 w-44 bg-slate-50 rounded divide-y divide-gray-200 shadow dark:bg-gray-700 dark:divide-gray-600">
+          <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
+            <li class="flex justify-center">
+              {{myUser.userEmail}}
+            </li>
+          </ul>
+          <div class="py-1 flex justify-center">
+            <button @click="logout"
+          class="w-64 block py-2 px-4 text-sm rounded-lg text-white bg-rose-500 hover:bg-rose-700 ">SIGN
+          OUT
+        </button>
+          </div>
         </div>
       </div>
-      <div class="mr-20" v-if="myUser.isLogin == true">
-        <!-- <router-link :to="{ name: 'UserDetail', params: { name: myUser.userName } }" -->
-        <button class="btn btn-ghost normal-case text-lg hover:btn-primary ">
-          Welcome: {{myUser.userEmail}}
-        </button>
-        <button @click="logout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT
-        </button>
-      </div>
-      <div class="mr-20" v-else>
-        <!-- <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
-        </router-link> -->
-        <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+      <div v-show="myUser.isLogin == false">
+        <router-link :to="{ name: 'SignIn' }"
+          class="text-white inline-flex items-center bg-green-400 border-0 px-4 py-2.5 focus:outline-none hover:bg-green-500 rounded-lg text-base mt-4 md:mt-0">
+          Sign In
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
         </router-link>
       </div>
     </div>
-    <router-view></router-view>
-  </div>
+    <!-- <router-view></router-view> -->
+  </header>
 </template>
 
 <style>

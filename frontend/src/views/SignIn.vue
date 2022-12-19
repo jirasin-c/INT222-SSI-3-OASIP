@@ -149,7 +149,7 @@ const checkMatch = async () => {
     await getUserToState(jwtToken.value.roles, email.value)
     // myUser.setUserName('qq')
     // myUser.setLogin()
-    setTimeout(() => appRouter.push({ name: "Home" }), 1000);
+    setTimeout(() => appRouter.push({ name: "EventList" }), 1000);
     // isExist.value = true
   } else if (res.status === 401) {
     isChecked.value = true;
@@ -307,8 +307,8 @@ onBeforeMount(async () => {
             </div>
           </div>
 
-          <div class="card-actions justify-center mt-3">
-            <button class="btn btn-primary" v-show="isNotSignedIn == true" @click="checkMatch">
+          <div class="card-actions justify-center mt-3 w-full">
+            <button class="btn btn-secondary" v-show="isNotSignedIn == true" @click="checkMatch">
               SIGN IN
             </button>
             <button v-show="isNotSignedIn == false" type="button"
@@ -322,6 +322,14 @@ onBeforeMount(async () => {
               </svg>
               <span class="font-medium"> Redirecting... </span>
             </button>
+          </div>
+          <div v-show="isNotSignedIn"  >
+              <div class="divider">OR</div>
+            <div class="card-actions justify-center mt-3 w-full">
+            <button class="btn btn-primary" v-show="isNotSignedIn == true">
+              SIGN IN WITH MICROSOFT
+            </button>
+          </div>
           </div>
         </div>
       </div>
