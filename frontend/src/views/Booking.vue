@@ -434,7 +434,7 @@ const deleteFile = () => {
         isFileInputed.value = false
         size.value = 0
         imageURL.value = []
-    }else{
+    } else {
         return
     }
 }
@@ -454,171 +454,284 @@ const formatBytes = (bytes, decimals = 2) => {
  
 <template>
     <div>
-        <div class="hero min-h-screen bg-base-200">
-            <div class="hero-content text-left ">
-                <div
-                    class="card w-auto lg:w-[1000px] bg-gradient-to-r from-base-100 to-base-200 mb-16 shadow-xl backdrop-blur-sm">
-                    <div class="card-body text-3xl place-self-center pb-1">
-                        <p
-                            class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 pb-1 text-center">
-                            Booking Event
-                        </p>
-                        <div class="divider"></div>
-                        <div class="flex justify-center pb-2">
-                            <div class="form-control w-full max-w-xs">
-                                <label for="category" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Category: <span class="text-red-500">*</span>
-                                    </span>
-                                </label>
-                                <select class="select select-secondary w-full max-w-xs  text-lg" id="category"
-                                    v-model="selectedCategory">
+        <section class="text-gray-600 body-font relative">
+            <div class="container px-5 py-14 mx-auto">
+                <div class="flex flex-col text-center w-full mb-12">
+                    <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Booking</h1>
+                    <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Please fill out the data below</p>
+                </div>
+                <div class="lg:w-1/2 md:w-2/3 mx-auto">
+                    <div class="flex flex-wrap -m-2">
+                        <div class="p-2 w-full">
+                            <div class="relative">
+                                <label for="name" class="leading-7 text-sm text-gray-600">Category<span
+                                        class="text-red-500 p-2">*</span></label>
+                                <select
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                    id="
+                                    category" v-model="selectedCategory">
                                     <option v-for="category in eventCategory " :key="category">
                                         {{ category.eventCategoryName }}</option>
                                 </select>
-                                <label for="duration" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Duration:
-                                    </span>
-                                </label>
+                            </div>
+                        </div>
+                        <div class="p-2 w-1/2">
+                            <div class="relative">
+                                <label for="name" class="leading-7 text-sm text-gray-600">Duration</label>
                                 <input type="text" v-model="duration"
-                                    class="input input-bordered input-secondary w-full max-w-xs text-gray-50" disabled
-                                    id="duration" />
-                                <label for="starttime" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Start time: <span class="text-red-500">*</span>
-                                    </span>
-                                </label>
-                                <span class="text-sm text-red-500 pb-2"
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-400 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out cursor-no-drop"
+                                    disabled id="duration" />
+                            </div>
+                        </div>
+                        <div class="p-2 w-1/2">
+                            <div class="relative" id="outlined_error">
+                                <label for="email" class="leading-7 text-sm text-gray-600">Start time<span
+                                        class="text-red-500 p-2">*</span></label>
+                                <span class="text-sm text-red-500 p-2"
                                     v-show="compareDate(startTime, currentTime)">Start time must be in the
                                     future.</span>
-                                <!-- <span class="text-sm text-red-500 pb-2" v-show="isOverlapped">Start time is overlapped.</span> -->
-                                <input type="datetime-local" placeholder="Type here"
-                                    class="input input-bordered input-secondary w-full max-w-xs text-lg"
+                                <input type="datetime-local"
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                     v-model="startTime" id="starttime" :min="currentTime">
-                                <label for="name" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Name : <span class="text-red-500">*</span>
-                                    </span>
-                                </label>
+                            </div>
+                        </div>
+                        <div class="p-2 w-1/2">
+                            <div class="relative">
+                                <label for="email" class="leading-7 text-sm text-gray-600">Name<span
+                                        class="text-red-500 p-2">*</span></label>
                                 <span class="text-sm text-yellow-500 pb-2" v-show="name.length == 100">** A name must be
                                     1
                                     - 100 characters. **</span>
                                 <input type="text" placeholder="Type yourname..."
-                                    class="input input-bordered input-secondary w-full max-w-xs text-lg" v-model="name"
-                                    id="name" maxlength="100" />
-                                <label class="label">
-                                    <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{ name.length }}/100</span>
-                                </label>
-                                <label for="email" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Email : <span class="text-red-500">*</span>
-                                    </span>
-                                </label>
+                                    class="w-full placeholder:opacity-50 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                    v-model="name" id="name" maxlength="100" />
+                                <p class="text-sm opacity-50 text-right">{{ name.length }}/100</p>
+                            </div>
+                        </div>
+                        <div class="p-2 w-1/2">
+                            <div class="relative">
+                                <label for="email" class="leading-7 text-sm text-gray-600">Email<span
+                                        class="text-red-500 p-2">*</span></label>
+
                                 <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
                                     address.</span>
                                 <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 100">** An email must
                                     be 1 - 100 characters. **</span>
                                 <input v-if="myUser.isLogin == false" type="email"
                                     placeholder="example@mail.kmutt.ac.th"
-                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg"
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                     v-model="email" id="email" maxlength="100" />
                                 <input v-else-if="myUser.userRole != 'admin'" type="email"
                                     placeholder="example@mail.kmutt.ac.th"
-                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg text-gray-50"
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                     v-model="email" id="email" maxlength="100" disabled />
                                 <input v-else type="email" placeholder="example@mail.kmutt.ac.th"
-                                    class="input input-bordered input-secondary w-full max-w-xs  text-lg"
+                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                     v-model="email" id="email" maxlength="100" />
-                                <label class="label">
-                                    <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{ email.length }}/100</span>
-                                </label>
-                                <label for="notes" class="label">
-                                    <span class="label-text text-base font-semibold">
-                                        Notes :
-                                    </span>
-                                </label>
-                                <span class="text-sm text-yellow-500 pb-2" v-show="notes.length == 500">** A notes must
-                                    be
-                                    1 - 500 characters. **</span>
+                                <p class="text-sm opacity-50 text-right">{{ email.length }}/100</p>
+                            </div>
+                        </div>
+                        <div class="p-2 w-full">
+                            <div class="relative">
+                                <label for="message" class="leading-7 text-sm text-gray-600">Notes</label>
                                 <textarea id="notes" cols="30" rows="2" v-model="notes"
-                                    class="textarea textarea-secondary  text-lg w-full overflow-auto"
+                                    class="w-full placeholder:opacity-50 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
                                     placeholder="Type something..." maxlength="500"></textarea>
-                                <label class="label">
-                                    <span class="label-text-alt"></span>
-                                    <span class="label-text-alt">{{ notes.length }}/500</span>
-                                </label>
-                                <label for="input" class="label">
-                                    <span class="label-text text-base font-semibold text-secondary">
-                                        Maximun 10 MB.
-                                    </span>
-                                </label>
-                                <input type="file" class="file-input file-input-bordered w-full max-w-xs"
-                                    @change="onFileSelected" id="input" />
-                                <span class="text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
-                                    be large than 10 MB. **</span>
-                                <div class="pt-5 avatar flex"  v-if="file.type == 'image/png' || file.type == 'image/jpeg'">
-                                    <div class="w-96 h-64 rounded-xl">
-                                        <!-- <img :src="imageObjectURL" width="300" height="300" alt="">
-                                         -->
-                                        <img :src="imageURL" alt="" width="400" height="400">
-                                    </div>
-                                </div>
+                                <p class="text-sm opacity-50 text-right">{{ notes.length }}/500</p>
+                            </div>
+                        </div>
+                        <div class="p-2 w-full">
 
-                                <!-- <p>{{file.name}}</p> -->
-                                <ul v-show="isFileInputed">
-                                    <li class="text-sm flex justify-between mt-5">{{ file.name }}
-                                        <span class="text-secondary">{{ size }}</span>
-                                        <button @click="deleteFile">
-                                            <svg width="32" height="32" viewBox="0 0 24 24">
-                                                <path fill="currentColor"
-                                                    d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
-                                            </svg>
-                                        </button>
-                                    </li>
-                                </ul>
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                for="file_input">Upload file</label>
+                            <input type="file"
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                @change="onFileSelected" id="input" />
+                            <!-- <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG
+                                or GIF (MAX. 800x400px).</p> -->
+
+
+                            <span class="text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
+                                be large than 10 MB. **</span>
+                            <div class="flex p-8" v-if="file.type == 'image/png' || file.type == 'image/jpeg'">
+
+                                <img class="mx-auto rounded-xl" :src="imageURL" alt="" width="200" height="200">
 
                             </div>
+
+                            <!-- <p>{{file.name}}</p> -->
+                            <ul v-show="isFileInputed">
+                                <li class="text-sm flex justify-between mt-5">{{ file.name }}
+                                    <span class="text-secondary">{{ size }}</span>
+                                    <button @click="deleteFile">
+                                        <svg width="32" height="32" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
+                                        </svg>
+                                    </button>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
-                            v-show="falseInput">
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
-                                    fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>Please fill {{ alertText }} field.</span>
-                            </div>
+                        <div class="p-8 w-full">
+                            <button
+                                class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-lg text-lg">SUBMIT</button>
                         </div>
-                        <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center"
-                            v-show="success">
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
-                                    fill="none" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span>Create event success.</span>
-                            </div>
-                        </div>
-                        <div class="card-actions justify-center">
-                            <button @click="createEvent"
-                                class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500 mb-4 text-lg">Book
-                                event</button>
+                        <div class="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
+                            <a class="text-indigo-500">napasuay@email.com</a>
+                            <p class="leading-normal my-5">Ban Khun Bam
+                                <br>Nameg Planet, MN 56301
+                            </p>
+                            <span class="inline-flex">
+                                <a class="text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                                    </svg>
+                                </a>
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                        <path
+                                            d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                                        </path>
+                                    </svg>
+                                </a>
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank"> 
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                        <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                                    </svg>
+                                </a>
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                    <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                        <path
+                                            d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
+
+
+        <!-- <div class="container mx-auto h-screen bg-white flex justify-center items-center">
+                <form class="w-full max-w-lg">
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-first-name">
+                                First Name
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                                id="grid-first-name" type="text" placeholder="Jane">
+                            <p class="text-red-500 text-xs italic">Please fill out this field.</p>
+                        </div>
+                        <div class="w-full md:w-1/2 px-3">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-last-name">
+                                Last Name
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="grid-last-name" type="text" placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap -mx-3 mb-6">
+                        <div class="w-full px-3">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-password">
+                                Password
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="grid-password" type="password" placeholder="******************">
+                            <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
+                        </div>
+                    </div>
+
+
+                    <div class="flex flex-wrap -mx-3 mb-2">
+                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-city">
+                                City
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="grid-city" type="text" placeholder="Albuquerque">
+                        </div>
+
+                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-state">
+                                State
+                            </label>
+                            <div class="relative">
+                                <select
+                                    class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-full leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    id="grid-state">
+                                    <option>New Mexico</option>
+                                    <option>Missouri</option>
+                                    <option>Texas</option>
+                                </select>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                                for="grid-zip">
+                                Zip
+                            </label>
+                            <input
+                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="grid-zip" type="text" placeholder="90210">
+                        </div>
+
+                    </div>
+
+                    <div class="w-full px-3 mb-6 md:mb-0">
+                        <div class="flex flex-wrap -mx-3 mb-6">
+
+                            <label class="w-full block text-gray-500 font-bold">
+                                <input class="mr-2 leading-tight" type="checkbox">
+                                <span class="text-sm">
+                                    Send me your newsletter!
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="flex flex-wrap -mx-3 mb-6">
+
+                            <div class="w-full">
+                                <button
+                                    class="shadow-none bg-blue-700 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-4 px-10 rounded-full"
+                                    type="button">
+                                    Sign Up
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div> -->
     </div>
 </template>
  
 <style scoped>
-::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-}
+
 </style>
