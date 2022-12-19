@@ -174,7 +174,7 @@ onBeforeMount(async () => {
         </router-link>
       </div>
     </div>
-    <router-view></router-view>
+    <!-- <router-view></router-view> -->
   </header>
 </template>
 
