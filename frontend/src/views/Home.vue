@@ -4,6 +4,7 @@ import ShowSelectedEvent from "../components/ShowSelectedEvent.vue";
 import { useRouter } from 'vue-router';
 import { onBeforeMount, onUpdated, ref } from "vue";
 import { useUser } from "../stores/user";
+import { Breadcrumb } from 'flowbite-vue'
 const appRouter = useRouter()
 const event = ref([]);
 const eventFilter = ref([])
@@ -294,10 +295,34 @@ onUpdated(() => {
 <template>
   <div>
     <div>
+      <section class="text-gray-700 body-font">
+        <div class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
+          <div
+            class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
+            <h1 class="title-font sm:text-4xl text-3xl mb-4 font-medium text-gray-900">Talk with your instructors,
+              <br class="hidden lg:inline-block">make your works better
+            </h1>
+            <p class="mb-8 leading-relaxed">The OASIP Application makes it simple for you to schedule a session with your teacher. Try out our features or click "Book Now" below to begin.</p>
+            <div class="flex justify-center">
+              <button
+                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">BOOK NOW</button>
+              <button
+                class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded text-lg">all bookings</button>
+            </div>
+          </div>
+          <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
+            <img class="object-cover object-center rounded" alt="hero" src="../assets/undraw_educator_re_ju47.svg">
+          </div>
+        </div>
+      </section>
+    </div>
+    <div>
       <div
-        class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+        class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
         CURRENT BOOKING</div>
+
       <div class="flex items-center mt-8 justify-end mr-16">
+
         <div
           class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
           <div class="text-2xl font-extrabold m-2">

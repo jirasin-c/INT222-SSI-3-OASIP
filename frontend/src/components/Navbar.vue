@@ -101,54 +101,30 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <div class="w-screen">
-    <div
-      class="navbar bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-primary-content flex justify-between">
-      <div>
-        <div class="hidden md:block md:w-auto">
-          <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
-            <div class="avatar pr-2">
-              <div class="w-[40px] rounded-full">
-                <img src="../assets/trimitr.png" />
-              </div>
-            </div>TRIMITR GROUP
-          </router-link>
-        </div>
-        <div class="md:hidden">
-          <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-sm mb-2">
+  <header class="text-black bg-white body-font">
+    <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
+      <a class="flex title-font font-small items-center text-black mb-4 md:mb-0 text">
+        <router-link :to="{ name: 'Home' }" class="btn btn-ghost normal-case text-xl">
+          <div class="avatar pr-2">
             <div class="w-[40px] rounded-full">
               <img src="../assets/trimitr.png" />
-              trimitr
             </div>
-          </router-link>
-        </div>
-        <div class="ml-5">
-          <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg"
-            v-show="myUser.userRole != 'lecturer' ">BOOKS</router-link>
-          <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
-          </router-link>
-          <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
-            v-show="myUser.userRole == 'admin' ">USER LIST</router-link>
-          <!-- <a class="btn btn-ghost normal-case text-xl">TRIMITR GROUP</a> -->
-        </div>
-      </div>
-      <div class="mr-20" v-if="myUser.isLogin == true">
-        <!-- <router-link :to="{ name: 'UserDetail', params: { name: myUser.userName } }" -->
-        <button class="btn btn-ghost normal-case text-lg hover:btn-primary ">
-          Welcome: {{myUser.userEmail}}
-        </button>
-        <button @click="logout" class="btn  normal-case text-lg btn-accent ml-3">SIGN OUT
-        </button>
-      </div>
-      <div class="mr-20" v-else>
-        <!-- <router-link :to="{ name: 'AddUser' }" class="btn btn-ghost normal-case text-lg hover:btn-primary ">SIGN UP
-        </router-link> -->
-        <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+          </div>TRIMITR GROUP
         </router-link>
-      </div>
+      </a>
+      <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <router-link :to="{ name: 'Booking' }" class="btn btn-ghost normal-case text-lg"
+          v-show="myUser.userRole != 'lecturer'">BOOKS</router-link>
+        <router-link :to="{ name: 'EventCategory' }" class="btn btn-ghost normal-case text-lg">CATEGORIES
+        </router-link>
+        <router-link :to="{ name: 'UserList' }" class="btn btn-ghost normal-case text-lg"
+          v-show="myUser.userRole == 'admin'">USER LIST</router-link>
+      </nav>
+      <router-link :to="{ name: 'SignIn' }" class="btn  normal-case text-lg btn-accent ml-3">SIGN IN
+      </router-link>
     </div>
     <router-view></router-view>
-  </div>
+  </header>
 </template>
 
 <style>
