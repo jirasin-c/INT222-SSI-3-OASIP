@@ -14,9 +14,8 @@
             <p class="mb-8 leading-relaxed">The OASIP Application makes it simple for you to schedule a session with
               your teacher. Try out our features or click "Book Now" below to begin.</p>
             <div class="flex justify-center">
-              <router-link :to="{ name: 'Booking' }"
-                class="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded-lg text-lg">
-                BOOK
+              <router-link :to="{name: 'Booking'}"
+                class="inline-flex text-white bg-sky-400 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">BOOK
                 NOW</router-link>
               <router-link :to="{ name: 'EventList' }"
                 class="ml-4 inline-flex text-gray-700 bg-gray-200 border-0 py-2 px-6 focus:outline-none hover:bg-gray-300 rounded-lg text-lg">
