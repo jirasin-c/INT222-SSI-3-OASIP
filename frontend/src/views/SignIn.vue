@@ -149,7 +149,7 @@ const checkMatch = async () => {
     await getUserToState(jwtToken.value.roles, email.value)
     // myUser.setUserName('qq')
     // myUser.setLogin()
-    setTimeout(() => appRouter.push({ name: "Home" }), 1000);
+    setTimeout(() => appRouter.push({ name: "EventList" }), 1000);
     // isExist.value = true
   } else if (res.status === 401) {
     isChecked.value = true;

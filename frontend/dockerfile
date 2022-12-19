@@ -4,6 +4,7 @@ WORKDIR /frontend
 COPY package*.json ./
 RUN npm install
 RUN npm i daisyui
+RUN npm i flowbite
 COPY . .
 # RUN npm ci
 RUN ls

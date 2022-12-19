@@ -39,22 +39,22 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
-    // beforeEnter: (to, form) => {
-    //   var userLocal = {
-    //     // id: null,
-    //     // name: "",
-    //     email: "",
-    //     role: "",
-    //   };
-    //   if (localStorage.getItem("token") == null) {
-    //     // myUser.setLogin();
-    //     // myUser.setUserEmail(email);
-    //     // myUser.setUserRole("guest");
-    //     // userLocal.email = email;
-    //     userLocal.role = 'guest';
-    //     localStorage.setItem("user", JSON.stringify(userLocal));
-    //   }
-    // },
+    beforeEnter: (to, form) => {
+      var userLocal = {
+        // id: null,
+        // name: "",
+        email: "",
+        role: "",
+      };
+      if (localStorage.getItem("token") == null) {
+        // myUser.setLogin();
+        // myUser.setUserEmail(email);
+        // myUser.setUserRole("guest");
+        // userLocal.email = email;
+        userLocal.role = 'guest';
+        localStorage.setItem("user", JSON.stringify(userLocal));
+      }
+    },
   },
   {
     path: "/event-detail/:bookingId",
@@ -191,22 +191,22 @@ const routes = [
     path: "/event-lists/",
     name: "EventList",
     component: EventList,
-    beforeEnter: (to, form) => {
-      var userLocal = {
-        // id: null,
-        // name: "",
-        email: "",
-        role: "",
-      };
-      if (localStorage.getItem("token") == null) {
-        // myUser.setLogin();
-        // myUser.setUserEmail(email);
-        // myUser.setUserRole("guest");
-        // userLocal.email = email;
-        userLocal.role = 'guest';
-        localStorage.setItem("user", JSON.stringify(userLocal));
-      }
-    },
+    // beforeEnter: (to, form) => {
+    //   var userLocal = {
+    //     // id: null,
+    //     // name: "",
+    //     email: "",
+    //     role: "",
+    //   };
+    //   if (localStorage.getItem("token") == null) {
+    //     // myUser.setLogin();
+    //     // myUser.setUserEmail(email);
+    //     // myUser.setUserRole("guest");
+    //     // userLocal.email = email;
+    //     userLocal.role = 'guest';
+    //     localStorage.setItem("user", JSON.stringify(userLocal));
+    //   }
+    // },
     
   }
 ];
