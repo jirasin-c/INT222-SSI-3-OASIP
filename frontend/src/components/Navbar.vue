@@ -136,10 +136,12 @@ onBeforeMount(async () => {
         <span class="ml-3 text-xl">TRIMITR</span>
       </router-link>
       <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
+        <!-- <router-link v-for="link in links" :to="{name: link.routeName}" class="mr-5 hover:text-gray-900" v-show="link.authorize == false || (link.authorize == true && link.role == myUser.userRole)">{{link.name}}</router-link> -->
         <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole != 'lecturer'">Book</router-link>
         <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
         <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole == 'admin'">Users</router-link>
         <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Events</router-link>
+        <router-link :to="{ name: 'FAQ' }" class="mr-5 hover:text-gray-900">FAQ</router-link>
       </nav>
       <div v-show="myUser.isLogin == true">
         <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
