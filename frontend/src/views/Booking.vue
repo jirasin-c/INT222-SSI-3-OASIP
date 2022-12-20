@@ -156,7 +156,6 @@ const validateEmail = () => {
 // }
 
 const createEvent = async () => {
-
     isOverlapped.value = false
     const compareStartTime = new Date(startTime.value).toLocaleString()
     const compareStartTimeISO = new Date(startTime.value)
@@ -284,14 +283,14 @@ const createEvent = async () => {
                 // )
             })
             if (res.status === 200) {
-                startTime.value = null
-                name.value = ''
-                email.value = ''
-                notes.value = ''
-                // alert("Event created successfully")
-                success.value = true
-                setTimeout(() => appRouter.push({ name: 'Home' }), 1000)
-                // appRouter.push({ name: 'Home' })
+            startTime.value = null
+            name.value = ''
+            email.value = ''
+            notes.value = ''
+            // alert("Event created successfully")
+            success.value = true
+            setTimeout(() => appRouter.push({ name: 'Home' }), 1000)
+            // appRouter.push({ name: 'Home' })
             } else {
                 startTime.value = startTime.value
                 alert("Event can't created")
@@ -453,7 +452,6 @@ const formatBytes = (bytes, decimals = 2) => {
 </script>
  
 <template>
-    <div>
         <section class="text-gray-600 body-font relative">
             <div class="container px-5 py-14 mx-auto">
                 <div class="flex flex-col text-center w-full mb-12">
@@ -555,7 +553,7 @@ const formatBytes = (bytes, decimals = 2) => {
                                 be large than 10 MB. **</span>
                             <div class="flex p-8" v-if="file.type == 'image/png' || file.type == 'image/jpeg'">
 
-                                <img class="mx-auto rounded-xl" :src="imageURL" alt="" width="200" height="200">
+                                <img class="mx-auto rounded-xl" :src="imageURL" alt="" width="350" height="350">
 
                             </div>
 
@@ -572,23 +570,61 @@ const formatBytes = (bytes, decimals = 2) => {
                                 </li>
                             </ul>
                         </div>
+                        <div class="alert alert-error shadow-lg w-screen h-12 py-3 text-[16px] text-white self-center"
+                            v-show="falseInput">
+                            <div class=" flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                                role="alert">
+                                <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Info</span>
+                                <div>
+                                    lease fill {{ alertText }} field.
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="alert alert-success shadow-lg w-screen h-12 text-[16px] text-white self-center"
+                            v-show="success">
+                            <div class="flex p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                                role="alert">
+                                <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="sr-only">Info</span>
+                                <div>
+                                    Create event success.
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="p-8 w-full">
-                            <button
+                            <button @click="createEvent"
                                 class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-lg text-lg">SUBMIT</button>
                         </div>
+
                         <div class="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
                             <a class="text-indigo-500">napasuay@email.com</a>
                             <p class="leading-normal my-5">Napasorn, Jirasin, Naruebet
                                 <br>School of Information Technology, KMUTT
                             </p>
                             <span class="inline-flex">
-                                <a class="text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                <a class="text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                    target="_blank">
                                     <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
                                         <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
                                     </svg>
                                 </a>
-                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                    target="_blank">
                                     <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
                                         <path
@@ -596,14 +632,16 @@ const formatBytes = (bytes, decimals = 2) => {
                                         </path>
                                     </svg>
                                 </a>
-                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank"> 
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                    target="_blank">
                                     <svg fill="none" stroke="currentColor" stroke-linecap="round"
                                         stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
                                         <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                                         <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
                                     </svg>
                                 </a>
-                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                    target="_blank">
                                     <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                         stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
                                         <path
@@ -617,119 +655,6 @@ const formatBytes = (bytes, decimals = 2) => {
                 </div>
             </div>
         </section>
-
-
-
-        <!-- <div class="container mx-auto h-screen bg-white flex justify-center items-center">
-                <form class="w-full max-w-lg">
-                    <div class="flex flex-wrap -mx-3 mb-6">
-                        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-first-name">
-                                First Name
-                            </label>
-                            <input
-                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                                id="grid-first-name" type="text" placeholder="Jane">
-                            <p class="text-red-500 text-xs italic">Please fill out this field.</p>
-                        </div>
-                        <div class="w-full md:w-1/2 px-3">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-last-name">
-                                Last Name
-                            </label>
-                            <input
-                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="grid-last-name" type="text" placeholder="Doe">
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap -mx-3 mb-6">
-                        <div class="w-full px-3">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-password">
-                                Password
-                            </label>
-                            <input
-                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="grid-password" type="password" placeholder="******************">
-                            <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
-                        </div>
-                    </div>
-
-
-                    <div class="flex flex-wrap -mx-3 mb-2">
-                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-city">
-                                City
-                            </label>
-                            <input
-                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="grid-city" type="text" placeholder="Albuquerque">
-                        </div>
-
-                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-state">
-                                State
-                            </label>
-                            <div class="relative">
-                                <select
-                                    class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-full leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    id="grid-state">
-                                    <option>New Mexico</option>
-                                    <option>Missouri</option>
-                                    <option>Texas</option>
-                                </select>
-                                <div
-                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20">
-                                        <path
-                                            d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                            <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                                for="grid-zip">
-                                Zip
-                            </label>
-                            <input
-                                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-full py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                id="grid-zip" type="text" placeholder="90210">
-                        </div>
-
-                    </div>
-
-                    <div class="w-full px-3 mb-6 md:mb-0">
-                        <div class="flex flex-wrap -mx-3 mb-6">
-
-                            <label class="w-full block text-gray-500 font-bold">
-                                <input class="mr-2 leading-tight" type="checkbox">
-                                <span class="text-sm">
-                                    Send me your newsletter!
-                                </span>
-                            </label>
-                        </div>
-
-                        <div class="flex flex-wrap -mx-3 mb-6">
-
-                            <div class="w-full">
-                                <button
-                                    class="shadow-none bg-blue-700 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-4 px-10 rounded-full"
-                                    type="button">
-                                    Sign Up
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div> -->
-    </div>
 </template>
  
 <style scoped>
