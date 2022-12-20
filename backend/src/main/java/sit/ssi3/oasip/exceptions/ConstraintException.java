@@ -16,7 +16,6 @@ public class ConstraintException extends ValidationException {
         } else {
             this.constraintViolations = new HashSet(constraintViolations);
         }
-
     }
 
     public ConstraintException(Set<? extends ConstraintViolation<?>> constraintViolations) {

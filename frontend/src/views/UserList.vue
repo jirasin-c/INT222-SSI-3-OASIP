@@ -131,30 +131,71 @@ onBeforeMount(async () => {
 </script>
  
 <template>
-    <div
-        class="mt-10 ml-16 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-        USER LIST
-    </div>
-    <div class="flex items-center mt-8 justify-end mr-16">
-        <router-link :to="{ name: 'MatchPass' }">
-            <div class="w-4/8 shadow p-5 mr-5 bg-primary text-slate-300 rounded-2xl justify-self-start flex">
-                <!-- <div class="text-xl font-extrabold m-2 hover:animate-bounce"> -->
-                Match Pass
-                <!-- </div> -->
-            </div>
-        </router-link>
-        <router-link :to="{ name: 'AddUser' }">
-            <div
-                class="w-4/8 shadow p-5 rounded-2xl bg-gradient-to-r from-gray-500/20 to-slate-100/20 bg-opacity-20 justify-self-start flex">
-                <div class="text-xl font-extrabold m-2 hover:animate-bounce">
-                    <UiAdd class="inline-block" /> Creat new user
+    <div>
+        <section class="text-gray-600 body-font">
+            <div class="container px-5 py-24 mx-auto">
+                <div class="flex flex-initial text-center w-full">
+                    <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Users</h1>
+                </div>
+                <div>
+                    <router-link :to="{ name: 'AddUser' }">
+                        <button type="button"
+                            class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Create
+                            User</button>
+                    </router-link>
+                    <router-link :to="{ name: 'MatchPass' }">
+                        <button type="button"
+                            class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Match Password</button>
+                    </router-link>
+                </div>
+                <div class="flex flex-wrap -m-2">
+                    <div class="p-2 lg:w-1/3 md:w-1/2 w-full" v-for="(user, index) in userList" :key="index">
+
+                        <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg">
+                            <div class=" flex-grow">
+                                <h2 class="text-gray-900 title-font font-medium">{{ user.name }}</h2>
+                                <p class="text-gray-500">{{ user.email }}</p>
+                                <span v-if="user.role == 'Admin'"
+                                    class="bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">Admin</span>
+                                <span v-else-if="user.role == 'Lecturer'"
+                                    class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                                    {{ user.role }}</span>
+                                <span v-else
+                                    class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">{{
+                                            user.role
+                                    }}</span>
+
+
+                            </div>
+
+                            <div class="flex items-center p-6 space-x-4 rounded-lg">
+                                <button class="justify-self-end flex" @click="getDetail(user.name)"><svg class="w-6 h-6"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                        </path>
+                                    </svg></button>
+
+                                <button class="justify-self-end flex" @click="deleteUser(user.name)"><svg
+                                        class="w-6 h-6" fill="none" stroke="red" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg></button>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
-        </router-link>
+        </section>
     </div>
-    <div class="flex flex-row h-screen">
-        <div class="shadow-inner shadow-lg glass w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
-            <div class=" w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
+
+    <!-- <div class="flex flex-row h-screen">
+        <div class="w-screen h-3/4 ml-16 mt-12 mr-16 rounded-2xl overflow-auto">
+            <div class="w-auto text-sm lg:w-[1700px] mx-auto space-y-6 pb-6 lg:text-2xl mt-10">
                 <div v-if="isEmpty" class="grid justify-items-center pt-72">
                     <p class="text-2xl text-gray-400">No User.</p>
                 </div>
@@ -165,11 +206,11 @@ onBeforeMount(async () => {
                         IN
                     </router-link>
                 </div>
-                <div class="grid grid-cols-1  md:grid md:grid-cols-3 md:gap-6 ">
+                <div class="grid md:grid md:grid-cols-3 md:gap-6 w-screen">
                     <div v-for="(user, index) in userList" :key="index">
                         <div>
                             <div
-                                class="grid break-inside-avoid rounded-xl p-4 mb-8 w-full break-words drop-shadow-md text-ellipsis overflow-hidden bg-gray-200 text-slate-500">
+                                class="grid rounded-xl p-4 mb-8 w-full drop-shadow-md bg-gray-200 text-slate-500">
                                 <p>Name: {{ user.name }}</p>
                                 <p>Email: {{ user.email }}</p>
                                 <p>Role: {{ user.role }}</p>
@@ -182,9 +223,12 @@ onBeforeMount(async () => {
                     </div>
                 </div>
 
+
+                
+
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
  
 <style>

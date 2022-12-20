@@ -18,17 +18,8 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findByEventCategoryID_Id(Integer eventCategoryId);
     List<Event> findAllByOrderByEventStartTimeDesc();
-
     List<Event> findAllByBookingEmailOrderByEventStartTimeDesc(String email);
-
-//    List<Event> findAllByEventCategoryID(List<Integer> eventCategoryId);
     @Query("select a from Event a where a.eventCategoryID.id in :idCate")
     List<Event> findAllByEventCategory(@Param("idCate") List<Integer> idCate);
 
-
-//    @Modifying
-//    @Query("delete from Event e where e.user.id = ?1")
-//    void deleteEventsByUserId(Integer id);
-//    @Transactional
-//    void deleteAllByUser(User user);
 }

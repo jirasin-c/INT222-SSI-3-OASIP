@@ -19,11 +19,6 @@ public class EventCategoryController {
     @Autowired
     private EventCategoryService eventCategoryService;
 
-//    @GetMapping("")
-//    public List<EventcategoryDTO> getEventCategory(@RequestParam(defaultValue = "id") String sortBy){
-//        return eventCategoryService.getEventCategory(sortBy);
-//    }
-
     @GetMapping("")
     public List<EventcategoryDTO> getEventCategory(@RequestParam(defaultValue = "id") String sortBy,HttpServletRequest request) {
         return eventCategoryService.getEventCategory(sortBy,request);

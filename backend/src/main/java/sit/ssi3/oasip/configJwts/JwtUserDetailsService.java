@@ -18,6 +18,7 @@ import java.util.List;
 public class JwtUserDetailsService implements UserDetailsService {
 
 
+
     private final UserRepository repository;
     private final Argon2PasswordEncoder argon2PasswordEncoder;
 
@@ -26,7 +27,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         this.argon2PasswordEncoder = argon2PasswordEncoder;
     }
 
-
+    //loadUserByUsername spring จะส่ง username มาให้แล้วไปหาemail
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = repository.findByEmail(username);
