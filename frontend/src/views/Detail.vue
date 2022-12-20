@@ -418,7 +418,7 @@ const deleteFile = () => {
     console.log(size.value);
     console.log(beforeSize.value);
     imageURL.value = []
-  }else{
+  } else {
     return
   }
 
@@ -450,87 +450,81 @@ window.onbeforeunload = function () {
 </script>
 
 <template>
+
+
   <div>
-    <div class="hero min-h-screen bg-base-200">
-      <div class="hero-content text-left">
-        <div
-          class="card w-auto lg:w-[1200px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm mb-12">
-          <div class="card-body text-xl md:text-3xl place-self-center">
-            <p class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center "
-              v-if="isEdit == false">
-              {{ selectedEvent.eventCategoryName }}
-            </p>
-            <input type="text" v-model="selectedEvent.eventCategoryName"
-              class="input input-bordered input-secondary w-full max-w-xs self-center text-2xl" disabled id="duration"
-              v-else />
-            <div class="divider"></div>
-            <p>
-              <IcPerson class="inline-block mr-5" />
-              <label> Name:
-                <span v-if="isEdit == false">{{ selectedEvent.bookingName }}</span>
-                <span v-else><input type="text" v-model="selectedEvent.bookingName"
-                    class="input input-bordered input-secondary w-96 max-w-xs self-center text-lg" disabled
-                    id="duration" /></span>
-              </label>
-            </p>
-            <br />
-            <p>
-              <IcTimer class="inline-block mr-5" />
-              <label> Duration:
-                <span v-if="isEdit == false">{{ selectedEvent.eventDuration }} mins</span>
-                <span v-else><input type="text" v-model="selectedEvent.eventDuration"
-                    class="input input-bordered input-secondary w-84 max-w-xs self-center text-lg" disabled
-                    id="duration" /></span>
-              </label>
-            </p>
-            <br />
-            <p>
-              <IcCalendar class="inline-block mr-5" />
-              <label for="starttime">
-                Start time :
-              </label>
-            <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventStartTime }}</p>
-            <!-- <span class="text-red-500 mr-2" v-show="isEdit" >*</span> -->
-            <input v-show="isEdit" type="datetime-local"
-              class="input input-bordered input-secondary w-auto max-w-xs text-lg" id="starttime" v-model="editDate"
-              :min="currentTime" />
-            </p>
-            <span class="text-sm text-yellow-500 pb-2 inline-block" v-show="compareDate(editDate, currentTime)">** Start
-              time must be in the future.</span>
-            <br />
-            <p>
-              <IcEmail class="inline-block mr-5 " />
-              <label> Email:
-                <span v-if="isEdit == false">{{ selectedEvent.bookingEmail }}</span>
-                <span v-else><input type="text" v-model="selectedEvent.bookingEmail"
-                    class="input input-bordered input-secondary w-full max-w-xs self-center text-lg" disabled
-                    id="duration" /></span>
-              </label>
-            </p>
-            <br />
-            <p>
-              <IcNote class="inline-block mr-5" />
-              <label for="notes">
-                Notes:
-              </label>
-            <p v-if="selectedEvent.eventNotes != ''" v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes
-            }}
-            </p>
-            <p v-else v-show="!isEdit" class="inline-block">NO MESSAGE.</p>
-            <p>
-            <div v-show="isEdit">
-              <span class="text-sm text-yellow-500 pb-2" v-show="editNote.length == 500">** A notes length must be 1 -
-                500 character.</span>
-            </div>
-            <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
-              class="textarea textarea-secondary text-xl w-full overflow-auto mt-3" maxlength="500"></textarea>
-            <label class="label">
-              <span class="label-text-alt"></span>
-              <span class="label-text-alt" v-show="isEdit">{{ editNote.length }}/500</span>
+    <div class="max-w-xl rounded-xl overflow-hidden shadow-lg mx-auto my-8 bg-white">
+      <div class="px-6 py-4">
+        <div class="font-bold text-xl mb-2">
+          <p class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 m-4 pb-1 text-center "
+            v-if="isEdit == false">
+            {{ selectedEvent.eventCategoryName }}
+          </p>
+          <p>
+            <IcPerson class="inline-block mr-5" />
+            <label>
+              <span v-if="isEdit == false">{{ selectedEvent.bookingName }}</span>
+              <span v-else><input type="text" v-model="selectedEvent.bookingName"
+                  class="rounded-lg w-96 max-w-xs self-center text-lg" disabled
+                  id="duration" /></span>
             </label>
-            </p>
-            </p>
-            <!-- <p v-else>
+          </p>
+          <br />
+          <p>
+            <IcTimer class="inline-block mr-5" />
+            <label>
+              <span v-if="isEdit == false">{{ selectedEvent.eventDuration }} mins</span>
+              <span v-else><input type="text" v-model="selectedEvent.eventDuration"
+                  class="rounded-lg input-secondary w-84 max-w-xs self-center text-lg" disabled
+                  id="duration" /></span>
+            </label>
+          </p>
+          <br />
+          <p>
+            <IcCalendar class="inline-block mr-5" />
+            <label for="starttime">
+            </label>
+          <p v-show="!isEdit" class="inline-block">{{ selectedEvent.eventStartTime }}</p>
+          <!-- <span class="text-red-500 mr-2" v-show="isEdit" >*</span> -->
+          <input v-show="isEdit" type="datetime-local"
+            class="rounded-lg w-auto max-w-xs text-lg" id="starttime" v-model="editDate"
+            :min="currentTime" />
+          </p>
+          <span class="text-sm text-yellow-500 pb-2 inline-block" v-show="compareDate(editDate, currentTime)">** Start
+            time must be in the future.</span>
+          <br />
+          <p>
+            <IcEmail class="inline-block mr-5 " />
+            <label>
+              <span v-if="isEdit == false">{{ selectedEvent.bookingEmail }}</span>
+              <span v-else><input type="text" v-model="selectedEvent.bookingEmail"
+                  class="rounded-lg w-full max-w-xs self-center text-lg" disabled
+                  id="duration" /></span>
+            </label>
+          </p>
+          <br />
+          <p>
+            <IcNote class="inline-block mr-5" />
+            <label for="notes">
+            </label>
+          <p v-if="selectedEvent.eventNotes != ''" v-show="!isEdit" class="inline-block">{{ selectedEvent.eventNotes
+          }}
+          </p>
+          <p v-else v-show="!isEdit" class="inline-block">NO MESSAGE.</p>
+          <p>
+          <div v-show="isEdit">
+            <span class="text-sm text-yellow-500 pb-2" v-show="editNote.length == 500">** A notes length must be 1 -
+              500 character.</span>
+          </div>
+          <textarea type="text" rows="2" v-show="isEdit" id="notes" v-model="editNote"
+            class="rounded-lg text-xl w-full overflow-auto mt-3" maxlength="500"></textarea>
+          <label class="label">
+            <span class="label-text-alt"></span>
+            <span class="label-text-alt text-base" v-show="isEdit">{{ editNote.length }}/500</span>
+          </label>
+          </p>
+          </p>
+          <!-- <p v-else>
               <IcNote class="inline-block mr-5" />
               <label for="notes">
                 Notes: 
@@ -547,68 +541,69 @@ window.onbeforeunload = function () {
                   </label>
                 </p>
             </p> -->
-            <p class="" v-if="isEdit">
-              <!-- <label>File name:</label> -->
-              <label for="input" class="label">
-                <span class="label-text text-base font-semibold text-secondary flex">
-                  Maximun 10 MB.
-                </span>
-              </label>
-              <input type="file" class="flex file-input file-input-bordered w-full max-w-xs" @change="onFileSelected"
-                id="input" />
-              <span class="flex text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
-                be large than 10 MB. **</span>
-            <div class="pt-5 avatar flex"
-              v-if="(file.type == 'image/png' || file.type == 'image/jpeg') && imageURL.length > 0">
-              <div class="flex w-96 h-64 rounded-xl">
-                <!-- <img :src="imageObjectURL" width="300" height="300" alt="">
+          <p class="" v-if="isEdit">
+            <!-- <label>File name:</label> -->
+            <label for="input" class="label">
+              <span class="label-text text-base font-semibold text-secondary flex">
+                Maximun 10 MB.
+              </span>
+            </label>
+            <input type="file" class="flex rounded-lg  w-full max-w-xs" @change="onFileSelected"
+              id="input" />
+            <span class="flex text-sm text-yellow-500 pb-2" v-show="isLarger10">** The file size cannot
+              be large than 10 MB. **</span>
+          <div class="pt-5 avatar flex"
+            v-if="(file.type == 'image/png' || file.type == 'image/jpeg') && imageURL.length > 0">
+            <div class="flex w-96 h-64 rounded-xl">
+              <!-- <img :src="imageObjectURL" width="300" height="300" alt="">
                                          -->
-                <img :src="imageURL" alt="" width="400" height="400">
-              </div>
+              <img :src="imageURL" alt="" width="400" height="400" class="rounded-lg">
             </div>
-
-            <!-- <p>{{file.name}}</p> -->
-            <ul v-show="isFileInputed">
-              <li class="text-sm flex justify-between mt-5">{{ file.name }}
-                <span class="text-secondary">{{ size }}</span>
-                <button @click="deleteFile">
-                  <svg width="32" height="32" viewBox="0 0 24 24">
-                    <path fill="currentColor"
-                      d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
-                  </svg>
-                </button>
-              </li>
-            </ul>
-            </p>
-            <p class="flex" v-else>
-              <!-- <IcEmail class="inline-block mr-5 " /> -->
-              <label> File name:
-                <!-- <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary" >{{ fileName }}</a> -->
-                <a :href="imageObjectURL" class="flex text-lg link link-secondary" :download="fileName">{{ fileName }}</a>
-                <span v-show="imageObjectURL.length == 0" class="text-secondary text-lg">No file.</span>
-              </label>
-            <div class="pl-5 avatar flex"
-              v-show="imageObjectURL.length > 0 && (showImg.type == 'image/png' || showImg.type == 'image/jpeg')">
-              <div class="w-96 h-64 rounded-xl">
-                <img :src="imageObjectURL" width="300" height="300" alt="">
-              </div>
-            </div>
-            </p>
-
-            <!-- <img :src="{showImg}" alt="">
-            <img :src="{imgName}" alt=""> -->
-            <!-- <img src="image" alt=""> -->
           </div>
-          <div class="card-actions justify-end m-5">
-            <button v-if="roleLocal.role != 'lecturer'" class="btn btn-secondary border-none " @click="isEdit = !isEdit"
-              v-show="!isEdit">Edit</button>
-            <button class="btn btn-accent border-none " @click="isEdit = true, updateEvent()"
-              v-show="isEdit">Apply</button>
-            <button class="btn btn-secondary border-none "
+
+          <!-- <p>{{file.name}}</p> -->
+          <ul v-show="isFileInputed">
+            <li class="text-sm flex justify-between mt-5">{{ file.name }}
+              <span class="text-secondary">{{ size }}</span>
+              <button @click="deleteFile">
+                <svg width="32" height="32" viewBox="0 0 24 24">
+                  <path fill="currentColor"
+                    d="M15.59 7L12 10.59L8.41 7L7 8.41L10.59 12L7 15.59L8.41 17L12 13.41L15.59 17L17 15.59L13.41 12L17 8.41L15.59 7Z" />
+                </svg>
+              </button>
+            </li>
+          </ul>
+          </p>
+          <p class="flex" v-else>
+            <!-- <IcEmail class="inline-block mr-5 " /> -->
+            <label> File name:
+              <!-- <a :href="imageObjectURL" target="_blank" class="flex text-lg link link-secondary" >{{ fileName }}</a> -->
+              <a :href="imageObjectURL" class="flex text-lg link link-secondary" :download="fileName">{{ fileName
+              }}</a>
+              <span v-show="imageObjectURL.length == 0" class="text-secondary text-lg">No file.</span>
+            </label>
+          <div class="pl-5 avatar flex"
+            v-show="imageObjectURL.length > 0 && (showImg.type == 'image/png' || showImg.type == 'image/jpeg')">
+            <div class="w-96 h-64 rounded-xl">
+              <img :src="imageObjectURL" width="300" height="300" alt="">
+            </div>
+          </div>
+
+          </p>
+          <div class="card-actions justify-end p-4">
+            <button v-if="roleLocal.role != 'lecturer'" @click="isEdit = !isEdit" v-show="!isEdit" type="button"
+              class="p-2 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+              Edit</button>
+            <button @click="isEdit = true, updateEvent()" v-show="isEdit" class="mr-2 focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4
+              focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600
+              dark:hover:bg-purple-700 dark:focus:ring-purple-900">Apply</button>
+            <button
               @click="isEdit = !isEdit, editDate = beforeEditDate, editNote = beforeEditNote, file = beforeEditFile, imageURL = beforeImageURL, size = beforeSize, fileName == '' ? isFileInputed = false : isFileInputed = true"
-              v-show="isEdit">Cancel</button>
-            <router-link :to="{ name: 'Home' }"><button
-                class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500">Go
+              v-show="isEdit"
+              class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Cancel</button>
+
+            <router-link :to="{ name: 'EventList' }"><button
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Go
                 back</button>
             </router-link>
           </div>

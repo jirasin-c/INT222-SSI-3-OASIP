@@ -151,7 +151,7 @@ onBeforeMount(async () => {
                 <div class="flex flex-wrap -m-2">
                     <div class="p-2 lg:w-1/3 md:w-1/2 w-full" v-for="(user, index) in userList" :key="index">
 
-                        <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg">
+                        <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg bg-white">
                             <div class=" flex-grow">
                                 <h2 class="text-gray-900 title-font font-medium">{{ user.name }}</h2>
                                 <p class="text-gray-500">{{ user.email }}</p>
@@ -233,4 +233,4 @@ onBeforeMount(async () => {
  
 <style>
 
-</style>
+</style> 

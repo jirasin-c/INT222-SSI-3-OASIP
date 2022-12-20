@@ -19,7 +19,7 @@ if (window.localStorage) {
                     questions.
                     (FAQ)
                 </h1>
-                <div id="accordion-open" data-accordion="open" class="w-3/4">
+                <div id="accordion-open" data-accordion="open" class="w-3/4 bg-white ">
                     <h2 id="accordion-open-heading-1">
                         <button type="button"
                             class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -69,14 +69,7 @@ if (window.localStorage) {
                     </h2>
                     <div id="accordion-open-body-2" class="hidden" aria-labelledby="accordion-open-heading-2">
                         <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700">
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is first conceptualized
-                                and designed using the Figma software so everything you see in the library has a
-                                design equivalent in our Figma file.</p>
-                            <p class="text-gray-500 dark:text-gray-400">Check out the <a
-                                    href="https://flowbite.com/figma/"
-                                    class="text-blue-600 dark:text-blue-500 hover:underline">Figma design
-                                    system</a> based on the utility classes from Tailwind CSS and components
-                                from Flowbite.</p>
+                            <p class="mb-2 text-gray-500 dark:text-gray-400">Student can book event, view their own events and edit their event.</p>
                         </div>
                     </div>
                     <h2 id="accordion-open-heading-3">
@@ -100,14 +93,7 @@ if (window.localStorage) {
                     </h2>
                     <div id="accordion-open-body-3" class="hidden" aria-labelledby="accordion-open-heading-2">
                         <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700">
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is first conceptualized
-                                and designed using the Figma software so everything you see in the library has a
-                                design equivalent in our Figma file.</p>
-                            <p class="text-gray-500 dark:text-gray-400">Check out the <a
-                                    href="https://flowbite.com/figma/"
-                                    class="text-blue-600 dark:text-blue-500 hover:underline">Figma design
-                                    system</a> based on the utility classes from Tailwind CSS and components
-                                from Flowbite.</p>
+                            <p class="mb-2 text-gray-500 dark:text-gray-400">Lecturer can view only their own categories's event.</p>
                         </div>
                     </div>
                     <h2 id="accordion-open-heading-4">
@@ -131,14 +117,7 @@ if (window.localStorage) {
                     </h2>
                     <div id="accordion-open-body-4" class="hidden" aria-labelledby="accordion-open-heading-2">
                         <div class="p-5 font-light border border-b-0 border-gray-200 dark:border-gray-700">
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is first conceptualized
-                                and designed using the Figma software so everything you see in the library has a
-                                design equivalent in our Figma file.</p>
-                            <p class="text-gray-500 dark:text-gray-400">Check out the <a
-                                    href="https://flowbite.com/figma/"
-                                    class="text-blue-600 dark:text-blue-500 hover:underline">Figma design
-                                    system</a> based on the utility classes from Tailwind CSS and components
-                                from Flowbite.</p>
+                            <p class="mb-2 text-gray-500 dark:text-gray-400">Guests can only book an event and they can't see events</p> 
                         </div>
                     </div>
                     <h2 id="accordion-open-heading-5">
@@ -162,24 +141,8 @@ if (window.localStorage) {
                     </h2>
                     <div id="accordion-open-body-5" class="hidden" aria-labelledby="accordion-open-heading-3">
                         <div class="p-5 font-light border border-t-0 border-gray-200 dark:border-gray-700">
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">The main difference is that the
-                                core components from Flowbite are open source under the MIT license, whereas
-                                Tailwind UI is a paid product. Another difference is that Flowbite relies on
-                                smaller and standalone components, whereas Tailwind UI offers sections of pages.
+                            <p class="mb-2 text-gray-500 dark:text-gray-400">Administrator can do anything.
                             </p>
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">However, we actually recommend
-                                using both Flowbite, Flowbite Pro, and even Tailwind UI as there is no technical
-                                reason stopping you from using the best of two worlds.</p>
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">Learn more about these
-                                technologies:</p>
-                            <ul class="pl-5 text-gray-500 list-disc dark:text-gray-400">
-                                <li><a href="https://flowbite.com/pro/"
-                                        class="text-blue-600 dark:text-blue-500 hover:underline">Flowbite
-                                        Pro</a></li>
-                                <li><a href="https://tailwindui.com/" rel="nofollow"
-                                        class="text-blue-600 dark:text-blue-500 hover:underline">Tailwind UI</a>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>

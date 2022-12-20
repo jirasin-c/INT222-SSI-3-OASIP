@@ -137,31 +137,33 @@ onBeforeMount(async () => {
       </router-link>
       <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
         <!-- <router-link v-for="link in links" :to="{name: link.routeName}" class="mr-5 hover:text-gray-900" v-show="link.authorize == false || (link.authorize == true && link.role == myUser.userRole)">{{link.name}}</router-link> -->
-        <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole != 'lecturer'">Book</router-link>
+        <router-link :to="{ name: 'Booking' }" class="mr-5 hover:text-gray-900"
+          v-show="myUser.userRole != 'lecturer'">Book</router-link>
         <router-link :to="{ name: 'EventCategory' }" class="mr-5 hover:text-gray-900">Categories</router-link>
-        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900" v-show="myUser.userRole == 'admin'">Users</router-link>
+        <router-link :to="{ name: 'UserList' }" class="mr-5 hover:text-gray-900"
+          v-show="myUser.userRole == 'admin'">Users</router-link>
         <router-link :to="{ name: 'EventList' }" class="mr-5 hover:text-gray-900">Events</router-link>
         <router-link :to="{ name: 'FAQ' }" class="mr-5 hover:text-gray-900">FAQ</router-link>
       </nav>
       <div v-show="myUser.isLogin == true">
         <button id="dropdownDividerButton" data-dropdown-toggle="dropdownDivider"
           class="text-white bg-indigo-500 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-base px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          type="button">User<svg class="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          type="button">{{ myUser.userRole.toUpperCase() }}<svg class="ml-2 w-4 h-4" aria-hidden="true" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg></button>
         <div id="dropdownDivider"
           class="hidden z-10 w-44 bg-slate-50 rounded divide-y divide-gray-200 shadow dark:bg-gray-700 dark:divide-gray-600">
           <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
             <li class="flex justify-center">
-              {{myUser.userEmail}}
+              {{ myUser.userEmail }}
             </li>
           </ul>
           <div class="py-1 flex justify-center">
             <button @click="logout"
-          class="w-64 block py-2 px-4 text-sm rounded-lg text-white bg-rose-500 hover:bg-rose-700 ">SIGN
-          OUT
-        </button>
+              class="w-64 block py-2 px-4 text-sm rounded-lg text-white bg-rose-500 hover:bg-rose-700 ">SIGN
+              OUT
+            </button>
           </div>
         </div>
       </div>

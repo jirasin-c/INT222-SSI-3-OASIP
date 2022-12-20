@@ -253,16 +253,16 @@ const updateUser = async () => {
   }
 }
 
-const createHeader = () =>{
-    if (localStorage.getItem('token') != null) {
-        var tokenToLocal = localStorage.getItem("token")
-        var tokenLocal = JSON.parse(tokenToLocal)
-        // console.log(tokenLocal);
-        myHeader.value = new Headers({
-            "content-type": "application/json",
-            "Authorization": `Bearer ${tokenLocal.accessToken}`,
-        })
-    }
+const createHeader = () => {
+  if (localStorage.getItem('token') != null) {
+    var tokenToLocal = localStorage.getItem("token")
+    var tokenLocal = JSON.parse(tokenToLocal)
+    // console.log(tokenLocal);
+    myHeader.value = new Headers({
+      "content-type": "application/json",
+      "Authorization": `Bearer ${tokenLocal.accessToken}`,
+    })
+  }
 }
 onBeforeMount(async () => {
   // if (localStorage.getItem('token') != null) {
@@ -281,8 +281,18 @@ onBeforeMount(async () => {
  
 <template>
   <div>
-    <div class="hero min-h-screen bg-base-200">
-      <div class="hero-content text-left">
+    <div class="px-6 py-4">
+      <span
+        class="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-600 mr-2">#photography</span>
+      <span
+        class="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-600 mr-2">#travel</span>
+      <span class="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-600">#winter</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="min-h-screen bg-base-200">
+      <div class="text-left">
         <div
           class="card w-auto lg:w-[1200px] h-full bg-gradient-to-r from-base-100 to-base-200 shadow-xl backdrop-blur-sm mb-12">
           <div class="card-body text-xl md:text-3xl place-self-center">
