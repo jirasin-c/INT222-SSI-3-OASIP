@@ -10,6 +10,8 @@ import AddUser from "../views/AddUser.vue";
 import SignIn from "../views/SignIn.vue";
 import MatchPass from "../views/MatchPass.vue";
 import EventList from "../views/EventList.vue"
+import FAQ from "../views/FAQ.vue"
+
 const history = createWebHistory("/ssi3/");
 // const history = createWebHistory();
 // async function removeQueryParams(to) {
@@ -208,6 +210,11 @@ const routes = [
     //   }
     // },
     
+  },
+  {
+    path: "/faq/",
+    name: "FAQ",
+    component: FAQ,
   }
 ];
 

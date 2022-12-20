@@ -29,15 +29,15 @@ const myHeader = ref()
 // }
 
 const createHeader = () => {
-  if (localStorage.getItem('token') != null) {
-    var tokenToLocal = localStorage.getItem("token")
-    var tokenLocal = JSON.parse(tokenToLocal)
-    // console.log(tokenLocal);
-    myHeader.value = new Headers({
-      "content-type": "application/json",
-      "Authorization": `Bearer ${tokenLocal.accessToken}`,
-    })
-  }
+    if (localStorage.getItem('token') != null) {
+        var tokenToLocal = localStorage.getItem("token")
+        var tokenLocal = JSON.parse(tokenToLocal)
+        // console.log(tokenLocal);
+        myHeader.value = new Headers({
+            "content-type": "application/json",
+            "Authorization": `Bearer ${tokenLocal.accessToken}`,
+        })
+    }
 }
 
 const passwordCheckMatch = (checkedPass) => {
@@ -183,7 +183,7 @@ const creatUser = async () => {
         // console.log(res);
         if (res.status === 200) {
             // setTimeout(() => appRouter.push({ name: 'MatchPass', params: { email: email.value.trim(), password: password.value } }), 1000)
-            setTimeout(() => appRouter.push({ name: 'UserList'}), 1000)
+            setTimeout(() => appRouter.push({ name: 'UserList' }), 1000)
             // name.value = ''
             // email.value = ''
             selectedRole.value = 'Student'
@@ -214,144 +214,77 @@ onBeforeMount(async () => {
 </script>
  
 <template>
-    <div class="hero min-h-screen bg-base-200">
-        <div class="hero-content text-left ">
-            <div
-                class="card w-auto lg:w-[1000px] bg-gradient-to-r from-base-100 to-base-200 mb-16 shadow-xl backdrop-blur-sm">
-                <div class="card-body text-3xl place-self-center pb-1">
-                    <p
-                        class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-600 pb-1 text-center">
-                        Create new user
-                    </p>
-                    <div class="divider"></div>
-                    <div class="flex justify-center pb-2">
-                        <div class="form-control w-full max-w-xs">
-                            <label for="name" class="label">
-                                <span class="label-text text-base font-semibold">
-                                    Name: <span class="text-red-500">*</span>
-                                </span>
-                            </label>
-                            <span class="text-sm text-red-500 pb-2" v-show="usedName">This name is already
-                                used.</span>
-                            <span class="text-sm text-yellow-500 pb-2" v-show="name.length == 100">** A name must be 1 -
-                                100 characters. ** <br>
-                                101st characters onwards will be cut off</span>
-                            <input type="text" v-model="name" placeholder="Type yourname..."
-                                class="input input-bordered input-secondary w-full max-w-xs text-lg"
-                                id="name" maxlength="100" @change="checkUsedName(name)" />
-                            <label class="label">
-                                <span class="label-text-alt"></span>
-                                <span class="label-text-alt">{{ name.length }}/100</span>
-                            </label>
-
-                            <label for="email" class="label">
-                                <span class="label-text text-base font-semibold">
-                                    Email : <span class="text-red-500">*</span>
-                                </span>
-                            </label>
-                            <span class="text-sm text-red-500 pb-2" v-show="usedEmail">This email is already
-                                used.</span>
+    <section class="text-gray-600 body-font relative">
+        <div class="container px-5 py-14 mx-auto">
+            <div class="flex flex-col text-center w-full mb-12">
+                <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Create user</h1>
+                <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Please fill out the data below</p>
+            </div>
+            <div class="lg:w-1/2 md:w-2/3 mx-auto">
+                <div class="flex flex-wrap -m-2">
+                    <div class="p-2 w-1/2">
+                        <div class="relative">
+                            <label for="email" class="leading-7 text-sm text-gray-600">Name<span
+                                    class="text-red-500 p-2">*</span></label>
+                            <span class="text-sm text-yellow-500 pb-2" v-show="name.length == 100">** A name must be
+                                1
+                                - 100 characters. **</span>
+                            <input type="text" placeholder="Type yourname..."
+                                class="w-full placeholder:opacity-50 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                v-model="name" id="name" maxlength="100" />
+                            <p class="text-sm opacity-50 text-right">{{ name.length }}/100</p>
+                        </div>
+                    </div>
+                    <div class="p-2 w-1/2">
+                        <div class="relative">
+                            <label for="email" class="leading-7 text-sm text-gray-600">Email<span
+                                    class="text-red-500 p-2">*</span></label>
                             <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
                                 address.</span>
-                            <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 50">** An email must be
-                                1
-                                - 50 characters. **<br>
-                                51st characters onwards will be cut off</span>
+                            <span class="text-sm text-yellow-500 pb-2" v-show="email.length == 50">** An email must
+                                be 1 - 50 characters. **</span>
                             <input type="email" placeholder="example@mail.kmutt.ac.th"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-lg" v-model="email"
-                                id="email" maxlength="50" @change="checkUsedEmail(email)" />
-                            <label class="label">
-                                <span class="label-text-alt"></span>
-                                <span class="label-text-alt">{{ email.length }}/50</span>
-                            </label>
-
-                            <label for="password" class="label">
-                                <span class="label-text text-base font-semibold">
-                                    Password : <span class="text-red-500">*</span>
-                                </span>
-                                <label class="swap">
-                                    <input type="checkbox" v-model="isShowPassword" />
-                                    <div class="swap-on text-sm">
-                                        <svg width="24" height="24" viewBox="0 0 512 512" class="inline">
-                                            <path fill="currentColor"
-                                                d="m63.998 86.005l21.998-21.998L447.999 426.01l-21.998 21.998zM259.34 192.09l60.57 60.57a64.07 64.07 0 0 0-60.57-60.57Zm-6.68 127.82l-60.57-60.57a64.07 64.07 0 0 0 60.57 60.57Z" />
-                                            <path fill="currentColor"
-                                                d="M256 352a96 96 0 0 1-92.6-121.34l-69.07-69.08C66.12 187.42 39.24 221.14 16 256c26.42 44 62.56 89.24 100.2 115.18C159.38 400.92 206.33 416 255.76 416A233.47 233.47 0 0 0 335 402.2l-53.61-53.6A95.84 95.84 0 0 1 256 352Zm0-192a96 96 0 0 1 92.6 121.34L419.26 352c29.15-26.25 56.07-61.56 76.74-96c-26.38-43.43-62.9-88.56-101.18-114.82C351.1 111.2 304.31 96 255.76 96a222.92 222.92 0 0 0-78.21 14.29l53.11 53.11A95.84 95.84 0 0 1 256 160Z" />
-                                        </svg> Hide
-                                    </div>
-                                    <div class="swap-off text-sm"><svg width="24" height="24" viewBox="0 0 512 512"
-                                            class="inline">
-                                            <circle cx="256" cy="256" r="64" fill="currentColor" />
-                                            <path fill="currentColor"
-                                                d="M490.84 238.6c-26.46-40.92-60.79-75.68-99.27-100.53C349 110.55 302 96 255.66 96c-42.52 0-84.33 12.15-124.27 36.11c-40.73 24.43-77.63 60.12-109.68 106.07a31.92 31.92 0 0 0-.64 35.54c26.41 41.33 60.4 76.14 98.28 100.65C162 402 207.9 416 255.66 416c46.71 0 93.81-14.43 136.2-41.72c38.46-24.77 72.72-59.66 99.08-100.92a32.2 32.2 0 0 0-.1-34.76ZM256 352a96 96 0 1 1 96-96a96.11 96.11 0 0 1-96 96Z" />
-                                        </svg> Show</div>
-                                </label>
-                            </label>
-                            <!-- <span class="text-sm text-red-500 pb-2" v-show="usedEmail">This email is already
-                                used.</span>
-                            <span class="text-sm text-red-500 pb-2" v-show="validateEmail()">Invalid email
-                                address.</span> -->
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                v-model="email" id="email" maxlength="50" />
+                            <p class="text-sm opacity-50 text-right">{{ email.length }}/50</p>
+                        </div>
+                    </div>
+                    <div class="p-2 w-1/2">
+                        <div class="relative">
+                            <label for="email" class="leading-7 text-sm text-gray-600">Password<span
+                                    class="text-red-500 p-2">*</span></label>
                             <span class="text-sm text-yellow-500 pb-2"
                                 v-show="0 < password.length && password.length < 8">** Password can be 8-14 characters
                                 **</span>
                             <span class="text-sm text-red-500 pb-2" v-show="password.length > 14">** Password can be
                                 8-14 characters
                                 **</span>
-                            <!-- <span class="text-sm text-red-500 pb-2" v-show="password.length == 14">** Exceed password
-                                limit
-                                ** <br>
-                                15th characters onwards will be cut off</span> -->
-                            <input v-if="!isShowPassword" type="password" placeholder="••••••••" v-model="password"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-2xl" id="password" />
-                            <input v-else type="text" v-model="password"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-base" id="password" />
-                            <label class="label">
-                                <span class="label-text-alt"></span>
-                                <!-- <span class="label-text-alt">{{ password.length }}/14</span> -->
-                                <span class="label-text-alt">{{ password.length }} Characters.</span>
-                            </label>
-
-                            <label for="re-password" class="label">
-                                <span class="label-text text-base font-semibold">
-                                    Re-Password : <span class="text-red-500">*</span>
-                                </span>
-                                <label class="swap">
-                                    <input type="checkbox" v-model="isShowRePassword" />
-                                    <div class="swap-on text-sm">
-                                        <svg width="24" height="24" viewBox="0 0 512 512" class="inline">
-                                            <path fill="currentColor"
-                                                d="m63.998 86.005l21.998-21.998L447.999 426.01l-21.998 21.998zM259.34 192.09l60.57 60.57a64.07 64.07 0 0 0-60.57-60.57Zm-6.68 127.82l-60.57-60.57a64.07 64.07 0 0 0 60.57 60.57Z" />
-                                            <path fill="currentColor"
-                                                d="M256 352a96 96 0 0 1-92.6-121.34l-69.07-69.08C66.12 187.42 39.24 221.14 16 256c26.42 44 62.56 89.24 100.2 115.18C159.38 400.92 206.33 416 255.76 416A233.47 233.47 0 0 0 335 402.2l-53.61-53.6A95.84 95.84 0 0 1 256 352Zm0-192a96 96 0 0 1 92.6 121.34L419.26 352c29.15-26.25 56.07-61.56 76.74-96c-26.38-43.43-62.9-88.56-101.18-114.82C351.1 111.2 304.31 96 255.76 96a222.92 222.92 0 0 0-78.21 14.29l53.11 53.11A95.84 95.84 0 0 1 256 160Z" />
-                                        </svg> Hide
-                                    </div>
-                                    <div class="swap-off text-sm"><svg width="24" height="24" viewBox="0 0 512 512"
-                                            class="inline">
-                                            <circle cx="256" cy="256" r="64" fill="currentColor" />
-                                            <path fill="currentColor"
-                                                d="M490.84 238.6c-26.46-40.92-60.79-75.68-99.27-100.53C349 110.55 302 96 255.66 96c-42.52 0-84.33 12.15-124.27 36.11c-40.73 24.43-77.63 60.12-109.68 106.07a31.92 31.92 0 0 0-.64 35.54c26.41 41.33 60.4 76.14 98.28 100.65C162 402 207.9 416 255.66 416c46.71 0 93.81-14.43 136.2-41.72c38.46-24.77 72.72-59.66 99.08-100.92a32.2 32.2 0 0 0-.1-34.76ZM256 352a96 96 0 1 1 96-96a96.11 96.11 0 0 1-96 96Z" />
-                                        </svg> Show</div>
-                                </label>
-                            </label>
-                            <span class="text-sm text-red-500 pb-2" v-show="passwordUnmatch">Password are does not
+                            <input type="password" placeholder="••••••••"
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                v-model="password" id="password"/>
+                            <p class="text-sm opacity-50 text-right">{{ password.length }} Characters.</p>
+                        </div>
+                    </div>
+                    <div class="p-2 w-1/2">
+                        <div class="relative">
+                            <label for="email" class="leading-7 text-sm text-gray-600">Re-Password<span
+                                    class="text-red-500 p-2">*</span></label>
+                                    <span class="text-sm text-red-500 pb-2" v-show="passwordUnmatch">Password are does not
                                 match.</span>
-                            <input v-if="!isShowRePassword" type="password" placeholder="••••••••" v-model="rePassword"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-2xl" id="re-password"
-                                @change="passwordCheckMatch(rePassword)" />
-                            <input v-else type="text" v-model="rePassword"
-                                class="input input-bordered input-secondary w-full max-w-xs  text-base" id="re-password"
-                                @change="passwordCheckMatch(rePassword)" />
-                            <label class="label">
-                                <span class="label-text-alt"></span>
-                                <span class="label-text-alt">{{ rePassword.length }} Characters.</span>
-                            </label>
-
+                            <input type="password" placeholder="••••••••" @change="passwordCheckMatch(rePassword)" 
+                                class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                v-model="rePassword" id="rePassword"/>
+                            <p class="text-sm opacity-50 text-right">{{ rePassword.length }} Characters.</p>
+                        </div>
+                    </div>
+                    <div class="p-2 w-full">
+                        <div class="relative">
                             <label for="role" class="label">
                                 <span class="label-text text-base font-semibold">
                                     Role:
                                 </span>
                             </label>
-                            <select class="select select-secondary w-full max-w-xs  text-lg" id="role"
+                            <select class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" id="role"
                                 v-model="selectedRole">
                                 <option disabled selected>Select your role</option>
                                 <option v-for="(role, index) in roles" :key="index">
@@ -359,37 +292,91 @@ onBeforeMount(async () => {
                             </select>
                         </div>
                     </div>
-                    <div class="alert alert-error shadow-lg w-auto h-12 text-[16px] text-white self-center"
+
+                    <div class="alert alert-error shadow-lg w-screen h-12 py-3 text-[16px] text-white self-center"
                         v-show="falseInput">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
-                                fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div class=" flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                            role="alert">
+                            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd"></path>
                             </svg>
-                            <span>Please fill {{ alertText }} field.</span>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                lease fill {{ alertText }} field.
+                            </div>
                         </div>
+
                     </div>
-                    <div class="alert alert-success shadow-lg w-auto h-12 text-[16px] text-white self-center"
+
+                    <div class="alert alert-success shadow-lg w-screen h-12 text-[16px] text-white self-center"
                         v-show="success">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6"
-                                fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div class="flex p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                            role="alert">
+                            <svg aria-hidden="true" class="flex-shrink-0 inline w-5 h-5 mr-3" fill="currentColor"
+                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd"></path>
                             </svg>
-                            <span>Create user success.</span>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                Create user success.
+                            </div>
                         </div>
+
                     </div>
-                    <div class="card-actions justify-center">
+                    <div class="p-8 w-full">
                         <button @click="creatUser"
-                            class="btn btn-secondary border-none bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-pink-500 hover:to-yellow-500 mb-4 text-lg">Create
-                            User</button>
+                            class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-lg text-lg">SUBMIT</button>
+                    </div>
+
+                    <div class="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
+                        <a class="text-indigo-500">napasuay@email.com</a>
+                        <p class="leading-normal my-5">Napasorn, Jirasin, Naruebet
+                            <br>School of Information Technology, KMUTT
+                        </p>
+                        <span class="inline-flex">
+                            <a class="text-gray-500" href="https://www.instagram.com/_bamnapasorn_/" target="_blank">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                target="_blank">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                target="_blank">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                                    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+                                </svg>
+                            </a>
+                            <a class="ml-4 text-gray-500" href="https://www.instagram.com/_bamnapasorn_/"
+                                target="_blank">
+                                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    class="w-5 h-5" viewBox="0 0 24 24">
+                                    <path
+                                        d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z">
+                                    </path>
+                                </svg>
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
 </template>
  
