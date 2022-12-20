@@ -55,26 +55,11 @@ public class AuthenticationService {
     private ModelMapper modelMapper;
 
 
-    public ResponseEntity match(LoginDTO oldUser) throws  Exception {
-        if (userRepository.existsByEmail(oldUser.getEmail())) {
-            User user = userRepository.findByEmail(oldUser.getEmail());
-            if (argon2PasswordEncoder.matches(oldUser.getPassword(), user.getPassword())) {
-
-                return ValidationLoginHandler.showError(HttpStatus.OK, "Password Matched");
-
-            } else {
-                return ValidationLoginHandler.showError(HttpStatus.UNAUTHORIZED, "Password NOT Matched");
-            }
-        } else {
-            return ValidationLoginHandler.showError(HttpStatus.NOT_FOUND, "A user with the specified email DOES NOT exist");
-        }
-    }
-
-
+    //get token
     public ResponseEntity login(LoginDTO oldUser) throws  Exception {
-        if (userRepository.existsByEmail(oldUser.getEmail())) {
+        if (userRepository.existsByEmail(oldUser.getEmail())) { //boolean
             User user = userRepository.findByEmail(oldUser.getEmail());
-            if (argon2PasswordEncoder.matches(oldUser.getPassword(), user.getPassword())) {
+            if (argon2PasswordEncoder.matches(oldUser.getPassword(), user.getPassword())) { //match password return boolean
                 authenticate(oldUser.getEmail() , oldUser.getPassword());
 
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(oldUser.getEmail());
@@ -94,8 +79,24 @@ public class AuthenticationService {
         }
     }
 
+    //match password
+    public ResponseEntity match(LoginDTO oldUser) throws  Exception {
+        if (userRepository.existsByEmail(oldUser.getEmail())) {
+            User user = userRepository.findByEmail(oldUser.getEmail());
+            if (argon2PasswordEncoder.matches(oldUser.getPassword(), user.getPassword())) {
+
+                return ValidationLoginHandler.showError(HttpStatus.OK, "Password Matched");
+
+            } else {
+                return ValidationLoginHandler.showError(HttpStatus.UNAUTHORIZED, "Password NOT Matched");
+            }
+        } else {
+            return ValidationLoginHandler.showError(HttpStatus.NOT_FOUND, "A user with the specified email DOES NOT exist");
+        }
+    }
+
     public ResponseEntity refreshToken(HttpServletRequest request){
-        String requestRefreshToken = request.getHeader("Authorization").substring(7);
+        String requestRefreshToken = request.getHeader("Authorization").substring(7); //ตัดเอาหลังตัว7 7 ตัวแรก = bearer
         String userEmail = jwtTokenUtil.getUsernameFromToken(requestRefreshToken);
         UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(userEmail);
         String accessToken = jwtTokenUtil.generateToken(userDetails);
@@ -108,7 +109,6 @@ public class AuthenticationService {
         return Respond.respond(HttpStatus.NOT_FOUND, "Can't find Refresh Token");
     }
 
-
     private Boolean checkTokenExpired(String request){
         if(!jwtTokenUtil.isTokenExpired(request)){
             return true;
@@ -117,13 +117,7 @@ public class AuthenticationService {
     }
 
     private void authenticate(String email, String password) throws Exception {
-//        try {
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-//        } catch (DisabledException e) {
-//            throw new Exception("USER_DISABLED", e);
-//        } catch (BadCredentialsException e) {
-//            throw new Exception("INVALID_CREDENTIALS", e);
-//        }
+
     }
 
 

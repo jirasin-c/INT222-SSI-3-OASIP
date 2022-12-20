@@ -35,7 +35,7 @@ public class FileSystemStorageService implements StorageService {
             Files.createDirectories(this.rootLocation);
         } catch (Exception ex) {
             throw new RuntimeException(
-                    "Could not create the directory where the uploaded files will be stored.", ex);
+                    "Can't create the directory", ex);
         }
     }
 
@@ -61,12 +61,10 @@ public class FileSystemStorageService implements StorageService {
 
         if (!resource.exists()) {
             Path path = Files.createDirectory(folder);
-            System.out.println(path);
             return folder;
 
         }else {
             FileUtils.cleanDirectory(folder.toFile());
-            System.out.println(rootLocation + "\\" + folderName);
             return folder;
         }
     }
@@ -93,18 +91,19 @@ public class FileSystemStorageService implements StorageService {
     public Resource loadAsResource(Integer eventId, String filename) {
         try {
             Path file = load(eventId, filename);
+            //Create a new UrlResource based on the given URL object.
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
             else {
                 throw new StorageFileNotFoundException(
-                        "Could not read file: " + filename);
+                        "Can't read file: " + filename);
 
             }
         }
         catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+            throw new StorageFileNotFoundException("Can't read file: " + filename, e);
         }
     }
 
@@ -124,6 +123,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    //Delete the supplied File - for directories, recursively delete any nested directories or files as well.
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
@@ -131,6 +131,7 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void deleteFileById(Integer eventId) {
         String dest = eventId.toString();
+        //Delete the supplied File - for directories, recursively delete any nested directories or files as well.
         FileSystemUtils.deleteRecursively(rootLocation.resolve(dest).toFile());
     }
 

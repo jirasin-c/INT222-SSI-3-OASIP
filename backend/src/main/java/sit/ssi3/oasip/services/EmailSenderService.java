@@ -16,10 +16,9 @@ public class EmailSenderService {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom("bam.infinite@gmail.com");
         msg.setTo(toMail);
-        msg.setText(body);
         msg.setSubject(subject);
+        msg.setText(body);
 
         javaMailSender.send(msg);
-        System.out.println("Email Sent successfully");
     }
 }

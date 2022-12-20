@@ -3,13 +3,12 @@ package sit.ssi3.oasip.configJwts;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sit.ssi3.oasip.Enum.RoleEnum;
-
-
 import java.util.Collection;
 
+//สำหรับการตรวจสอบสิทธิ์ หรือ authorization
+//store user information
 public class AuthenticationUser implements UserDetails {
-    private final String username;
+    private final String username; //Returns the username used to authenticate the user .
     private final String password;
     private final Collection<Role> authorities;
 
@@ -19,11 +18,8 @@ public class AuthenticationUser implements UserDetails {
         this.authorities = authorities;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        for (Role c : this.authorities)
-//            System.out.println(c);
         return this.authorities;
     }
 

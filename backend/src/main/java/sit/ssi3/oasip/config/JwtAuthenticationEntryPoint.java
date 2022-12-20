@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint{
-//    private static final long serialVersionUID = -7858869558953243875L;
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
     private ZonedDateTime date;

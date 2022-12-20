@@ -65,9 +65,5 @@ public class User {
     @Transient
     @AssertFalse(message = "A password must be between 8 and 14")
     private boolean isPasswordFit;
-
-//    @OneToMany(mappedBy = "user")
-//    private Set<Event> events = new LinkedHashSet<>();
-
-
+    
 }

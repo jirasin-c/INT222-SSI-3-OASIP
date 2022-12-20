@@ -28,9 +28,6 @@ public class ValidationHandler {
         errors.put("status", status.value());
         errors.put("message", message);
 
-//        Map<String, String> errorDetails = new HashMap<>();
-//        errorDetails.put(fieldName, message);
-//        errors.put("errorDetails",errorDetails);
         return new ResponseEntity<Object>(errors, status);
     }
 

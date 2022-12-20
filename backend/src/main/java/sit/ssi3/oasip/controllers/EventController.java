@@ -41,14 +41,8 @@ public class EventController {
         return eventService.getEvent(sortBy,request);
     }
 
-
     @GetMapping("/{eventId}")
-//    public EventDTO getEventByID(@PathVariable Integer eventId){
-//        return eventService.getEventById(eventId);
-//    }
-
     public Object getEventByID(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
-
         return eventService.getEventById(request, eventId);
     }
 
@@ -67,37 +61,37 @@ public class EventController {
         return  eventService.getListDay(dateEvent,sortBy,request);
     }
 
-//    @PostMapping("")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Object create(@Valid HttpServletRequest request, @Valid @RequestBody CreateEventDTO newEvent) {
-
-        @PostMapping(path="",consumes = {"multipart/form-data"})
-        public Object create(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam(name = "file", required = false) MultipartFile file) throws JsonProcessingException {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.findAndRegisterModules();
-            CreateEventDTO newEvent  = objectMapper.readValue(event, CreateEventDTO.class);
+    //เป็นการอนุญาตให้ฟอร์มส่งข้อมูลได้หลายประเภทพร้อมกัน เช่น ข้อความและรูปภาพ (อัพโหลดรูป)
+    @PostMapping(path="",consumes = {"multipart/form-data"})
+    public Object create(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam(name = "file", required = false) MultipartFile file) throws JsonProcessingException {
+        //converting a JSON String to a Java object using the ObjectMapper
+        ObjectMapper objectMapper = new ObjectMapper();
+        //provides functionality for finding reading and writing JSON
+        objectMapper.findAndRegisterModules();
+        //Read Object From JSON File
+        //fieldที่กรอกมาในform
+        CreateEventDTO newEvent  = objectMapper.readValue(event, CreateEventDTO.class);
 
         int categoryId = newEvent.getEventCategoryID();
         Eventcategory eventCategory = eventCategoryRepository.findById(categoryId).orElseThrow(()->new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Category id "+ categoryId+
-                "Does Not Exist !!!"
+            HttpStatus.NOT_FOUND, "Category id "+ categoryId+
+            "Does Not Exist !!!"
         ));
 
+        //email form
         Date startTime = new Date(newEvent.getEventStartTime().getTime());
         Date endTime = new Date(startTime.getTime()+ (newEvent.getEventDuration()*60000));
         String category = eventCategory.getEventCategoryName();
 
         String header = "[OASIP] " + category + " @ " + startTime + " - " + endTime;
         String body = "Your appointment has been registered successfully. \n \n" +
-                "Details" +
-                "\n" + "Booking Name : " + newEvent.getBookingName() +
-                "\n" + "Event Category : " + eventCategory.getEventCategoryName() +
-                "\n" + "When : " + startTime + " - " + endTime +
-                "\n" + "Event Notes : " + newEvent.getEventNotes();
+               "Details" +
+               "\n" + "Booking Name : " + newEvent.getBookingName() +
+               "\n" + "Event Category : " + eventCategory.getEventCategoryName() +
+               "\n" + "When : " + startTime + " - " + endTime +
+               "\n" + "Event Notes : " + newEvent.getEventNotes();
 
-
-//        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
-
+        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
         return eventService.createEvent(request, newEvent,file);
     }
 
@@ -108,13 +102,16 @@ public class EventController {
 
     @PatchMapping("/{eventId}")
     public Object update(@Valid HttpServletRequest request, @RequestParam(name = "event", required = false) String updateEvent, @RequestParam(name = "file", required = false) MultipartFile file, @PathVariable Integer eventId) throws JsonProcessingException {
+        //converting a JSON String to a Java object using the ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
+        //provides functionality for finding reading and writing JSON
         objectMapper.findAndRegisterModules();
-
         CreateEventDTO editEvent = null;
         if(updateEvent != null) {
-         editEvent = objectMapper.readValue(updateEvent,CreateEventDTO.class);}
-        
+        //Read Object From JSON File
+        //fieldที่กรอกมาในform
+        editEvent = objectMapper.readValue(updateEvent,CreateEventDTO.class);}
+
         return eventService.updateEvent(request, editEvent, file, eventId);
     }
 
