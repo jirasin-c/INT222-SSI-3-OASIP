@@ -13,4 +13,11 @@ import Navbar from "./components/Navbar.vue";
 </template>
 
 <style>
+body {
+  background-image: url('./assets/illust.png');
+  background-size: 300% 300%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+}
 </style>

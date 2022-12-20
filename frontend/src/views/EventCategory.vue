@@ -18,7 +18,7 @@ const getEventCategory = async () => {
 </script>
 
 <template>
-  <div class="w-full h-full bg-gray-500/20">
+  <div class="w-full h-ful">
     <CategoryCard :all-category="eventCategory" class="m-10 p-10" />
   </div>
 </template>
