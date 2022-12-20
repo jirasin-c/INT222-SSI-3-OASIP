@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// throw AccessDeniedHandler WebSecurityConfig
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+//throw exception userService create update
 public class ConstraintException extends ValidationException {
     private final Set<ConstraintViolation<?>> constraintViolations;
 
