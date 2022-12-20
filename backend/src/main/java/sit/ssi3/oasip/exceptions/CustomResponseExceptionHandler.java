@@ -37,7 +37,6 @@ public class CustomResponseExceptionHandler extends ResponseEntityExceptionHandl
         details.put("timestamp",new Date());
         details.put("status",status.value());
 
-
         Map<String , String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String Name = ((FieldError) error).getField();
