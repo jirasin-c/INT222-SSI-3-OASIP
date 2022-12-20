@@ -122,8 +122,17 @@ const filterCategory = async (ev) => {
   isFindeNoByPass.value = false
   isFindeNoByDate.value = false
   isEmpty.value = false
+  createHeader()
+    // const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+    //   method: "GET",
+    //   headers: myHeader.value
+    // });
+
   if (selectCategory.value == 'All category') {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events`, {
+      method: "GET",
+      headers: myHeader.value
+    })
     event.value = await res.json()
     isFindeNoByCategory.value = false
     console.log(eventFilter.value);
@@ -139,7 +148,10 @@ const filterCategory = async (ev) => {
       e.eventStartTime = localDate;
     });
   } else {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/?categoryId=${selectCategory.value}`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/?categoryId=${selectCategory.value}`, {
+      method: "GET",
+      headers: myHeader.value
+    })
     if (res.status == 404) {
       isFindeNoByCategory.value = true;
       event.value = []
@@ -167,8 +179,12 @@ const filterCategoryStatus = async () => {
   isFindeNoByPass.value = false
   isFindeNoByDate.value = false
   isEmpty.value = false
+  createHeader()
   if (categoryStatus.value == 'Up coming') {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/upComing`, {
+      method: "GET",
+      headers: myHeader.value
+    })
     if (res.status == 404) {
       isFindeNoByUpComing.value = true;
       event.value = []
@@ -188,7 +204,10 @@ const filterCategoryStatus = async () => {
       });
     }
   } else {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/past`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/past`, {
+      method: "GET",
+      headers: myHeader.value
+    })
     // console.log(res.json());
     if (res.status == 404) {
       isFindeNoByPass.value = true
@@ -218,7 +237,11 @@ const filterDay = async () => {
   isFindeNoByPass.value = false
   isFindeNoByDate.value = false
   isEmpty.value = false
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/day/?dateEvent=${startTime.value}`)
+  createHeader()
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}api/events/day/?dateEvent=${startTime.value}`, {
+      method: "GET",
+      headers: myHeader.value
+    })
   // console.log(res.json());
   if (res.status == 404) {
     isFindeNoByDate.value = true
